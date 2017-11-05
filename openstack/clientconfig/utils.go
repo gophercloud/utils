@@ -6,8 +6,6 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
-
-	"github.com/Wessie/appdirs"
 )
 
 // findAndLoadYAML attempts to locate a clouds.yaml file in the following
@@ -15,10 +13,8 @@ import (
 //
 // 1. OS_CLIENT_CONFIG_FILE
 // 2. Current directory.
-// 3. XDG OS-specific user_config_dir
-// 4. unix-specific user_config_dir (~/.config/openstack/clouds.yaml)
-// 5. XDG OS-specific site_config_dir
-// 6. unix-specific site_config_dir (/etc/openstack/clouds.yaml)
+// 3. unix-specific user_config_dir (~/.config/openstack/clouds.yaml)
+// 4. unix-specific site_config_dir (/etc/openstack/clouds.yaml)
 //
 // If found, the contents of the file is returned.
 func findAndReadYAML() ([]byte, error) {
@@ -40,18 +36,7 @@ func findAndReadYAML() ([]byte, error) {
 		return ioutil.ReadFile(filename)
 	}
 
-	// xdg os-specific user_config_dir
-	app := appdirs.New("openstack", "", "")
-	if v := app.UserConfig(); v != "" {
-		filename := filepath.Join(v, "clouds.yaml")
-		if ok := fileExists(filename); ok {
-			return ioutil.ReadFile(filename)
-		}
-	}
-
-	// unix-specific user_config_dir.
-	// xdg on Mac/Darwin is "Application Support",
-	// but maybe ~/.config/openstack exists anyway.
+	// unix user config directory: ~/.config/openstack.
 	currentUser, err := user.Current()
 	if err != nil {
 		return nil, fmt.Errorf("unable to get current user: %s", err)
@@ -65,15 +50,7 @@ func findAndReadYAML() ([]byte, error) {
 		}
 	}
 
-	// xdg OS-specific site_config_dir
-	if v := app.SiteConfig(); v != "" {
-		filename := filepath.Join(v, "clouds.yaml")
-		if ok := fileExists(filename); ok {
-			return ioutil.ReadFile(filename)
-		}
-	}
-
-	// unix-specific site_config_dir
+	// unix-specific site config directory: /etc/openstack.
 	if ok := fileExists("/etc/openstack/clouds.yaml"); ok {
 		return ioutil.ReadFile("/etc/openstack/clouds.yaml")
 	}
