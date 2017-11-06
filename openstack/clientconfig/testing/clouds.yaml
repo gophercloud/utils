@@ -1,0 +1,31 @@
+clouds:
+  hawaii:
+    profile: "Some profile"
+    auth:
+      auth_url: "https://hi.example.com:5000/v3"
+      username: "jdoe"
+      password: "password"
+      project_name: "Some Project"
+      domain_name: "default"
+    region_name: "HNL"
+  florida:
+    profile: "Some profile"
+    auth:
+      auth_url: "https://fl.example.com:5000/v3"
+      username: "jdoe"
+      password: "password"
+      project_id: "12345"
+      domain_id: "abcde"
+    region_name: "MIA"
+  california:
+    profile: "Some profile"
+    auth:
+      auth_url: "https://ca.example.com:5000/v3"
+      username: "jdoe"
+      password: "password"
+      project_name: "Some Project"
+      domain_name: "default"
+    regions:
+      - SAN
+      - LAX
+
