@@ -1,0 +1,13 @@
+language: go
+sudo: false
+install:
+- go get -v ./...
+- go get golang.org/x/tools/cmd/goimports
+go:
+- 1.9
+- tip
+before_script:
+- go vet ./...
+- go test -v ./...
+script:
+- ./script/format
