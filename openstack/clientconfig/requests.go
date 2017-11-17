@@ -110,6 +110,14 @@ func AuthOptions(opts *ClientOpts) (*gophercloud.AuthOptions, error) {
 		ao.DomainName = auth.ProjectDomainName
 	}
 
+	if auth.UserDomainID != "" {
+		ao.DomainID = auth.UserDomainID
+	}
+
+	if auth.UserDomainName != "" {
+		ao.DomainName = auth.UserDomainName
+	}
+
 	// Environment variable overrides.
 	envPrefix := "OS_"
 	if opts != nil && opts.EnvPrefix != "" {

@@ -27,6 +27,8 @@ type CloudAuth struct {
 	ProjectID         string `yaml:"project_id"`
 	DomainName        string `yaml:"domain_name"`
 	DomainID          string `yaml:"domain_id"`
+	UserDomainName    string `yaml:"user_domain_name"`
+	UserDomainID      string `yaml:"user_domain_id"`
 	ProjectDomainName string `yaml:"project_domain_name"`
 	ProjectDomainID   string `yaml:"project_domain_id"`
 }
