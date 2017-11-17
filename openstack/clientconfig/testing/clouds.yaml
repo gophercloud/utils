@@ -15,7 +15,7 @@ clouds:
       username: "jdoe"
       password: "password"
       project_id: "12345"
-      domain_id: "abcde"
+      user_domain_id: "abcde"
     region_name: "MIA"
   california:
     profile: "Some profile"
@@ -24,7 +24,7 @@ clouds:
       username: "jdoe"
       password: "password"
       project_name: "Some Project"
-      domain_name: "default"
+      project_domain_name: "default"
     regions:
       - SAN
       - LAX
