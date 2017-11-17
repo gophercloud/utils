@@ -19,11 +19,11 @@ var CloudYAMLHawaii = clientconfig.Cloud{
 var CloudYAMLFlorida = clientconfig.Cloud{
 	RegionName: "MIA",
 	Auth: &clientconfig.CloudAuth{
-		AuthURL:   "https://fl.example.com:5000/v3",
-		Username:  "jdoe",
-		Password:  "password",
-		ProjectID: "12345",
-		DomainID:  "abcde",
+		AuthURL:      "https://fl.example.com:5000/v3",
+		Username:     "jdoe",
+		Password:     "password",
+		ProjectID:    "12345",
+		UserDomainID: "abcde",
 	},
 }
 
@@ -33,11 +33,11 @@ var CloudYAMLCalifornia = clientconfig.Cloud{
 		"LAX",
 	},
 	Auth: &clientconfig.CloudAuth{
-		AuthURL:     "https://ca.example.com:5000/v3",
-		Username:    "jdoe",
-		Password:    "password",
-		ProjectName: "Some Project",
-		DomainName:  "default",
+		AuthURL:           "https://ca.example.com:5000/v3",
+		Username:          "jdoe",
+		Password:          "password",
+		ProjectName:       "Some Project",
+		ProjectDomainName: "default",
 	},
 }
 
