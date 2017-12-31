@@ -7,13 +7,8 @@ import (
 
 	"github.com/gophercloud/gophercloud/pagination"
 	th "github.com/gophercloud/gophercloud/testhelper"
-<<<<<<< HEAD
 	"github.com/gophercloud/utils/gnocchi/metric/v1/archivepolicies"
 	fake "github.com/gophercloud/utils/gnocchi/testhelper/client"
-=======
-	"github.com/gophercloud/gophercloud/utils/gnocchi/metric/v1/archivepolicies"
-	fake "github.com/gophercloud/gophercloud/utils/gnocchi/metric/v1/common"
->>>>>>> Implement Gnocchi archive policy list
 )
 
 func TestListArchivePolicies(t *testing.T) {
