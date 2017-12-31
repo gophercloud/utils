@@ -1,7 +1,7 @@
 package testing
 
 import (
-	"github.com/gophercloud/gophercloud/utils/gnocchi/metric/v1/archivepolicies"
+	"github.com/gophercloud/utils/gnocchi/metric/v1/archivepolicies"
 )
 
 // ArchivePoliciesListResult represents raw server response from a server to a list call.
