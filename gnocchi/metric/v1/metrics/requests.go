@@ -13,13 +13,18 @@ type ListOptsBuilder interface {
 
 // ListOpts allows the limiting and sorting of paginated collections through
 // the Gnocchi API.
-// SortKey allows you to sort by a particular metric attribute.
-// SortDir sets the direction, and is either `asc` or `desc`.
-// Marker and Limit are used for the pagination.
 type ListOpts struct {
-	Limit   int    `q:"limit"`
-	Marker  string `q:"marker"`
+	// Limit allows to limits count of metrics in the response.
+	Limit int `q:"limit"`
+
+	// Marker is used for pagination.
+	Marker string `q:"marker"`
+
+	// SortKey allows to sort metrics in the response by key.
 	SortKey string `q:"sort_key"`
+
+	// SortDir allows to set the direction of sorting.
+	// Can be `asc` or `desc`.
 	SortDir string `q:"sort_dir"`
 }
 
@@ -30,7 +35,7 @@ func (opts ListOpts) ToMetricListQuery() (string, error) {
 }
 
 // List returns a Pager which allows you to iterate over a collection of
-// metrics. It accepts a ListOpts struct, which allows you to filter and sort
+// metrics. It accepts a ListOpts struct, which allows you to limit and sort
 // the returned collection for a greater efficiency.
 func List(c *gophercloud.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 	url := listURL(c)

@@ -20,7 +20,7 @@ type Metric struct {
 	ArchivePolicy archivepolicies.ArchivePolicy `json:"archive_policy"`
 
 	// CreatedByProjectID contains the id of the Identity project that
-	// were used for metric creation.
+	// was used for a metric creation.
 	CreatedByProjectID string `json:"created_by_project_id"`
 
 	// CreatedByUserID contains the id of the Identity user
@@ -29,7 +29,7 @@ type Metric struct {
 
 	// Creator shows who created the metric.
 	// Usually it contains concatenated string with values from
-	// "created_by_project_id" and "created_by_user_id" fields.
+	// "created_by_user_id" and "created_by_project_id" fields.
 	Creator string `json:"creator"`
 
 	// ID uniquely identifies the Gnocchi metric.
