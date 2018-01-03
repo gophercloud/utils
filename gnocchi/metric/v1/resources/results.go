@@ -23,8 +23,7 @@ type Resource struct {
 	ID string `json:"id"`
 
 	// Metrics are entities that store aggregates.
-	// They are identified by an UUIDs.
-	Metrics []string `json:"metrics"`
+	Metrics map[string]string `json:"metrics"`
 
 	// OriginalResourceID is the orginal resource id. It can be different from the
 	// regular ID field.
