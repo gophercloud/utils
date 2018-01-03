@@ -51,27 +51,6 @@ type MetricPage struct {
 	pagination.LinkedPageBase
 }
 
-// NextPageURL is invoked when a paginated collection of metrics has reached
-// the end of a page and the pager seeks to traverse over a new one.
-// In order to do this, it needs to construct the next page's URL.
-//
-// Gnocchi API doesn't provide special JSON with pagination links. Instead it expects
-// a new URL with a metric's id as a marker.
-func (r MetricPage) NextPageURL() (string, error) {
-	var s []Metric
-
-	err := r.ExtractInto(&s)
-	if err != nil {
-		return "", err
-	}
-
-	lastMetric := s[len(s)-1]
-	lastMetricID := lastMetric.ID
-	nextPageURL := r.PageResult.URL.String() + "?marker=" + lastMetricID
-
-	return nextPageURL, nil
-}
-
 // IsEmpty checks whether a MetricPage struct is empty.
 func (r MetricPage) IsEmpty() (bool, error) {
 	is, err := ExtractMetrics(r)
