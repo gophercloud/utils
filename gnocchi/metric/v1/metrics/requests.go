@@ -47,6 +47,6 @@ func List(c *gophercloud.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 		url += query
 	}
 	return pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
-		return MetricPage{pagination.LinkedPageBase{PageResult: r}}
+		return MetricPage{pagination.SinglePageBase(r)}
 	})
 }

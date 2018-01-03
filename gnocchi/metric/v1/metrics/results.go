@@ -48,7 +48,7 @@ type Metric struct {
 // MetricPage is the page returned by a pager when traversing over a collection
 // of metrics.
 type MetricPage struct {
-	pagination.LinkedPageBase
+	pagination.SinglePageBase
 }
 
 // IsEmpty checks whether a MetricPage struct is empty.
@@ -57,9 +57,8 @@ func (r MetricPage) IsEmpty() (bool, error) {
 	return len(is) == 0, err
 }
 
-// ExtractMetrics accepts a Page struct, specifically a MetricPage struct,
-// and extracts the elements into a slice of Metric structs. In other words,
-// a generic collection is mapped into a relevant slice.
+// ExtractMetrics interprets the results of a single page from a List() call,
+// producing a slice of Metric structs.
 func ExtractMetrics(r pagination.Page) ([]Metric, error) {
 	var s []Metric
 	err := (r.(MetricPage)).ExtractInto(&s)
