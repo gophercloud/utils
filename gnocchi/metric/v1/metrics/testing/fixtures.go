@@ -32,14 +32,14 @@ const MetricsListResult = `[
                 }
             ],
             "name": "precise"
-			},
-			"created_by_project_id": "e9dc821ca664406e981820a477e9a761",
-			"created_by_user_id": "a23c5b98d42d4df3b961e54d5167eb6d",
-			"creator": "a23c5b98d42d4df3b961e54d5167eb6d:e9dc821ca664406e981820a477e9a761",
-			"id": "777a01d6-4694-49cb-b86a-5ba9fd4e609e",
-			"name": "memory.usage",
-			"resource_id": "1f3a0724-1807-4bd1-81f9-ee18c8ff6ccc",
-			"unit": "MB"
+        },
+        "created_by_project_id": "e9dc821ca664406e981820a477e9a761",
+        "created_by_user_id": "a23c5b98d42d4df3b961e54d5167eb6d",
+        "creator": "a23c5b98d42d4df3b961e54d5167eb6d:e9dc821ca664406e981820a477e9a761",
+        "id": "777a01d6-4694-49cb-b86a-5ba9fd4e609e",
+        "name": "memory.usage",
+        "resource_id": "1f3a0724-1807-4bd1-81f9-ee18c8ff6ccc",
+        "unit": "MB"
     },
     {
         "archive_policy": {
@@ -60,21 +60,21 @@ const MetricsListResult = `[
                     "timespan": "200 days, 0:00:00"
                 }
             ],
-        "name": "not_so_precise"
+            "name": "not_so_precise"
         },
         "created_by_project_id": "c6b68a6b413648b0a0eb191bf3222f4d",
         "created_by_user_id": "cb072aacdb494419aeeba5f1c62d1a65",
         "creator": "cb072aacdb494419aeeba5f1c62d1a65:c6b68a6b413648b0a0eb191bf3222f4d",
         "id": "6dbc97c5-bfdf-47a2-b184-02e7fa348d21",
-        "name": "cpu_util",
+        "name": "cpu.delta",
         "resource_id": "c5dc0c47-f43c-425c-a82f-44d61ee91175",
-        "unit": "%"
+        "unit": "ns"
     }
 ]`
 
 // Metric1 is an expected representation of first metric from MetricsListResult.
 var Metric1 = metrics.Metric{
-	archivepolicies.ArchivePolicy{
+	ArchivePolicy: archivepolicies.ArchivePolicy{
 		AggregationMethods: []string{
 			"max",
 			"min",
@@ -110,12 +110,12 @@ var Metric1 = metrics.Metric{
 
 // Metric2 is an expected representation of first metric from MetricsListResult.
 var Metric2 = metrics.Metric{
-	archivepolicies.ArchivePolicy{
+	ArchivePolicy: archivepolicies.ArchivePolicy{
 		AggregationMethods: []string{
 			"mean",
 			"sum",
 		},
-		BackWindow: 0,
+		BackWindow: 12,
 		Definitions: []archivepolicies.ArchivePolicyDefinition{
 			{
 				Granularity: "1:00:00",
@@ -134,7 +134,7 @@ var Metric2 = metrics.Metric{
 	CreatedByUserID:    "cb072aacdb494419aeeba5f1c62d1a65",
 	Creator:            "cb072aacdb494419aeeba5f1c62d1a65:c6b68a6b413648b0a0eb191bf3222f4d",
 	ID:                 "6dbc97c5-bfdf-47a2-b184-02e7fa348d21",
-	Name:               "cpu_util",
+	Name:               "cpu.delta",
 	ResourceID:         "c5dc0c47-f43c-425c-a82f-44d61ee91175",
-	Unit:               "%",
+	Unit:               "ns",
 }
