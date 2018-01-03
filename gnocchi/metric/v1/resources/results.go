@@ -42,6 +42,9 @@ type Resource struct {
 	// StartedAt is a resource creation timestamp.
 	StartedAt string `json:"started_at"`
 
+	// EndedAt is a timestamp of when the resource has ended.
+	EndedAt string `json:"ended_at"`
+
 	// Type is a type of the resource.
 	Type string `json:"type"`
 
