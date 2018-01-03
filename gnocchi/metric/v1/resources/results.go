@@ -55,27 +55,6 @@ type ResourcePage struct {
 	pagination.LinkedPageBase
 }
 
-// NextPageURL is invoked when a paginated collection of resources has reached
-// the end of a page and the pager seeks to traverse over a new one.
-// In order to do this, it needs to construct the next page's URL.
-//
-// Gnocchi API doesn't provide special JSON with pagination links. Instead it expects
-// a new URL with a resource's id as a marker.
-func (r ResourcePage) NextPageURL() (string, error) {
-	var s []Resource
-
-	err := r.ExtractInto(&s)
-	if err != nil {
-		return "", err
-	}
-
-	lastResource := s[len(s)-1]
-	lastResourceID := lastResource.ID
-	nextPageURL := r.PageResult.URL.String() + "?marker=" + lastResourceID
-
-	return nextPageURL, nil
-}
-
 // IsEmpty checks whether a ResourcePage struct is empty.
 func (r ResourcePage) IsEmpty() (bool, error) {
 	is, err := ExtractResources(r)
