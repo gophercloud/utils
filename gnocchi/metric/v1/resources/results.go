@@ -1,6 +1,8 @@
 package resources
 
-import "github.com/gophercloud/gophercloud/pagination"
+import (
+	"github.com/gophercloud/gophercloud/pagination"
+)
 
 // Resource is an entity representing anything in your infrastructure
 // that you will associate metric(s) with.
@@ -51,10 +53,14 @@ type Resource struct {
 	UserID string `json:"user_id"`
 }
 
-// ResourcePage is the page returned by a pager when traversing over a collection
-// of resources.
+// ResourcePage abstracts the raw results of making a List() request against
+// the Gnocchi API.
+//
+// As Gnocchi API may freely alter the response bodies of structures
+// returned to the client, you may only safely access the data provided through
+// the ExtractResources call.
 type ResourcePage struct {
-	pagination.LinkedPageBase
+	pagination.SinglePageBase
 }
 
 // IsEmpty checks whether a ResourcePage struct is empty.
@@ -63,9 +69,8 @@ func (r ResourcePage) IsEmpty() (bool, error) {
 	return len(is) == 0, err
 }
 
-// ExtractResources accepts a Page struct, specifically a ResourcePage struct,
-// and extracts the elements into a slice of Resource structs. In other words,
-// a generic collection is mapped into a relevant slice.
+// ExtractResources interprets the results of a single page from a List() call,
+// producing a slice of Resource structs.
 func ExtractResources(r pagination.Page) ([]Resource, error) {
 	var s []Resource
 	err := (r.(ResourcePage)).ExtractInto(&s)
