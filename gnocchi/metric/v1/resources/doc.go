@@ -3,12 +3,12 @@ Package resources provides the ability to retrieve resources through the Gnocchi
 
 Example of Listing resources
 
+	resourceType: "instance",
 	listOpts := resources.ListOpts{
 		Details: True,
-		ResourceType: "instance",
 	}
 
-	allPages, err := resources.List(gnocchiClient, listOpts).AllPages()
+	allPages, err := resources.List(gnocchiClient, listOpts, resourceType).AllPages()
 	if err != nil {
 		panic(err)
 	}
