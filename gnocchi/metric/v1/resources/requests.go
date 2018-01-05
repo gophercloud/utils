@@ -53,3 +53,9 @@ func List(c *gophercloud.ServiceClient, opts ListOptsBuilder, resourceType strin
 		return ResourcePage{pagination.SinglePageBase(r)}
 	})
 }
+
+// Get retrieves a specific Gnocchi resource based on its type and ID.
+func Get(c *gophercloud.ServiceClient, resourceID string, resourceType string) (r GetResult) {
+	_, r.Err = c.Get(getURL(c, resourceID, resourceType), &r.Body, nil)
+	return
+}
