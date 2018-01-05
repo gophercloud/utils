@@ -72,7 +72,7 @@ const MetricsListResult = `[
     }
 ]`
 
-// Metric1 is an expected representation of first metric from MetricsListResult.
+// Metric1 is an expected representation of a first metric from the MetricsListResult.
 var Metric1 = metrics.Metric{
 	ArchivePolicy: archivepolicies.ArchivePolicy{
 		AggregationMethods: []string{
@@ -108,7 +108,7 @@ var Metric1 = metrics.Metric{
 	Unit:               "MB",
 }
 
-// Metric2 is an expected representation of first metric from MetricsListResult.
+// Metric2 is an expected representation of a second metric from the MetricsListResult.
 var Metric2 = metrics.Metric{
 	ArchivePolicy: archivepolicies.ArchivePolicy{
 		AggregationMethods: []string{
