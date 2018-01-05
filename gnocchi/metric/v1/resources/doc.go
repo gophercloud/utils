@@ -21,5 +21,15 @@ Example of Listing resources
 	for _, resource := range allResources {
 		fmt.Printf("%+v\n", resource)
 	}
+
+Example of Getting a resource
+
+	resourceID = "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55"
+	resourceType = ""
+	resource, err := resources.Get(gnocchiClient, resourceID, resourceType).Extract()
+	if err != nil {
+		panic(err)
+	}
+
 */
 package resources
