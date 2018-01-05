@@ -44,7 +44,7 @@ const ResourceListResult = `[
     }
 ]`
 
-// Resource1 is an expected representation of a first resource from ResourceListResult.
+// Resource1 is an expected representation of a first resource from the ResourceListResult.
 var Resource1 = resources.Resource{
 	CreatedByProjectID: "3d40ca37723449118987b9f288f4ae84",
 	CreatedByUserID:    "fdcfb420c09645e69e177a0bb1950884",
@@ -64,7 +64,7 @@ var Resource1 = resources.Resource{
 	UserID:             "bd5874d666624b24a9f01c128871e4ac",
 }
 
-// Resource2 is an expected representation of a second resource from ResourceListResult.
+// Resource2 is an expected representation of a second resource from the ResourceListResult.
 var Resource2 = resources.Resource{
 	CreatedByProjectID: "3d40ca37723449118987b9f288f4ae84",
 	CreatedByUserID:    "fdcfb420c09645e69e177a0bb1950884",
