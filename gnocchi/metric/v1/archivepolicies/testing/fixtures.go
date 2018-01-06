@@ -103,3 +103,28 @@ var ListArchivePoliciesExpected = []archivepolicies.ArchivePolicy{
 		Name: "not_so_precise",
 	},
 }
+
+// ArchivePolicyGetResult represents a raw server response from a server to a get request.
+const ArchivePolicyGetResult = `
+{
+    "aggregation_methods": [
+        "max",
+        "min",
+        "mean"
+    ],
+    "back_window": 128,
+    "definition": [
+        {
+            "granularity": "1:00:00",
+            "points": 2160,
+            "timespan": "90 days, 0:00:00"
+        },
+        {
+            "granularity": "1 day, 0:00:00",
+            "points": 100,
+            "timespan": "100 days, 0:00:00"
+        }
+    ],
+    "name": "test_policy"
+}
+`

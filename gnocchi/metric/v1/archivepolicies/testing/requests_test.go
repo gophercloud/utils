@@ -63,3 +63,41 @@ func TestListArchivePoliciesAllPages(t *testing.T) {
 	_, err = archivepolicies.ExtractArchivePolicies(allPages)
 	th.AssertNoErr(t, err)
 }
+
+func TestGetArchivePolicy(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/v1/archive_policy/test_policy", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "GET")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+
+		fmt.Fprintf(w, ArchivePolicyGetResult)
+	})
+
+	s, err := archivepolicies.Get(fake.ServiceClient(), "test_policy").Extract()
+	th.AssertNoErr(t, err)
+
+	th.AssertDeepEquals(t, s.AggregationMethods, []string{
+		"max",
+		"min",
+		"mean",
+	})
+	th.AssertEquals(t, s.BackWindow, 128)
+	th.AssertDeepEquals(t, s.Definitions, []archivepolicies.ArchivePolicyDefinition{
+		{
+			Granularity: "1:00:00",
+			Points:      2160,
+			TimeSpan:    "90 days, 0:00:00",
+		},
+		{
+			Granularity: "1 day, 0:00:00",
+			Points:      100,
+			TimeSpan:    "100 days, 0:00:00",
+		},
+	})
+	th.AssertEquals(t, s.Name, "test_policy")
+}

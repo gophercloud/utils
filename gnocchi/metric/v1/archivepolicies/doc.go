@@ -17,5 +17,13 @@ Example of Listing archive policies
 	for _, archivePolicy := range allArchivePolicies {
 		fmt.Printf("%+v\n", archivePolicy)
 	}
+
+Example of Getting an archive policy
+
+  archivePolicyName = "my_policy"
+  archivePolicy, err := archivepolicies.Get(gnocchiClient, archivePolicyName).Extract()
+  if err != nil {
+    panic(err)
+  }
 */
 package archivepolicies
