@@ -138,3 +138,49 @@ var Metric2 = metrics.Metric{
 	ResourceID:         "c5dc0c47-f43c-425c-a82f-44d61ee91175",
 	Unit:               "ns",
 }
+
+// MetricGetResult represents a raw server response from a server to a get request.
+const MetricGetResult = `
+{
+    "archive_policy": {
+        "aggregation_methods": [
+            "mean",
+            "sum"
+        ],
+        "back_window": 12,
+        "definition": [
+            {
+                "granularity": "1:00:00",
+                "points": 2160,
+                "timespan": "90 days, 0:00:00"
+            },
+            {
+                "granularity": "1 day, 0:00:00",
+                "points": 200,
+                "timespan": "200 days, 0:00:00"
+            }
+        ],
+        "name": "not_so_precise"
+    },
+        "created_by_project_id": "c6b68a6b413648b0a0eb191bf3222f4d",
+        "created_by_user_id": "cb072aacdb494419aeeba5f1c62d1a65",
+        "creator": "cb072aacdb494419aeeba5f1c62d1a65:c6b68a6b413648b0a0eb191bf3222f4d",
+        "id": "0ddf61cf-3747-4f75-bf13-13c28ff03ae3",
+        "name": "network.incoming.packets.rate",
+        "resource": {
+            "created_by_project_id": "c6b68a6b413648b0a0eb191bf3222f4d",
+            "created_by_user_id": "cb072aacdb494419aeeba5f1c62d1a65",
+            "creator": "cb072aacdb494419aeeba5f1c62d1a65:c6b68a6b413648b0a0eb191bf3222f4d",
+            "ended_at": null,
+            "id": "75274f99-faf6-4112-a6d5-2794cb07c789",
+            "original_resource_id": "75274f99-faf6-4112-a6d5-2794cb07c789",
+            "project_id": "4154f08883334e0494c41155c33c0fc9",
+            "revision_end": null,
+            "revision_start": "2018-01-08T00:59:33.767815+00:00",
+            "started_at": "2018-01-08T00:59:33.767795+00:00",
+            "type": "compute_instance_network",
+            "user_id": "bd5874d666624b24a9f01c128871e4ac"
+        },
+        "unit": "packet/s"
+}
+`

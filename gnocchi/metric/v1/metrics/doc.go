@@ -20,5 +20,13 @@ Example of Listing metrics
 	for _, metric := range allMetrics {
 		fmt.Printf("%+v\n", metric)
 	}
+
+Example of Getting a metric
+
+	metricID = "9e5a6441-1044-4181-b66e-34e180753040"
+	metric, err := metrics.Get(gnocchiClient, metricID).Extract()
+	if err != nil {
+		panic(err)
+	}
 */
 package metrics

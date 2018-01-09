@@ -1,9 +1,28 @@
 package metrics
 
 import (
+	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/pagination"
 	"github.com/gophercloud/utils/gnocchi/metric/v1/archivepolicies"
+	"github.com/gophercloud/utils/gnocchi/metric/v1/resources"
 )
+
+type commonResult struct {
+	gophercloud.Result
+}
+
+// Extract is a function that accepts a result and extracts a Gnocchi metric.
+func (r commonResult) Extract() (*Metric, error) {
+	var s *Metric
+	err := r.ExtractInto(&s)
+	return s, err
+}
+
+// GetResult represents the result of a get operation. Call its Extract
+// method to interpret it as a metric.
+type GetResult struct {
+	commonResult
+}
 
 // Metric is an entity storing aggregates identified by an UUID.
 // It can be attached to a resource using a name.
@@ -41,6 +60,9 @@ type Metric struct {
 
 	// ResourceID identifies the associated Gnocchi resource of the metric.
 	ResourceID string `json:"resource_id"`
+
+	// Resource is a Gnocchi resource representation.
+	Resource resources.Resource `json:"resource"`
 
 	// Unit is a unit of measurement for measures of that Gnocchi metric.
 	Unit string `json:"unit"`
