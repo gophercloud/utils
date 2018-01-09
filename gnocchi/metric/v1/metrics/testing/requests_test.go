@@ -75,17 +75,21 @@ func TestGet(t *testing.T) {
 			"sum",
 		},
 		BackWindow: 12,
+<<<<<<< HEAD
 		Definition: archivepolicies.ArchivePolicyDefinition{
+=======
+		Definitions: []archivepolicies.ArchivePolicyDefinition{
+>>>>>>> Fix Gnocchi metrics unit tests
 			{
 				Granularity: "1:00:00",
-				Points: 2160,
-				TimeSpan: "90 days, 0:00:00",
+				Points:      2160,
+				TimeSpan:    "90 days, 0:00:00",
 			},
 			{
 				Granularity: "1 day, 0:00:00",
-				Points: 200,
-				TimeSpan: "200 days, 0:00:00",
-			}
+				Points:      200,
+				TimeSpan:    "200 days, 0:00:00",
+			},
 		},
 		Name: "not_so_precise",
 	})
@@ -96,17 +100,17 @@ func TestGet(t *testing.T) {
 	th.AssertEquals(t, s.Name, "network.incoming.packets.rate")
 	th.AssertDeepEquals(t, s.Resource, resources.Resource{
 		CreatedByProjectID: "c6b68a6b413648b0a0eb191bf3222f4d",
-		CreatedByUserID: "cb072aacdb494419aeeba5f1c62d1a65",
-		Creator: "cb072aacdb494419aeeba5f1c62d1a65:c6b68a6b413648b0a0eb191bf3222f4d",
-		ID: "75274f99-faf6-4112-a6d5-2794cb07c789",
+		CreatedByUserID:    "cb072aacdb494419aeeba5f1c62d1a65",
+		Creator:            "cb072aacdb494419aeeba5f1c62d1a65:c6b68a6b413648b0a0eb191bf3222f4d",
+		ID:                 "75274f99-faf6-4112-a6d5-2794cb07c789",
 		OriginalResourceID: "75274f99-faf6-4112-a6d5-2794cb07c789",
-		ProjectID: "4154f08883334e0494c41155c33c0fc9",
-		RevisionStart: "2018-01-08T00:59:33.767815+00:00",
-		RevisionEnd: "",
-		StartedAt: "2018-01-08T00:59:33.767795+00:00",
-		EndedAt: "",
-		Type: "compute_instance_network",
-		UserID: "bd5874d666624b24a9f01c128871e4ac",
+		ProjectID:          "4154f08883334e0494c41155c33c0fc9",
+		RevisionStart:      "2018-01-08T00:59:33.767815+00:00",
+		RevisionEnd:        "",
+		StartedAt:          "2018-01-08T00:59:33.767795+00:00",
+		EndedAt:            "",
+		Type:               "compute_instance_network",
+		UserID:             "bd5874d666624b24a9f01c128871e4ac",
 	})
 	th.AssertEquals(t, s.Unit, "packet/s")
 }
