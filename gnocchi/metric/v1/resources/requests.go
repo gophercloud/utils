@@ -59,3 +59,65 @@ func Get(c *gophercloud.ServiceClient, resourceType string, resourceID string) (
 	_, r.Err = c.Get(getURL(c, resourceType, resourceID), &r.Body, nil)
 	return
 }
+
+// CreateOptsBuilder allows to add additional parameters to the
+// Create request.
+type CreateOptsBuilder interface {
+	ToResourceCreateMap() (map[string]interface{}, error)
+}
+
+// CreateOpts specifies parameters of a new Gnocchi resource.
+type CreateOpts struct {
+	// CreatedByProjectID contains the id of the Identity project that
+	// was used for a resource creation.
+	CreatedByProjectID string `json:"created_by_project_id,omitempty"`
+
+	// CreatedByUserID contains the id of the Identity user
+	// that created the Gnocchi resource.
+	CreatedByUserID string `json:"created_by_user_id,omitempty"`
+
+	// Creator shows who created the resource.
+	// Usually it contains concatenated string with values from
+	// "created_by_user_id" and "created_by_project_id" fields.
+	Creator string `json:"creator,omitempty"`
+
+	// ID uniquely identifies the Gnocchi resource.
+	ID string `json:"id"`
+
+	// OriginalResourceID is the orginal resource id. It can be different from the
+	// regular ID field.
+	OriginalResourceID string `json:"original_resource_id,omitempty"`
+
+	// ProjectID is the Identity project of the resource.
+	ProjectID string `json:"project_id"`
+
+	// UserID is the Identity user of the resource.
+	UserID string `json:"user_id"`
+
+	// StartedAt is a resource creation timestamp.
+	StartedAt string `json:"started_at,omitempty"`
+
+	// EndedAt is a timestamp of when the resource has ended.
+	EndedAt string `json:"ended_at,omitempty"`
+
+	// Type is a type of the resource.
+	Type string `json:"type,omitempty"`
+}
+
+// ToResourceCreateMap constructs a request body from CreateOpts.
+func (opts CreateOpts) ToResourceCreateMap() (map[string]interface{}, error) {
+	return gophercloud.BuildRequestBody(opts, "")
+}
+
+// Create requests the creation of a new Gnocchi resource on the server.
+func Create(client *gophercloud.ServiceClient, opts CreateOptsBuilder, resourceType string) (r CreateResult) {
+	b, err := opts.ToResourceCreateMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+	_, r.Err = client.Post(createURL(client, resourceType), b, &r.Body, &gophercloud.RequestOpts{
+		OkCodes: []int{201},
+	})
+	return
+}

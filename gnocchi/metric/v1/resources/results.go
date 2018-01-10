@@ -27,6 +27,12 @@ type GetResult struct {
 	commonResult
 }
 
+// CreateResult represents the result of a create operation. Call its Extract
+// method to interpret it as a Gnocchi resource.
+type CreateResult struct {
+	commonResult
+}
+
 // Resource is an entity representing anything in your infrastructure
 // that you will associate metric(s) with.
 // It is identified by a unique ID and can contain attributes.
