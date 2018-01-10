@@ -81,6 +81,11 @@ type CreateOpts struct {
 	// "created_by_user_id" and "created_by_project_id" fields.
 	Creator string `json:"creator,omitempty"`
 
+	// Metrics field can be used to link an existing metric in the resource
+	// or to create a metric with the resource at the same time to save
+	// some requests.
+	Metrics map[string]interface{} `json:"metrics"`
+
 	// ID uniquely identifies the Gnocchi resource.
 	ID string `json:"id"`
 
@@ -99,9 +104,6 @@ type CreateOpts struct {
 
 	// EndedAt is a timestamp of when the resource has ended.
 	EndedAt string `json:"ended_at,omitempty"`
-
-	// Type is a type of the resource.
-	Type string `json:"type,omitempty"`
 }
 
 // ToResourceCreateMap constructs a request body from CreateOpts.
