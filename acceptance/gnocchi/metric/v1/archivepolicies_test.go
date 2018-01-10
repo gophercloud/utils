@@ -1,3 +1,5 @@
+// +build acceptance metric archivepolicies
+
 package v1
 
 import (
