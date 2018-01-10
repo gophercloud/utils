@@ -5,11 +5,12 @@ import (
 )
 
 // ArchivePoliciesListResult represents raw server response from a server to a list call.
-const ArchivePoliciesListResult = `[
+const ArchivePoliciesListResult = `
+[
     {
         "aggregation_methods": [
-					"max",
-					"min"
+            "max",
+            "min"
         ],
         "back_window": 0,
         "definition": [
@@ -32,26 +33,27 @@ const ArchivePoliciesListResult = `[
         "name": "precise"
     },
     {
-	        "aggregation_methods": [
-							"mean",
-							"sum"
-	        ],
-	        "back_window": 12,
-	        "definition": [
-			    {
-					    "granularity": "1:00:00",
-					    "points": 2160,
-					    "timespan": "90 days, 0:00:00"
-			    },
-			    {
-				      "granularity": "1 day, 0:00:00",
-				      "points": 200,
-				      "timespan": "200 days, 0:00:00"
-			    }
-	        ],
-	        "name": "not_so_precise"
+        "aggregation_methods": [
+            "mean",
+            "sum"
+        ],
+        "back_window": 12,
+        "definition": [
+            {
+                "granularity": "1:00:00",
+                "points": 2160,
+                "timespan": "90 days, 0:00:00"
+            },
+            {
+                "granularity": "1 day, 0:00:00",
+                "points": 200,
+                "timespan": "200 days, 0:00:00"
+            }
+        ],
+        "name": "not_so_precise"
     }
-]`
+]
+`
 
 // ListArchivePoliciesExpected represents an expected repsonse from a List request.
 var ListArchivePoliciesExpected = []archivepolicies.ArchivePolicy{
