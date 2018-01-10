@@ -1,13 +1,6 @@
 package archivepolicies
 
-import (
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/pagination"
-)
-
-type archivePolicyResult struct {
-	gophercloud.Result
-}
+import "github.com/gophercloud/gophercloud/pagination"
 
 // ArchivePolicy represents a Gnocchi archive policy.
 // Archive policy is an aggregate storage policy attached to a metric.
