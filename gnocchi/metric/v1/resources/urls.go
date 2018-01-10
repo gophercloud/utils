@@ -11,13 +11,17 @@ func rootURL(c *gophercloud.ServiceClient, resourceType string) string {
 	return c.ServiceURL(resourcePath, resourceType)
 }
 
-func listURL(c *gophercloud.ServiceClient, resourceType string) string {
-	return rootURL(c, resourceType)
-}
-
-func getURL(c *gophercloud.ServiceClient, resourceID string, resourceType string) string {
+func resourceURL(c *gophercloud.ServiceClient, resourceType, resourceID string) string {
 	if resourceType == "" {
 		resourceType = "generic"
 	}
 	return c.ServiceURL(resourcePath, resourceType, resourceID)
+}
+
+func listURL(c *gophercloud.ServiceClient, resourceType string) string {
+	return rootURL(c, resourceType)
+}
+
+func getURL(c *gophercloud.ServiceClient, resourceType, resourceID string) string {
+	return resourceURL(c, resourceType, resourceID)
 }

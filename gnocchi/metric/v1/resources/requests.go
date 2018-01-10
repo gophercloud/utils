@@ -55,7 +55,7 @@ func List(c *gophercloud.ServiceClient, opts ListOptsBuilder, resourceType strin
 }
 
 // Get retrieves a specific Gnocchi resource based on its type and ID.
-func Get(c *gophercloud.ServiceClient, resourceID string, resourceType string) (r GetResult) {
-	_, r.Err = c.Get(getURL(c, resourceID, resourceType), &r.Body, nil)
+func Get(c *gophercloud.ServiceClient, resourceType string, resourceID string) (r GetResult) {
+	_, r.Err = c.Get(getURL(c, resourceType, resourceID), &r.Body, nil)
 	return
 }

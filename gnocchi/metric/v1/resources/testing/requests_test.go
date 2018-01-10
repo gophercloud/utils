@@ -64,7 +64,7 @@ func TestGet(t *testing.T) {
 		fmt.Fprintf(w, ResourceGetResult)
 	})
 
-	s, err := resources.Get(fake.ServiceClient(), "75274f99-faf6-4112-a6d5-2794cb07c789", "compute_instance_network").Extract()
+	s, err := resources.Get(fake.ServiceClient(), "compute_instance_network", "75274f99-faf6-4112-a6d5-2794cb07c789").Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, s.CreatedByProjectID, "3d40ca37723449118987b9f288f4ae84")
