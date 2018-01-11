@@ -15,9 +15,9 @@ type ArchivePolicy struct {
 	// than the last timestamp period boundary.
 	BackWindow int `json:"back_window"`
 
-	// Definitions is a list of parameters that configures
+	// Definition is a list of parameters that configures
 	// archive policy precision and timespan.
-	Definitions []ArchivePolicyDefinition `json:"definition"`
+	Definition []ArchivePolicyDefinition `json:"definition"`
 
 	// Name is a name of an archive policy.
 	Name string `json:"name"`

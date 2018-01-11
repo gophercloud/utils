@@ -63,7 +63,7 @@ var ListArchivePoliciesExpected = []archivepolicies.ArchivePolicy{
 			"min",
 		},
 		BackWindow: 0,
-		Definitions: []archivepolicies.ArchivePolicyDefinition{
+		Definition: []archivepolicies.ArchivePolicyDefinition{
 			{
 				Granularity: "1:00:00",
 				Points:      2304,
@@ -88,7 +88,7 @@ var ListArchivePoliciesExpected = []archivepolicies.ArchivePolicy{
 			"sum",
 		},
 		BackWindow: 12,
-		Definitions: []archivepolicies.ArchivePolicyDefinition{
+		Definition: []archivepolicies.ArchivePolicyDefinition{
 			{
 				Granularity: "1:00:00",
 				Points:      2160,
