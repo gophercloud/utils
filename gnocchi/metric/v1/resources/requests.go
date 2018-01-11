@@ -81,23 +81,23 @@ type CreateOpts struct {
 	// "created_by_user_id" and "created_by_project_id" fields.
 	Creator string `json:"creator,omitempty"`
 
-	// Metrics field can be used to link an existing metric in the resource
-	// or to create a metric with the resource at the same time to save
+	// Metrics field can be used to link existing metrics in the resource
+	// or to create metrics with the resource at the same time to save
 	// some requests.
-	Metrics map[string]interface{} `json:"metrics"`
+	Metrics map[string]interface{} `json:"metrics,omitempty"`
 
 	// ID uniquely identifies the Gnocchi resource.
-	ID string `json:"id"`
+	ID string `json:"id,omitempty"`
 
 	// OriginalResourceID is the orginal resource id. It can be different from the
 	// regular ID field.
 	OriginalResourceID string `json:"original_resource_id,omitempty"`
 
 	// ProjectID is the Identity project of the resource.
-	ProjectID string `json:"project_id"`
+	ProjectID string `json:"project_id,omitempty"`
 
 	// UserID is the Identity user of the resource.
-	UserID string `json:"user_id"`
+	UserID string `json:"user_id,omitempty"`
 
 	// StartedAt is a resource creation timestamp.
 	StartedAt string `json:"started_at,omitempty"`
@@ -112,7 +112,7 @@ func (opts CreateOpts) ToResourceCreateMap() (map[string]interface{}, error) {
 }
 
 // Create requests the creation of a new Gnocchi resource on the server.
-func Create(client *gophercloud.ServiceClient, opts CreateOptsBuilder, resourceType string) (r CreateResult) {
+func Create(client *gophercloud.ServiceClient, resourceType string, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToResourceCreateMap()
 	if err != nil {
 		r.Err = err

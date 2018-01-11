@@ -90,3 +90,139 @@ func TestGet(t *testing.T) {
 		"iface_name": "eth0",
 	})
 }
+
+func TestCreateWithoutMetrics(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/v1/resource/generic", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "POST")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "Content-Type", "application/json")
+		th.TestHeader(t, r, "Accept", "application/json")
+		th.TestJSONRequest(t, r, ResourceCreateWithoutMetricsRequest)
+
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+
+		fmt.Fprintf(w, ResourceCreateWithoutMetricsResult)
+	})
+
+	opts := resources.CreateOpts{
+		ID:        "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
+		ProjectID: "4154f088-8333-4e04-94c4-1155c33c0fc9",
+		UserID:    "bd5874d6-6662-4b24-a9f01c128871e4ac",
+	}
+	s, err := resources.Create(fake.ServiceClient(), "", opts).Extract()
+	th.AssertNoErr(t, err)
+
+	th.AssertEquals(t, s.CreatedByProjectID, "3d40ca37-7234-4911-8987b9f288f4ae84")
+	th.AssertEquals(t, s.CreatedByUserID, "fdcfb420-c096-45e6-9e177a0bb1950884")
+	th.AssertEquals(t, s.Creator, "fdcfb420-c096-45e6-9e177a0bb1950884:3d40ca37-7234-4911-8987b9f288f4ae84")
+	th.AssertEquals(t, s.ID, "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55")
+	th.AssertDeepEquals(t, s.Metrics, map[string]string{})
+	th.AssertEquals(t, s.OriginalResourceID, "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55")
+	th.AssertEquals(t, s.ProjectID, "4154f088-8333-4e04-94c4-1155c33c0fc9")
+	th.AssertEquals(t, s.RevisionStart, time.Date(2018, 1, 3, 11, 44, 31, 155773000, time.UTC))
+	th.AssertEquals(t, s.RevisionEnd, time.Time{})
+	th.AssertEquals(t, s.StartedAt, time.Date(2018, 1, 3, 11, 44, 31, 155732000, time.UTC))
+	th.AssertEquals(t, s.EndedAt, time.Time{})
+	th.AssertEquals(t, s.Type, "generic")
+	th.AssertEquals(t, s.UserID, "bd5874d6-6662-4b24-a9f01c128871e4ac")
+}
+
+func TestCreateLinkMetrics(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/v1/resource/compute_instance_network", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "POST")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "Content-Type", "application/json")
+		th.TestHeader(t, r, "Accept", "application/json")
+		th.TestJSONRequest(t, r, ResourceCreateLinkMetricsRequest)
+
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+
+		fmt.Fprintf(w, ResourceCreateLinkMetricsResult)
+	})
+
+	opts := resources.CreateOpts{
+		ID:        "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
+		ProjectID: "4154f088-8333-4e04-94c4-1155c33c0fc9",
+		UserID:    "bd5874d6-6662-4b24-a9f01c128871e4ac",
+		StartedAt: "2018-01-02 23:23:34",
+		EndedAt:   "2018-01-04 10:00:12",
+		Metrics: map[string]interface{}{
+			"network.incoming.bytes.rate": "01b2953e-de74-448a-a305-c84440697933",
+			"network.outgoing.bytes.rate": "dc9f3198-155b-4b88-a92c-58a3853ce2b2",
+		},
+	}
+	s, err := resources.Create(fake.ServiceClient(), "compute_instance_network", opts).Extract()
+	th.AssertNoErr(t, err)
+
+	th.AssertEquals(t, s.CreatedByProjectID, "3d40ca37-7234-4911-8987b9f288f4ae84")
+	th.AssertEquals(t, s.CreatedByUserID, "fdcfb420-c096-45e6-9e177a0bb1950884")
+	th.AssertEquals(t, s.Creator, "fdcfb420-c096-45e6-9e177a0bb1950884:3d40ca37-7234-4911-8987b9f288f4ae84")
+	th.AssertEquals(t, s.ID, "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55")
+	th.AssertDeepEquals(t, s.Metrics, map[string]string{
+		"network.incoming.bytes.rate": "01b2953e-de74-448a-a305-c84440697933",
+		"network.outgoing.bytes.rate": "dc9f3198-155b-4b88-a92c-58a3853ce2b2",
+	})
+	th.AssertEquals(t, s.OriginalResourceID, "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55")
+	th.AssertEquals(t, s.ProjectID, "4154f088-8333-4e04-94c4-1155c33c0fc9")
+	th.AssertEquals(t, s.RevisionStart, time.Date(2018, 1, 2, 23, 23, 34, 155813000, time.UTC))
+	th.AssertEquals(t, s.RevisionEnd, time.Time{})
+	th.AssertEquals(t, s.StartedAt, time.Date(2018, 1, 2, 23, 23, 34, 0, time.UTC))
+	th.AssertEquals(t, s.EndedAt, time.Date(2018, 1, 4, 10, 00, 12, 0, time.UTC))
+	th.AssertEquals(t, s.Type, "compute_instance_network")
+	th.AssertEquals(t, s.UserID, "bd5874d6-6662-4b24-a9f01c128871e4ac")
+}
+
+func TestCreateWithMetrics(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/v1/resource/compute_instance_disk", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "POST")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "Content-Type", "application/json")
+		th.TestHeader(t, r, "Accept", "application/json")
+		th.TestJSONRequest(t, r, ResourceCreateWithMetricsRequest)
+
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+
+		fmt.Fprintf(w, ResourceCreateWithMetricsResult)
+	})
+
+	opts := resources.CreateOpts{
+		ID:        "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
+		ProjectID: "4154f088-8333-4e04-94c4-1155c33c0fc9",
+		UserID:    "bd5874d6-6662-4b24-a9f01c128871e4ac",
+		Metrics: map[string]interface{}{
+			"disk.write.bytes.rate": map[string]string{
+				"archive_policy_name": "high",
+			},
+		},
+	}
+	s, err := resources.Create(fake.ServiceClient(), "compute_instance_disk", opts).Extract()
+	th.AssertNoErr(t, err)
+
+	th.AssertEquals(t, s.CreatedByProjectID, "3d40ca37-7234-4911-8987b9f288f4ae84")
+	th.AssertEquals(t, s.CreatedByUserID, "fdcfb420-c096-45e6-9e177a0bb1950884")
+	th.AssertEquals(t, s.Creator, "fdcfb420-c096-45e6-9e177a0bb1950884:3d40ca37-7234-4911-8987b9f288f4ae84")
+	th.AssertEquals(t, s.ID, "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55")
+	th.AssertDeepEquals(t, s.Metrics, map[string]string{
+		"disk.write.bytes.rate": "0a2da84d-4753-43f5-a65f-0f8d44d2766c",
+	})
+	th.AssertEquals(t, s.OriginalResourceID, "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55")
+	th.AssertEquals(t, s.ProjectID, "4154f088-8333-4e04-94c4-1155c33c0fc9")
+	th.AssertEquals(t, s.RevisionStart, time.Date(2018, 1, 2, 23, 23, 34, 155813000, time.UTC))
+	th.AssertEquals(t, s.RevisionEnd, time.Time{})
+	th.AssertEquals(t, s.StartedAt, time.Date(2018, 1, 2, 23, 23, 34, 155773000, time.UTC))
+	th.AssertEquals(t, s.EndedAt, time.Time{})
+	th.AssertEquals(t, s.Type, "compute_instance_disk")
+	th.AssertEquals(t, s.UserID, "bd5874d6-6662-4b24-a9f01c128871e4ac")
+}

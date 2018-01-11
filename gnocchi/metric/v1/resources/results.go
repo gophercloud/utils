@@ -75,9 +75,6 @@ type Resource struct {
 	// EndedAt is a timestamp of when the resource has ended.
 	EndedAt time.Time `json:"-"`
 
-	// EndedAt is a timestamp of when the resource has ended.
-	EndedAt string `json:"ended_at"`
-
 	// Type is a type of the resource.
 	Type string `json:"type"`
 
