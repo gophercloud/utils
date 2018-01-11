@@ -8,7 +8,7 @@ import (
 	"github.com/gophercloud/gophercloud/pagination"
 	th "github.com/gophercloud/gophercloud/testhelper"
 	"github.com/gophercloud/utils/gnocchi/metric/v1/archivepolicies"
-	fake "github.com/gophercloud/utils/gnocchi/metric/v1/common"
+	fake "github.com/gophercloud/utils/gnocchi/testhelper/client"
 )
 
 func TestListArchivePolicies(t *testing.T) {
