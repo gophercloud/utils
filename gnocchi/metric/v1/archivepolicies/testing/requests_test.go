@@ -87,7 +87,7 @@ func TestGetArchivePolicy(t *testing.T) {
 		"mean",
 	})
 	th.AssertEquals(t, s.BackWindow, 128)
-	th.AssertDeepEquals(t, s.Definitions, []archivepolicies.ArchivePolicyDefinition{
+	th.AssertDeepEquals(t, s.Definition, []archivepolicies.ArchivePolicyDefinition{
 		{
 			Granularity: "1:00:00",
 			Points:      2160,
