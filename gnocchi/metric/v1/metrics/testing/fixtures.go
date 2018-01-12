@@ -5,33 +5,33 @@ import (
 	"github.com/gophercloud/utils/gnocchi/metric/v1/metrics"
 )
 
-// MetricsListResult represents raw server response from a server to a list call.
+// MetricsListResult represents a raw server response from a server to a list call.
 const MetricsListResult = `[
     {
         "archive_policy": {
-            "aggregation_methods": [
-                "max",
-                "min"
-            ],
-            "back_window": 0,
-            "definition": [
-                {
-                    "granularity": "1:00:00",
-                    "points": 2304,
-                    "timespan": "96 days, 0:00:00"
-                },
-                {
-                    "granularity": "0:05:00",
-                    "points": 9216,
-                    "timespan": "32 days, 0:00:00"
-                },
-                {
-                    "granularity": "1 day, 0:00:00",
-                    "points": 400,
-                    "timespan": "400 days, 0:00:00"
-                }
-            ],
-            "name": "precise"
+        "aggregation_methods": [
+            "max",
+            "min"
+        ],
+        "back_window": 0,
+        "definition": [
+            {
+                "granularity": "1:00:00",
+                "points": 2304,
+                "timespan": "96 days, 0:00:00"
+            },
+            {
+                "granularity": "0:05:00",
+                "points": 9216,
+                "timespan": "32 days, 0:00:00"
+            },
+            {
+                "granularity": "1 day, 0:00:00",
+                "points": 400,
+                "timespan": "400 days, 0:00:00"
+            }
+        ],
+        "name": "precise"
         },
         "created_by_project_id": "e9dc821ca664406e981820a477e9a761",
         "created_by_user_id": "a23c5b98d42d4df3b961e54d5167eb6d",
@@ -80,7 +80,7 @@ var Metric1 = metrics.Metric{
 			"min",
 		},
 		BackWindow: 0,
-		Definitions: []archivepolicies.ArchivePolicyDefinition{
+		Definition: []archivepolicies.ArchivePolicyDefinition{
 			{
 				Granularity: "1:00:00",
 				Points:      2304,
@@ -116,7 +116,7 @@ var Metric2 = metrics.Metric{
 			"sum",
 		},
 		BackWindow: 12,
-		Definitions: []archivepolicies.ArchivePolicyDefinition{
+		Definition: []archivepolicies.ArchivePolicyDefinition{
 			{
 				Granularity: "1:00:00",
 				Points:      2160,

@@ -1,14 +1,9 @@
 package metrics
 
 import (
-	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/pagination"
 	"github.com/gophercloud/utils/gnocchi/metric/v1/archivepolicies"
 )
-
-type metricResult struct {
-	gophercloud.Result
-}
 
 // Metric is an entity storing aggregates identified by an UUID.
 // It can be attached to a resource using a name.
