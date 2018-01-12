@@ -1,3 +1,5 @@
+// +build acceptance metric metrics
+
 package v1
 
 import (
