@@ -11,3 +11,9 @@ func List(client *gophercloud.ServiceClient) pagination.Pager {
 		return ArchivePolicyPage{pagination.SinglePageBase(r)}
 	})
 }
+
+// Get retrieves a specific Gnocchi archive policy based on its name.
+func Get(c *gophercloud.ServiceClient, archivePolicyName string) (r GetResult) {
+	_, r.Err = c.Get(getURL(c, archivePolicyName), &r.Body, nil)
+	return
+}

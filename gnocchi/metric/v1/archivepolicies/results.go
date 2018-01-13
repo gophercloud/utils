@@ -1,6 +1,26 @@
 package archivepolicies
 
-import "github.com/gophercloud/gophercloud/pagination"
+import (
+	"github.com/gophercloud/gophercloud"
+	"github.com/gophercloud/gophercloud/pagination"
+)
+
+type commonResult struct {
+	gophercloud.Result
+}
+
+// Extract is a function that accepts a result and extracts a Gnocchi archive policy.
+func (r commonResult) Extract() (*ArchivePolicy, error) {
+	var s *ArchivePolicy
+	err := r.ExtractInto(&s)
+	return s, err
+}
+
+// GetResult represents the result of a get operation. Call its Extract
+// method to interpret it as an ArchivePolicy.
+type GetResult struct {
+	commonResult
+}
 
 // ArchivePolicy represents a Gnocchi archive policy.
 // Archive policy is an aggregate storage policy attached to a metric.
