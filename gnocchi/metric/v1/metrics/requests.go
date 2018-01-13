@@ -26,6 +26,17 @@ type ListOpts struct {
 	// SortDir allows to set the direction of sorting.
 	// Can be `asc` or `desc`.
 	SortDir string `q:"sort_dir"`
+
+	// Creator shows who created the metric.
+	// Usually it contains concatenated string with values from
+	// "created_by_user_id" and "created_by_project_id" fields.
+	Creator string `json:"creator"`
+
+	// ProjectID is the Identity project of the metric.
+	ProjectID string `json:"project_id"`
+
+	// UserID is the Identity user of the metric.
+	UserID string `json:"user_id"`
 }
 
 // ToMetricListQuery formats a ListOpts into a query string.
