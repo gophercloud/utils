@@ -1,6 +1,8 @@
 package testing
 
 import (
+	"time"
+
 	"github.com/gophercloud/utils/gnocchi/metric/v1/resources"
 )
 
@@ -56,10 +58,10 @@ var Resource1 = resources.Resource{
 	},
 	OriginalResourceID: "1f3a0724-1807-4bd1-81f9-ee18c8ff6ccc",
 	ProjectID:          "4154f08883334e0494c41155c33c0fc9",
-	RevisionStart:      "2018-01-02T11:39:33.942419+00:00",
-	RevisionEnd:        "",
-	StartedAt:          "2018-01-02T11:39:33.942391+00:00",
-	EndedAt:            "",
+	RevisionStart:      time.Date(2018, 1, 2, 11, 39, 33, 942419000, time.UTC),
+	RevisionEnd:        time.Time{},
+	StartedAt:          time.Date(2018, 1, 2, 11, 39, 33, 942391000, time.UTC),
+	EndedAt:            time.Time{},
 	Type:               "compute_instance",
 	UserID:             "bd5874d666624b24a9f01c128871e4ac",
 }
@@ -76,10 +78,10 @@ var Resource2 = resources.Resource{
 	},
 	OriginalResourceID: "789a7f65-977d-40f4-beed-f717100125f5",
 	ProjectID:          "4154f08883334e0494c41155c33c0fc9",
-	RevisionStart:      "2018-01-03T11:44:31.155773+00:00",
-	RevisionEnd:        "",
-	StartedAt:          "2018-01-03T11:44:31.155732+00:00",
-	EndedAt:            "",
+	RevisionStart:      time.Date(2018, 1, 3, 11, 44, 31, 155773000, time.UTC),
+	RevisionEnd:        time.Time{},
+	StartedAt:          time.Date(2018, 1, 3, 11, 44, 31, 155732000, time.UTC),
+	EndedAt:            time.Time{},
 	Type:               "compute_instance_disk",
 	UserID:             "bd5874d666624b24a9f01c128871e4ac",
 }

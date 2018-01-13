@@ -1,7 +1,11 @@
 package resources
 
 import (
+	"encoding/json"
+	"time"
+
 	"github.com/gophercloud/gophercloud/pagination"
+	"github.com/gophercloud/utils/gnocchi"
 )
 
 // Resource is an entity representing anything in your infrastructure
@@ -35,22 +39,46 @@ type Resource struct {
 	ProjectID string `json:"project_id"`
 
 	// RevisionStart is a staring timestamp of the current resource revision.
-	RevisionStart string `json:"revision_start"`
+	RevisionStart time.Time `json:"-"`
 
 	// RevisionEnd is an ending timestamp of the last resource revision.
-	RevisionEnd string `json:"revision_end"`
+	RevisionEnd time.Time `json:"-"`
 
 	// StartedAt is a resource creation timestamp.
-	StartedAt string `json:"started_at"`
+	StartedAt time.Time `json:"-"`
 
 	// EndedAt is a timestamp of when the resource has ended.
-	EndedAt string `json:"ended_at"`
+	EndedAt time.Time `json:"-"`
 
 	// Type is a type of the resource.
 	Type string `json:"type"`
 
 	// UserID is the Identity user of the resource.
 	UserID string `json:"user_id"`
+}
+
+// UnmarshalJSON helps to unmarshal Resource fields into needed values.
+func (r *Resource) UnmarshalJSON(b []byte) error {
+	type tmp Resource
+	var s struct {
+		tmp
+		RevisionStart gnocchi.JSONRFC3339NanoTimezone `json:"revision_start"`
+		RevisionEnd   gnocchi.JSONRFC3339NanoTimezone `json:"revision_end"`
+		StartedAt     gnocchi.JSONRFC3339NanoTimezone `json:"started_at"`
+		EndedAt       gnocchi.JSONRFC3339NanoTimezone `json:"ended_at"`
+	}
+	err := json.Unmarshal(b, &s)
+	if err != nil {
+		return err
+	}
+	*r = Resource(s.tmp)
+
+	r.RevisionStart = time.Time(s.RevisionStart)
+	r.RevisionEnd = time.Time(s.RevisionEnd)
+	r.StartedAt = time.Time(s.StartedAt)
+	r.EndedAt = time.Time(s.EndedAt)
+
+	return err
 }
 
 // ResourcePage abstracts the raw results of making a List() request against
