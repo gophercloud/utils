@@ -1,3 +1,5 @@
+// +build acceptance metric resources
+
 package v1
 
 import (
