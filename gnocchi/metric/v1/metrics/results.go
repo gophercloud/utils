@@ -14,6 +14,12 @@ type Metric struct {
 	// storage policy of a metric.
 	ArchivePolicy archivepolicies.ArchivePolicy `json:"archive_policy"`
 
+	// ArchivePolicyName is a name of the Gnocchi archive policy that describes
+	// the aggregate storage policy of a metric.
+	// Usually that field is not empty if a Metric struct is a result
+	// from a create request.
+	ArchivePolicyName string `json:"archive_policy_name"`
+
 	// CreatedByProjectID contains the id of the Identity project that
 	// was used for a metric creation.
 	CreatedByProjectID string `json:"created_by_project_id"`
