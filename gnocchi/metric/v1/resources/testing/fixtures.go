@@ -12,6 +12,9 @@ const ResourceListResult = `[
         "created_by_project_id": "3d40ca37723449118987b9f288f4ae84",
         "created_by_user_id": "fdcfb420c09645e69e177a0bb1950884",
         "creator": "fdcfb420c09645e69e177a0bb1950884:3d40ca37723449118987b9f288f4ae84",
+        "display_name": "MyInstance00",
+        "flavor_name": "2CPU4G",
+        "host": "compute010",
         "ended_at": null,
         "id": "1f3a0724-1807-4bd1-81f9-ee18c8ff6ccc",
         "metrics": {
@@ -30,6 +33,7 @@ const ResourceListResult = `[
         "created_by_project_id": "3d40ca37723449118987b9f288f4ae84",
         "created_by_user_id": "fdcfb420c09645e69e177a0bb1950884",
         "creator": "fdcfb420c09645e69e177a0bb1950884:3d40ca37723449118987b9f288f4ae84",
+        "disk_device_name": "sdb",
         "ended_at": null,
         "id": "789a7f65-977d-40f4-beed-f717100125f5",
         "metrics": {
@@ -64,6 +68,11 @@ var Resource1 = resources.Resource{
 	EndedAt:            time.Time{},
 	Type:               "compute_instance",
 	UserID:             "bd5874d666624b24a9f01c128871e4ac",
+	Extra: map[string]interface{}{
+		"display_name": "MyInstance00",
+		"flavor_name":  "2CPU4G",
+		"host":         "compute010",
+	},
 }
 
 // Resource2 is an expected representation of a second resource from the ResourceListResult.
@@ -84,4 +93,7 @@ var Resource2 = resources.Resource{
 	EndedAt:            time.Time{},
 	Type:               "compute_instance_disk",
 	UserID:             "bd5874d666624b24a9f01c128871e4ac",
+	Extra: map[string]interface{}{
+		"disk_device_name": "sdb",
+	},
 }
