@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/gophercloud/gophercloud/pagination"
 	th "github.com/gophercloud/gophercloud/testhelper"
@@ -101,12 +102,13 @@ func TestGet(t *testing.T) {
 		ID:                 "75274f99-faf6-4112-a6d5-2794cb07c789",
 		OriginalResourceID: "75274f99-faf6-4112-a6d5-2794cb07c789",
 		ProjectID:          "4154f08883334e0494c41155c33c0fc9",
-		RevisionStart:      "2018-01-08T00:59:33.767815+00:00",
-		RevisionEnd:        "",
-		StartedAt:          "2018-01-08T00:59:33.767795+00:00",
-		EndedAt:            "",
+		RevisionStart:      time.Date(2018, 1, 8, 00, 59, 33, 767815000, time.UTC),
+		RevisionEnd:        time.Time{},
+		StartedAt:          time.Date(2018, 1, 8, 00, 59, 33, 767795000, time.UTC),
+		EndedAt:            time.Time{},
 		Type:               "compute_instance_network",
 		UserID:             "bd5874d666624b24a9f01c128871e4ac",
+		Extra:              map[string]interface{}{},
 	})
 	th.AssertEquals(t, s.Unit, "packet/s")
 }
