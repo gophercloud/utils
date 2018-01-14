@@ -75,9 +75,6 @@ type Resource struct {
 	// EndedAt is a timestamp of when the resource has ended.
 	EndedAt time.Time `json:"-"`
 
-	// EndedAt is a timestamp of when the resource has ended.
-	EndedAt time.Time `json:"-"`
-
 	// Type is a type of the resource.
 	Type string `json:"type"`
 
@@ -139,6 +136,7 @@ func (r *Resource) UnmarshalJSON(b []byte) error {
 	type tmp Resource
 	var s struct {
 		tmp
+		Extra         map[string]interface{}          `json:"extra"`
 		RevisionStart gnocchi.JSONRFC3339NanoTimezone `json:"revision_start"`
 		RevisionEnd   gnocchi.JSONRFC3339NanoTimezone `json:"revision_end"`
 		StartedAt     gnocchi.JSONRFC3339NanoTimezone `json:"started_at"`
@@ -150,10 +148,30 @@ func (r *Resource) UnmarshalJSON(b []byte) error {
 	}
 	*r = Resource(s.tmp)
 
+	// Collect Gnocchi timestamps.
 	r.RevisionStart = time.Time(s.RevisionStart)
 	r.RevisionEnd = time.Time(s.RevisionEnd)
 	r.StartedAt = time.Time(s.StartedAt)
 	r.EndedAt = time.Time(s.EndedAt)
+
+	// Collect other resource fields
+	// and bundle them into Extra.
+	if s.Extra != nil {
+		r.Extra = s.Extra
+	} else {
+		var result interface{}
+		err := json.Unmarshal(b, &result)
+		if err != nil {
+			return err
+		}
+		if resultMap, ok := result.(map[string]interface{}); ok {
+			delete(resultMap, "revision_start")
+			delete(resultMap, "revision_end")
+			delete(resultMap, "started_at")
+			delete(resultMap, "ended_at")
+			r.Extra = internal.RemainingKeys(Resource{}, resultMap)
+		}
+	}
 
 	return err
 }
