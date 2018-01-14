@@ -104,6 +104,7 @@ const ResourceGetResult = `
     "created_by_project_id": "3d40ca37723449118987b9f288f4ae84",
     "created_by_user_id": "fdcfb420c09645e69e177a0bb1950884",
     "creator": "fdcfb420c09645e69e177a0bb1950884:3d40ca37723449118987b9f288f4ae84",
+    "iface_name": "eth0",
     "ended_at": null,
     "id": "75274f99-faf6-4112-a6d5-2794cb07c789",
     "metrics": {

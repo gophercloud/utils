@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/gophercloud/gophercloud/pagination"
 	th "github.com/gophercloud/gophercloud/testhelper"
@@ -79,10 +80,13 @@ func TestGet(t *testing.T) {
 	})
 	th.AssertEquals(t, s.OriginalResourceID, "75274f99-faf6-4112-a6d5-2794cb07c789")
 	th.AssertEquals(t, s.ProjectID, "4154f08883334e0494c41155c33c0fc9")
-	th.AssertEquals(t, s.RevisionStart, "2018-01-01T11:44:31.742031+00:00")
-	th.AssertEquals(t, s.RevisionEnd, "")
-	th.AssertEquals(t, s.StartedAt, "2018-01-01T11:44:31.742011+00:00")
-	th.AssertEquals(t, s.EndedAt, "")
+	th.AssertEquals(t, s.RevisionStart, time.Date(2018, 01, 01, 11, 44, 31, 742031000, time.UTC))
+	th.AssertEquals(t, s.RevisionEnd, time.Time{})
+	th.AssertEquals(t, s.StartedAt, time.Date(2018, 01, 01, 11, 44, 31, 742011000, time.UTC))
+	th.AssertEquals(t, s.EndedAt, time.Time{})
 	th.AssertEquals(t, s.Type, "compute_instance_network")
 	th.AssertEquals(t, s.UserID, "bd5874d666624b24a9f01c128871e4ac")
+	th.AssertDeepEquals(t, s.Extra, map[string]interface{}{
+		"iface_name": "eth0",
+	})
 }
