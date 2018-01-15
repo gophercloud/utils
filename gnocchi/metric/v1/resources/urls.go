@@ -5,16 +5,10 @@ import "github.com/gophercloud/gophercloud"
 const resourcePath = "resource"
 
 func rootURL(c *gophercloud.ServiceClient, resourceType string) string {
-	if resourceType == "" {
-		resourceType = "generic"
-	}
 	return c.ServiceURL(resourcePath, resourceType)
 }
 
 func resourceURL(c *gophercloud.ServiceClient, resourceType, resourceID string) string {
-	if resourceType == "" {
-		resourceType = "generic"
-	}
 	return c.ServiceURL(resourcePath, resourceType, resourceID)
 }
 

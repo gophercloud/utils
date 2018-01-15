@@ -28,7 +28,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	resources.List(fake.ServiceClient(), resources.ListOpts{}, "").EachPage(func(page pagination.Page) (bool, error) {
+	resources.List(fake.ServiceClient(), resources.ListOpts{}, "generic").EachPage(func(page pagination.Page) (bool, error) {
 		count++
 		actual, err := resources.ExtractResources(page)
 		if err != nil {
