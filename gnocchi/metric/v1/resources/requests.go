@@ -87,7 +87,7 @@ type CreateOpts struct {
 	Metrics map[string]interface{} `json:"metrics,omitempty"`
 
 	// ID uniquely identifies the Gnocchi resource.
-	ID string `json:"id,omitempty"`
+	ID string `json:"id"`
 
 	// OriginalResourceID is the orginal resource id. It can be different from the
 	// regular ID field.
