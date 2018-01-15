@@ -36,7 +36,7 @@ Example of Creating a resource without a metric
 	createOpts := resources.CreateOpts{
 		ID: "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
 	}
-	resourceType = ""
+	resourceType = "generic"
 	resource, err := resources.Create(gnocchiClient, createOpts, resourceType).Extract()
 	if err != nil {
 		panic(err)

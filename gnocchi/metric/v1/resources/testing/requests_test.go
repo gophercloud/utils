@@ -113,7 +113,7 @@ func TestCreateWithoutMetrics(t *testing.T) {
 		ProjectID: "4154f088-8333-4e04-94c4-1155c33c0fc9",
 		UserID:    "bd5874d6-6662-4b24-a9f01c128871e4ac",
 	}
-	s, err := resources.Create(fake.ServiceClient(), "", opts).Extract()
+	s, err := resources.Create(fake.ServiceClient(), "generic", opts).Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, s.CreatedByProjectID, "3d40ca37-7234-4911-8987b9f288f4ae84")

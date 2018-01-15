@@ -13,7 +13,7 @@ func CreateResource(t *testing.T, client *gophercloud.ServiceClient) (*resources
 	createOpts := resources.CreateOpts{
 		ID: "00000000-0000-dead-beef-111111111111",
 	}
-	resourceType := ""
+	resourceType := "generic"
 	t.Logf("Attempting to create a Gnocchi resource")
 
 	resource, err := resources.Create(client, resourceType, createOpts).Extract()
