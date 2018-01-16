@@ -1,4 +1,5 @@
 // +build acceptance metric resources
+
 package v1
 
 import (
@@ -20,6 +21,7 @@ func TestResourcesCRUD(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unable to create a generic Gnocchi resource: %v", err)
 	}
+	defer DeleteResource(t, client, resource.Type, resource.ID)
 
 	tools.PrintResource(t, genericResource)
 

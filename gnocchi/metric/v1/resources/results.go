@@ -39,6 +39,12 @@ type UpdateResult struct {
 	commonResult
 }
 
+// DeleteResult represents the result of a delete operation. Call its
+// ExtractErr method to determine if the request succeeded or failed.
+type DeleteResult struct {
+	gophercloud.ErrResult
+}
+
 // Resource is an entity representing anything in your infrastructure
 // that you will associate metric(s) with.
 // It is identified by a unique ID and can contain attributes.

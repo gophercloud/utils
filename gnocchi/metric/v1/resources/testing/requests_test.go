@@ -322,3 +322,17 @@ func TestUpdateCreateMetrics(t *testing.T) {
 	th.AssertEquals(t, s.Type, "compute_instance_disk")
 	th.AssertEquals(t, s.UserID, "bd5874d6-6662-4b24-a9f01c128871e4ac")
 }
+
+func TestDelete(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/v1/resource/generic/23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "DELETE")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		w.WriteHeader(http.StatusNoContent)
+	})
+
+	res := resources.Delete(fake.ServiceClient(), "generic", "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55")
+	th.AssertNoErr(t, res.Err)
+}
