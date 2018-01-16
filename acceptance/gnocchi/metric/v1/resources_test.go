@@ -17,7 +17,7 @@ func TestResourcesList(t *testing.T) {
 	}
 
 	opts := resources.ListOpts{}
-	resourceType := ""
+	resourceType := "generic"
 	allPages, err := resources.List(client, opts, resourceType).AllPages()
 	if err != nil {
 		t.Fatalf("Unable to list resources: %v", err)

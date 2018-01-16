@@ -4,10 +4,28 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/pagination"
 	"github.com/gophercloud/utils/gnocchi"
 	"github.com/gophercloud/utils/internal"
 )
+
+type commonResult struct {
+	gophercloud.Result
+}
+
+// Extract is a function that accepts a result and extracts a Gnocchi resource.
+func (r commonResult) Extract() (*Resource, error) {
+	var s *Resource
+	err := r.ExtractInto(&s)
+	return s, err
+}
+
+// GetResult represents the result of a get operation. Call its Extract
+// method to interpret it as a Gnocchi resource.
+type GetResult struct {
+	commonResult
+}
 
 // Resource is an entity representing anything in your infrastructure
 // that you will associate metric(s) with.

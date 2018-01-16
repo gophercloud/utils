@@ -97,3 +97,28 @@ var Resource2 = resources.Resource{
 		"disk_device_name": "sdb",
 	},
 }
+
+// ResourceGetResult represents raw server response from a server to a get requrest.
+const ResourceGetResult = `
+{
+    "created_by_project_id": "3d40ca37723449118987b9f288f4ae84",
+    "created_by_user_id": "fdcfb420c09645e69e177a0bb1950884",
+    "creator": "fdcfb420c09645e69e177a0bb1950884:3d40ca37723449118987b9f288f4ae84",
+    "iface_name": "eth0",
+    "ended_at": null,
+    "id": "75274f99-faf6-4112-a6d5-2794cb07c789",
+    "metrics": {
+        "network.incoming.bytes.rate": "01b2953e-de74-448a-a305-c84440697933",
+        "network.outgoing.bytes.rate": "4ac0041b-3bf7-441d-a95a-d3e2f1691158",
+        "network.incoming.packets.rate": "5a64328e-8a7c-4c6a-99df-2e6d17440142",
+        "network.outgoing.packets.rate": "dc9f3198-155b-4b88-a92c-58a3853ce2b2"
+    },
+    "original_resource_id": "75274f99-faf6-4112-a6d5-2794cb07c789",
+    "project_id": "4154f08883334e0494c41155c33c0fc9",
+    "revision_end": null,
+    "revision_start": "2018-01-01T11:44:31.742031+00:00",
+    "started_at": "2018-01-01T11:44:31.742011+00:00",
+    "type": "compute_instance_network",
+    "user_id": "bd5874d666624b24a9f01c128871e4ac"
+}
+`
