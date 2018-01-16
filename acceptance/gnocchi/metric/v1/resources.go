@@ -5,13 +5,19 @@ import (
 
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/utils/gnocchi/metric/v1/resources"
+	"github.com/satori/go.uuid"
 )
 
 // CreateResource will create Gnocchi resource. An error will be returned if the
 // resource could not be created.
 func CreateResource(t *testing.T, client *gophercloud.ServiceClient) (*resources.Resource, error) {
+	id, err := uuid.NewV4()
+	if err != nil {
+		return nil, err
+	}
+
 	createOpts := resources.CreateOpts{
-		ID: "00000000-0000-dead-beef-111111111111",
+		ID: id.String(),
 	}
 	resourceType := "generic"
 	t.Logf("Attempting to create a Gnocchi resource")
