@@ -14,6 +14,12 @@ type commonResult struct {
 	gophercloud.Result
 }
 
+// UpdateResult represents the result of an update operation. Call its Extract
+// method to interpret it as a Gnocchi resource.
+type UpdateResult struct {
+	commonResult
+}
+
 // Extract is a function that accepts a result and extracts a Gnocchi resource.
 func (r commonResult) Extract() (*Resource, error) {
 	var s *Resource

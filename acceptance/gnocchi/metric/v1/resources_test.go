@@ -22,6 +22,16 @@ func TestResourcesCRUD(t *testing.T) {
 	}
 
 	tools.PrintResource(t, genericResource)
+
+	updateOpts := &resources.UpdateOpts{
+		StartedAt: "2018-01-01T01:01:01",
+	}
+	newGenericResource, err := resources.Update(client, genericResource.Type, genericResource.ID, updateOpts).Extract()
+	if err != nil {
+		t.Fatalf("Unable to update the generic Gnocchi resource: %v", err)
+	}
+
+	tools.PrintResource(t, newGenericResource)
 }
 
 func TestResourcesList(t *testing.T) {

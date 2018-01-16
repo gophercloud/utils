@@ -223,3 +223,67 @@ const ResourceCreateWithMetricsResult = `
     "user_id": "bd5874d6-6662-4b24-a9f01c128871e4ac"
 }
 `
+
+// ResourceUpdateLinkMetricsRequest represents a request to update a resource and link some existing metrics.
+const ResourceUpdateLinkMetricsRequest = `
+{
+    "ended_at":"2018-01-14T13:00:00",
+    "metrics": {
+        "network.incoming.bytes.rate": "01b2953e-de74-448a-a305-c84440697933"
+    }
+}
+`
+
+// ResourceUpdateCreateMetricsRequest represents a request to update a resource and link some existing metrics.
+const ResourceUpdateCreateMetricsRequest = `
+{
+    "started_at":"2018-01-12T11:00:00",
+    "metrics": {
+        "disk.read.bytes.rate": {
+            "archive_policy_name": "low"
+        }
+    }
+}
+`
+
+// ResourceUpdateLinkMetricsResponse represents a raw server responce to the ResourceUpdateLinkMetricsRequest.
+const ResourceUpdateLinkMetricsResponse = `
+{
+    "created_by_project_id": "3d40ca37-7234-4911-8987b9f288f4ae84",
+    "created_by_user_id": "fdcfb420-c096-45e6-9e177a0bb1950884",
+    "creator": "fdcfb420-c096-45e6-9e177a0bb1950884:3d40ca37-7234-4911-8987b9f288f4ae84",
+    "ended_at": "2018-01-14T13:00:00+00:00",
+    "id": "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
+    "project_id": "4154f088-8333-4e04-94c4-1155c33c0fc9",
+    "original_resource_id": "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
+    "revision_end": null,
+    "metrics": {
+        "network.incoming.bytes.rate": "01b2953e-de74-448a-a305-c84440697933"
+    },
+    "revision_start": "2018-01-12T13:44:34.742031+00:00",
+    "started_at": "2018-01-12T13:44:34.742011+00:00",
+    "type": "compute_instance_network",
+    "user_id": "bd5874d6-6662-4b24-a9f01c128871e4ac"
+}
+`
+
+// ResourceUpdateCreateMetricsResponse represents a raw server responce to the ResourceUpdateLinkMetricsRequest.
+const ResourceUpdateCreateMetricsResponse = `
+{
+    "created_by_project_id": "3d40ca37-7234-4911-8987b9f288f4ae84",
+    "created_by_user_id": "fdcfb420-c096-45e6-9e177a0bb1950884",
+    "creator": "fdcfb420-c096-45e6-9e177a0bb1950884:3d40ca37-7234-4911-8987b9f288f4ae84",
+    "ended_at": null,
+    "id": "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
+    "project_id": "4154f088-8333-4e04-94c4-1155c33c0fc9",
+    "original_resource_id": "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
+    "revision_end": null,
+    "metrics": {
+        "disk.read.bytes.rate": "ed1bb76f-6ccc-4ad2-994c-dbb19ddccbae"
+    },
+    "revision_start": "2018-01-12T12:00:34.742031+00:00",
+    "started_at": "2018-01-12T11:00:00+00:00",
+    "type": "compute_instance_disk",
+    "user_id": "bd5874d6-6662-4b24-a9f01c128871e4ac"
+}
+`

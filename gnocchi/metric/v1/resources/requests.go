@@ -132,3 +132,48 @@ func Create(client *gophercloud.ServiceClient, resourceType string, opts CreateO
 	})
 	return
 }
+
+// UpdateOptsBuilder allows extensions to add additional parameters to the
+// Update request.
+type UpdateOptsBuilder interface {
+	ToResourceUpdateMap() (map[string]interface{}, error)
+}
+
+// UpdateOpts represents options used to update a network.
+type UpdateOpts struct {
+	// Metrics field can be used to link existing metrics in the resource
+	// or to create metrics and update the resource at the same time to save
+	// some requests.
+	Metrics map[string]interface{} `json:"metrics,omitempty"`
+
+	// ProjectID is the Identity project of the resource.
+	ProjectID string `json:"project_id,omitempty"`
+
+	// UserID is the Identity user of the resource.
+	UserID string `json:"user_id,omitempty"`
+
+	// StartedAt is a resource creation timestamp.
+	StartedAt string `json:"started_at,omitempty"`
+
+	// EndedAt is a timestamp of when the resource has ended.
+	EndedAt string `json:"ended_at,omitempty"`
+}
+
+// ToResourceUpdateMap builds a request body from UpdateOpts.
+func (opts UpdateOpts) ToResourceUpdateMap() (map[string]interface{}, error) {
+	return gophercloud.BuildRequestBody(opts, "")
+}
+
+// Update accepts a UpdateOpts struct and updates an existing Gnocchi resource using the
+// values provided.
+func Update(c *gophercloud.ServiceClient, resourceType, resourceID string, opts UpdateOptsBuilder) (r UpdateResult) {
+	b, err := opts.ToResourceUpdateMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+	_, r.Err = c.Patch(updateURL(c, resourceType, resourceID), b, &r.Body, &gophercloud.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return
+}

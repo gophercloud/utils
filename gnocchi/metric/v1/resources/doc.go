@@ -77,5 +77,48 @@ Example of Creating a resource and a metric a the same time
 	if err != nil {
 		panic(err)
 	}
+
+Example of Updating a resource
+
+	updateOpts := resources.UpdateOpts{
+		ProjectID: "4154f08883334e0494c41155c33c0fc9",
+	}
+	resourceType = "generic"
+	resourceID = "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55"
+	resource, err := resources.Update(gnocchiClient, resourceType, resourceID, updateOpts).Extract()
+	if err != nil {
+		panic(err)
+	}
+
+Example of Updating a resource and associating an existing metric to it
+
+	updateOpts := resources.UpdateOpts{
+		EndedAt: "2018-01-16 12:00:00",
+		Metrics: map[string]interface{}{
+			"disk.write.bytes.rate": "0a2da84d-4753-43f5-a65f-0f8d44d2766c",
+		},
+	}
+	resourceType = "compute_instance_disk"
+	resourceID = "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55"
+	resource, err := resources.Update(gnocchiClient, resourceType, resourceID, updateOpts).Extract()
+	if err != nil {
+		panic(err)
+	}
+
+Example of Updating a resource and creating an associated metric at the same time
+
+	updateOpts := resources.UpdateOpts{
+		Metrics: map[string]interface{}{
+			"cpu.delta": map[string]string{
+				"archive_policy_name": "medium",
+			},
+		},
+	}
+	resourceType = "compute_instance"
+	resourceID = "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55"
+	resource, err := resources.Update(gnocchiClient, resourceType, resourceID, updateOpts).Extract()
+	if err != nil {
+		panic(err)
+	}
 */
 package resources
