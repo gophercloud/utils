@@ -98,6 +98,16 @@ type CreateOpts struct {
 
 // ToResourceCreateMap constructs a request body from CreateOpts.
 func (opts CreateOpts) ToResourceCreateMap() (map[string]interface{}, error) {
+	if opts.StartedAtTimeStamp != nil {
+		opts.StartedAtString = opts.StartedAtTimeStamp.Format(gnocchi.RFC3339NanoTimezone)
+		opts.StartedAtTimeStamp = nil
+	}
+
+	if opts.EndedAtTimeStamp != nil {
+		opts.EndedAtString = opts.EndedAtTimeStamp.Format(gnocchi.RFC3339NanoTimezone)
+		opts.EndedAtTimeStamp = nil
+	}
+
 	b, err := gophercloud.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
