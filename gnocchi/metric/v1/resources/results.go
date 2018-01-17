@@ -122,7 +122,7 @@ func (r *Resource) UnmarshalJSON(b []byte) error {
 	r.EndedAt = time.Time(s.EndedAt)
 
 	// Collect other resource fields
-	// and bundle them into Extra.
+	// and bundle them into ExtraAttributes.
 	if s.ExtraAttributes != nil {
 		r.ExtraAttributes = s.ExtraAttributes
 	} else {
