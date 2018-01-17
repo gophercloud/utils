@@ -31,10 +31,11 @@ Example of Getting a resource
 		panic(err)
 	}
 
-Example of Creating a resource without a metric
+Example of Creating a resource without a metric with a string timestamp for the starting time
 
 	createOpts := resources.CreateOpts{
 		ID: "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
+		StartedAtString: "2018-01-09T22:15:00+00:00",
 	}
 	resourceType = "generic"
 	resource, err := resources.Create(gnocchiClient, createOpts, resourceType).Extract()
@@ -42,11 +43,14 @@ Example of Creating a resource without a metric
 		panic(err)
 	}
 
-Example of Creating a resource with links to some existing metrics
+Example of Creating a resource with links to some existing metrics with
+a Go standard time format for the ending time
 
+	endedAt := time.Time(2018, 1, 10, 21, 0, 0, 0, time.UTC)
 	createOpts := resources.CreateOpts{
 		ID: "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
 		ProjectID: "4154f088-8333-4e04-94c4-1155c33c0fc9",
+		EndedAtTimeStamp: &endedAt,
 		Metrics: map[string]interface{}{
 			"disk.read.bytes.rate": "ed1bb76f-6ccc-4ad2-994c-dbb19ddccbae",
 			"disk.write.bytes.rate": "0a2da84d-4753-43f5-a65f-0f8d44d2766c",
