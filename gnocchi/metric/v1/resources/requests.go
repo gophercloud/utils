@@ -104,11 +104,26 @@ type CreateOpts struct {
 
 	// EndedAt is a timestamp of when the resource has ended.
 	EndedAt string `json:"ended_at,omitempty"`
+
+	// ExtraAttributes is a collection of keys and values that can be found in resources
+	// of different resource types.
+	ExtraAttributes map[string]interface{} `json:"-"`
 }
 
 // ToResourceCreateMap constructs a request body from CreateOpts.
 func (opts CreateOpts) ToResourceCreateMap() (map[string]interface{}, error) {
-	return gophercloud.BuildRequestBody(opts, "")
+	b, err := gophercloud.BuildRequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	if opts.ExtraAttributes != nil {
+		for key, value := range opts.ExtraAttributes {
+			b[key] = value
+		}
+	}
+
+	return b, nil
 }
 
 // Create requests the creation of a new Gnocchi resource on the server.

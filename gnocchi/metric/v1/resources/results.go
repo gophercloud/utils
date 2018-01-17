@@ -91,7 +91,7 @@ func (r *Resource) UnmarshalJSON(b []byte) error {
 	type tmp Resource
 	var s struct {
 		tmp
-		ExtraAttributes map[string]interface{}          `json:"extra"`
+		ExtraAttributes map[string]interface{}          `json:"extra_attributes"`
 		RevisionStart   gnocchi.JSONRFC3339NanoTimezone `json:"revision_start"`
 		RevisionEnd     gnocchi.JSONRFC3339NanoTimezone `json:"revision_end"`
 		StartedAt       gnocchi.JSONRFC3339NanoTimezone `json:"started_at"`
