@@ -86,7 +86,7 @@ func TestGet(t *testing.T) {
 	th.AssertEquals(t, s.EndedAt, time.Time{})
 	th.AssertEquals(t, s.Type, "compute_instance_network")
 	th.AssertEquals(t, s.UserID, "bd5874d666624b24a9f01c128871e4ac")
-	th.AssertDeepEquals(t, s.Extra, map[string]interface{}{
+	th.AssertDeepEquals(t, s.ExtraAttributes, map[string]interface{}{
 		"iface_name": "eth0",
 	})
 }
