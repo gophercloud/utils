@@ -31,10 +31,11 @@ Example of Getting a resource
 		panic(err)
 	}
 
-Example of Creating a resource without a metric
+Example of Creating a resource without a metric with a string timestamp for the starting time
 
 	createOpts := resources.CreateOpts{
 		ID: "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
+		StartedAtString: "2018-01-09T22:15:00+00:00",
 	}
 	resourceType = "generic"
 	resource, err := resources.Create(gnocchiClient, resourceType, createOpts).Extract()
