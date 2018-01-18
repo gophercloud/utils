@@ -187,7 +187,6 @@ const ResourceCreateLinkMetricsResult = `
     "created_by_project_id": "3d40ca37-7234-4911-8987b9f288f4ae84",
     "created_by_user_id": "fdcfb420-c096-45e6-9e177a0bb1950884",
     "creator": "fdcfb420-c096-45e6-9e177a0bb1950884:3d40ca37-7234-4911-8987b9f288f4ae84",
-    "ended_at": "2018-01-04T10:00:12+00:00",
     "id": "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
     "metrics": {
         "network.incoming.bytes.rate": "01b2953e-de74-448a-a305-c84440697933",
@@ -197,6 +196,7 @@ const ResourceCreateLinkMetricsResult = `
     "project_id": "4154f088-8333-4e04-94c4-1155c33c0fc9",
     "revision_end": null,
     "revision_start": "2018-01-02T23:23:34.155813+00:00",
+    "ended_at": "2018-01-04T10:00:12+00:00",
     "started_at": "2018-01-02T23:23:34+00:00",
     "type": "compute_instance_network",
     "user_id": "bd5874d6-6662-4b24-a9f01c128871e4ac"
@@ -209,7 +209,6 @@ const ResourceCreateWithMetricsResult = `
     "created_by_project_id": "3d40ca37-7234-4911-8987b9f288f4ae84",
     "created_by_user_id": "fdcfb420-c096-45e6-9e177a0bb1950884",
     "creator": "fdcfb420-c096-45e6-9e177a0bb1950884:3d40ca37-7234-4911-8987b9f288f4ae84",
-    "ended_at": "2018-01-09T20:00:00+00:00",
     "id": "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
     "metrics": {
         "disk.write.bytes.rate": "0a2da84d-4753-43f5-a65f-0f8d44d2766c"
@@ -218,6 +217,7 @@ const ResourceCreateWithMetricsResult = `
     "project_id": "4154f088-8333-4e04-94c4-1155c33c0fc9",
     "revision_end": null,
     "revision_start": "2018-01-02T23:23:34.155813+00:00",
+    "ended_at": "2018-01-09T20:00:00+00:00",
     "started_at": "2018-01-02T23:23:34.155773+00:00",
     "type": "compute_instance_disk",
     "user_id": "bd5874d6-6662-4b24-a9f01c128871e4ac"

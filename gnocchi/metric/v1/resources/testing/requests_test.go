@@ -151,11 +151,11 @@ func TestCreateLinkMetrics(t *testing.T) {
 	startedAt := time.Date(2018, 1, 2, 23, 23, 34, 0, time.UTC)
 	endedAt := time.Date(2018, 1, 4, 10, 00, 12, 0, time.UTC)
 	opts := resources.CreateOpts{
-		ID:                 "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
-		ProjectID:          "4154f088-8333-4e04-94c4-1155c33c0fc9",
-		UserID:             "bd5874d6-6662-4b24-a9f01c128871e4ac",
-		StartedAtTimeStamp: &startedAt,
-		EndedAtTimeStamp:   &endedAt,
+		ID:        "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
+		ProjectID: "4154f088-8333-4e04-94c4-1155c33c0fc9",
+		UserID:    "bd5874d6-6662-4b24-a9f01c128871e4ac",
+		StartedAt: &startedAt,
+		EndedAt:   &endedAt,
 		Metrics: map[string]interface{}{
 			"network.incoming.bytes.rate": "01b2953e-de74-448a-a305-c84440697933",
 			"network.outgoing.bytes.rate": "dc9f3198-155b-4b88-a92c-58a3853ce2b2",
@@ -199,11 +199,12 @@ func TestCreateWithMetrics(t *testing.T) {
 		fmt.Fprintf(w, ResourceCreateWithMetricsResult)
 	})
 
+	endedAt := time.Date(2018, 1, 9, 20, 0, 0, 0, time.UTC)
 	opts := resources.CreateOpts{
-		ID:            "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
-		ProjectID:     "4154f088-8333-4e04-94c4-1155c33c0fc9",
-		UserID:        "bd5874d6-6662-4b24-a9f01c128871e4ac",
-		EndedAtString: "2018-01-09T20:00:00+00:00",
+		ID:        "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
+		ProjectID: "4154f088-8333-4e04-94c4-1155c33c0fc9",
+		UserID:    "bd5874d6-6662-4b24-a9f01c128871e4ac",
+		EndedAt:   &endedAt,
 		Metrics: map[string]interface{}{
 			"disk.write.bytes.rate": map[string]string{
 				"archive_policy_name": "high",

@@ -102,19 +102,11 @@ type CreateOpts struct {
 	// UserID is the Identity user of the resource.
 	UserID string `json:"user_id,omitempty"`
 
-	// StartedAtTimeStamp is a resource creation timestamp. It's contents will be converted into the string
-	// and then transferred to the private "startedAt" field.
-	StartedAtTimeStamp *time.Time `json:"-"`
+	// StartedAt is a resource creation timestamp.
+	StartedAt *time.Time `json:"-"`
 
-	// StartedAtString is a string representation of the "StartedAt" field.
-	StartedAtString string `json:"started_at,omitempty"`
-
-	// EndedAtTimeStamp is a timestamp of when the resource has ended. It's contents will be converted into the string
-	// and then transferred to the private "endedAt" field.
-	EndedAtTimeStamp *time.Time `json:"-"`
-
-	// EndedAtString is a string representation of the "EndedAt" field.
-	EndedAtString string `json:"ended_at,omitempty"`
+	// EndedAt is a timestamp of when the resource has ended.
+	EndedAt *time.Time `json:"-"`
 
 	// ExtraAttributes is a collection of keys and values that can be found in resources
 	// of different resource types.
@@ -123,19 +115,17 @@ type CreateOpts struct {
 
 // ToResourceCreateMap constructs a request body from CreateOpts.
 func (opts CreateOpts) ToResourceCreateMap() (map[string]interface{}, error) {
-	if opts.StartedAtTimeStamp != nil {
-		opts.StartedAtString = opts.StartedAtTimeStamp.Format(gnocchi.RFC3339NanoTimezone)
-		opts.StartedAtTimeStamp = nil
-	}
-
-	if opts.EndedAtTimeStamp != nil {
-		opts.EndedAtString = opts.EndedAtTimeStamp.Format(gnocchi.RFC3339NanoTimezone)
-		opts.EndedAtTimeStamp = nil
-	}
-
 	b, err := gophercloud.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
+	}
+
+	if opts.StartedAt != nil {
+		b["started_at"] = opts.StartedAt.Format(gnocchi.RFC3339NanoTimezone)
+	}
+
+	if opts.EndedAt != nil {
+		b["ended_at"] = opts.EndedAt.Format(gnocchi.RFC3339NanoTimezone)
 	}
 
 	if opts.ExtraAttributes != nil {
