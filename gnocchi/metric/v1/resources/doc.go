@@ -44,7 +44,7 @@ Example of Creating a resource without a metric
 
 Example of Creating a resource with links to some existing metrics with an ending timestamp of the resource
 
-	endedAt := time.Time(2018, 1, 10, 21, 0, 0, 0, time.UTC)
+	endedAt := time.Date(2018, 1, 4, 10, 0, 0, 0, time.UTC)
 	createOpts := resources.CreateOpts{
 		ID: "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
 		ProjectID: "4154f088-8333-4e04-94c4-1155c33c0fc9",
