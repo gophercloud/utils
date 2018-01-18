@@ -53,5 +53,13 @@ archive policy rule and can assign the policy automatically
 	if err != nil {
 		panic(err)
 	}
+
+Example of Deleting a Gnocchi metric
+
+	metricID := "01b2953e-de74-448a-a305-c84440697933"
+	err := metrics.Delete(gnocchiClient, metricID).ExtractErr()
+	if err != nil {
+		panic(err)
+	}
 */
 package metrics

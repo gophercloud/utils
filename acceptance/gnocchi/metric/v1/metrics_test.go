@@ -20,6 +20,7 @@ func TestMetricsCRUD(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unable to create a Gnocchi metric: %v", err)
 	}
+	defer DeleteMetric(t, client, metric.ID)
 
 	tools.PrintResource(t, metric)
 }

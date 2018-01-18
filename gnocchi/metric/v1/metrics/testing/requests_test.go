@@ -148,3 +148,17 @@ func TestCreate(t *testing.T) {
 	th.AssertEquals(t, s.ResourceID, "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55")
 	th.AssertEquals(t, s.Unit, "B/s")
 }
+
+func TestDelete(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/v1/metric/01b2953e-de74-448a-a305-c84440697933", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "DELETE")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		w.WriteHeader(http.StatusNoContent)
+	})
+
+	res := metrics.Delete(fake.ServiceClient(), "01b2953e-de74-448a-a305-c84440697933")
+	th.AssertNoErr(t, res.Err)
+}
