@@ -10,6 +10,20 @@ import (
 	"github.com/gophercloud/utils/gnocchi/metric/v1/metrics"
 )
 
+func TestMetricsCRUD(t *testing.T) {
+	client, err := clients.NewGnocchiV1Client()
+	if err != nil {
+		t.Fatalf("Unable to create a Gnocchi client: %v", err)
+	}
+
+	metric, err := CreateMetric(t, client)
+	if err != nil {
+		t.Fatalf("Unable to create a Gnocchi metric: %v", err)
+	}
+
+	tools.PrintResource(t, metric)
+}
+
 func TestMetricsList(t *testing.T) {
 	client, err := clients.NewGnocchiV1Client()
 	if err != nil {

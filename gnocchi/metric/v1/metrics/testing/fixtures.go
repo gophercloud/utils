@@ -184,3 +184,30 @@ const MetricGetResult = `
     "unit": "packet/s"
 }
 `
+
+// MetricCreateRequest represents a request to create a metric.
+const MetricCreateRequest = `
+{
+    "archive_policy_name": "high",
+    "created_by_project_id": "3d40ca37-7234-4911-8987b9f288f4ae84",
+    "created_by_user_id": "fdcfb420-c096-45e6-9e177a0bb1950884",
+    "creator": "fdcfb420-c096-45e6-9e177a0bb1950884:3d40ca37-7234-4911-8987b9f288f4ae84",
+    "name": "network.incoming.bytes.rate",
+    "resource_id": "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
+    "unit": "B/s"
+}
+`
+
+// MetricCreateResponse represents a raw server responce to the MetricCreateRequest.
+const MetricCreateResponse = `
+{
+    "archive_policy_name": "high",
+    "created_by_project_id": "3d40ca37-7234-4911-8987b9f288f4ae84",
+    "created_by_user_id": "fdcfb420-c096-45e6-9e177a0bb1950884",
+    "creator": "fdcfb420-c096-45e6-9e177a0bb1950884:3d40ca37-7234-4911-8987b9f288f4ae84",
+    "id": "01b2953e-de74-448a-a305-c84440697933",
+    "name": "network.incoming.bytes.rate",
+    "resource_id": "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
+    "unit": "B/s"
+}
+`

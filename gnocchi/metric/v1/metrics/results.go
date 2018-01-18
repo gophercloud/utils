@@ -24,6 +24,12 @@ type GetResult struct {
 	commonResult
 }
 
+// CreateResult represents the result of a create operation. Call its Extract
+// method to interpret it as a Gnocchi metric.
+type CreateResult struct {
+	commonResult
+}
+
 // Metric is an entity storing aggregates identified by an UUID.
 // It can be attached to a resource using a name.
 // How a metric stores its aggregates is defined by the archive policy

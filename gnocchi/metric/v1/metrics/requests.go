@@ -67,3 +67,64 @@ func Get(c *gophercloud.ServiceClient, metricID string) (r GetResult) {
 	_, r.Err = c.Get(getURL(c, metricID), &r.Body, nil)
 	return
 }
+
+// CreateOptsBuilder allows to add additional parameters to the
+// Create request.
+type CreateOptsBuilder interface {
+	ToMetricCreateMap() (map[string]interface{}, error)
+}
+
+// CreateOpts specifies parameters of a new Gnocchi metric.
+type CreateOpts struct {
+	// ArchivePolicyName is a name of the Gnocchi archive policy that describes
+	// the aggregate storage policy of a metric.
+	// You can omit it in the request if your Gnocchi installation has the needed
+	// archive policy rule to assign an archive policy by a metric's name.
+	ArchivePolicyName string `json:"archive_policy_name,omitempty"`
+
+	// CreatedByProjectID contains the id of the Identity project that
+	// was used for a metric creation.
+	CreatedByProjectID string `json:"created_by_project_id,omitempty"`
+
+	// CreatedByUserID contains the id of the Identity user
+	// that created the Gnocchi metric.
+	CreatedByUserID string `json:"created_by_user_id,omitempty"`
+
+	// Creator shows who created the metric.
+	// Usually it contains concatenated string with values from
+	// "created_by_user_id" and "created_by_project_id" fields.
+	Creator string `json:"creator,omitempty"`
+
+	// Name is a human-readable name for the Gnocchi metric.
+	// You must provide it if you are also providing a ResourceID in the request.
+	Name string `json:"name,omitempty"`
+
+	// ResourceID identifies the associated Gnocchi resource of the metric.
+	ResourceID string `json:"resource_id,omitempty"`
+
+	// Unit is a unit of measurement for measures of that Gnocchi metric.
+	Unit string `json:"unit,omitempty"`
+}
+
+// ToMetricCreateMap constructs a request body from CreateOpts.
+func (opts CreateOpts) ToMetricCreateMap() (map[string]interface{}, error) {
+	b, err := gophercloud.BuildRequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	return b, nil
+}
+
+// Create requests the creation of a new Gnocchi metric on the server.
+func Create(client *gophercloud.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
+	b, err := opts.ToMetricCreateMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+	_, r.Err = client.Post(createURL(client), b, &r.Body, &gophercloud.RequestOpts{
+		OkCodes: []int{201},
+	})
+	return
+}
