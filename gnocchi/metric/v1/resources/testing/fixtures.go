@@ -273,7 +273,6 @@ const ResourceUpdateCreateMetricsResponse = `
     "created_by_project_id": "3d40ca37-7234-4911-8987b9f288f4ae84",
     "created_by_user_id": "fdcfb420-c096-45e6-9e177a0bb1950884",
     "creator": "fdcfb420-c096-45e6-9e177a0bb1950884:3d40ca37-7234-4911-8987b9f288f4ae84",
-    "ended_at": "2018-01-09T20:00:00+00:00",
     "id": "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
     "project_id": "4154f088-8333-4e04-94c4-1155c33c0fc9",
     "original_resource_id": "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
