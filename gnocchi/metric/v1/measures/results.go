@@ -7,8 +7,15 @@ import (
 
 	"github.com/gophercloud/utils/gnocchi"
 
+	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/pagination"
 )
+
+// PushResult represents the result of a push operation. Call its
+// ExtractErr method to determine if the request succeeded or failed.
+type PushResult struct {
+	gophercloud.ErrResult
+}
 
 // Measure is an datapoint thats is composed with a timestamp and a value.
 type Measure struct {

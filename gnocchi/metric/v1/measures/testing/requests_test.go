@@ -52,3 +52,34 @@ func TestListMeasures(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.CheckEquals(t, 1, pages)
 }
+
+func TestPushMeasures(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/v1/metric/9e5a6441-1044-4181-b66e-34e180753040/measures", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "POST")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "Content-Type", "application/json")
+		th.TestHeader(t, r, "Accept", "application/json, */*")
+		w.WriteHeader(http.StatusAccepted)
+	})
+
+	pushOpts := measures.PushOpts{
+		Measures: []measures.MeasureToPush{
+			{
+				TimeStamp: time.Date(2018, 1, 18, 12, 31, 0, 0, time.UTC),
+				Value:     101.2,
+			},
+			{
+				TimeStamp: time.Date(2018, 1, 18, 14, 32, 0, 0, time.UTC),
+				Value:     102,
+			},
+		},
+	}
+	res := measures.Push(fake.ServiceClient(), "9e5a6441-1044-4181-b66e-34e180753040", pushOpts)
+	if res.Err.Error() == "EOF" {
+		res.Err = nil
+	}
+	th.AssertNoErr(t, res.Err)
+}
