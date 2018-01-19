@@ -82,19 +82,6 @@ type CreateOpts struct {
 	// archive policy rule to assign an archive policy by a metric's name.
 	ArchivePolicyName string `json:"archive_policy_name,omitempty"`
 
-	// CreatedByProjectID contains the id of the Identity project that
-	// was used for a metric creation.
-	CreatedByProjectID string `json:"created_by_project_id,omitempty"`
-
-	// CreatedByUserID contains the id of the Identity user
-	// that created the Gnocchi metric.
-	CreatedByUserID string `json:"created_by_user_id,omitempty"`
-
-	// Creator shows who created the metric.
-	// Usually it contains concatenated string with values from
-	// "created_by_user_id" and "created_by_project_id" fields.
-	Creator string `json:"creator,omitempty"`
-
 	// Name is a human-readable name for the Gnocchi metric.
 	// You must provide it if you are also providing a ResourceID in the request.
 	Name string `json:"name,omitempty"`

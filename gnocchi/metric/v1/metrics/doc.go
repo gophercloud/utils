@@ -33,9 +33,8 @@ Example of Creating a metric and link it to an existing archive policy
 
 	createOpts := metrics.CreateOpts{
 		ArchivePolicyName: "low",
-		CreatedByProjectID: "3d40ca37-7234-4911-8987b9f288f4ae84",
-		CreatedByUserID: "fdcfb420-c096-45e6-9e177a0bb1950884",
-		Creator: "fdcfb420-c096-45e6-9e177a0bb1950884:3d40ca37-7234-4911-8987b9f288f4ae84",
+		Name: "network.incoming.packets.rate",
+		Unit: "packet/s",
 	}
 	metric, err := metrics.Create(gnocchiClient, createOpts).Extract()
 	if err != nil {

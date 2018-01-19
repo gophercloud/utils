@@ -131,13 +131,10 @@ func TestCreate(t *testing.T) {
 	})
 
 	opts := metrics.CreateOpts{
-		ArchivePolicyName:  "high",
-		CreatedByProjectID: "3d40ca37-7234-4911-8987b9f288f4ae84",
-		CreatedByUserID:    "fdcfb420-c096-45e6-9e177a0bb1950884",
-		Creator:            "fdcfb420-c096-45e6-9e177a0bb1950884:3d40ca37-7234-4911-8987b9f288f4ae84",
-		Name:               "network.incoming.bytes.rate",
-		ResourceID:         "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
-		Unit:               "B/s",
+		ArchivePolicyName: "high",
+		Name:              "network.incoming.bytes.rate",
+		ResourceID:        "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
+		Unit:              "B/s",
 	}
 	s, err := metrics.Create(fake.ServiceClient(), opts).Extract()
 	th.AssertNoErr(t, err)
