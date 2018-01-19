@@ -234,18 +234,6 @@ const ResourceUpdateLinkMetricsRequest = `
 }
 `
 
-// ResourceUpdateCreateMetricsRequest represents a request to update a resource and link some existing metrics.
-const ResourceUpdateCreateMetricsRequest = `
-{
-    "started_at":"2018-01-12T11:00:00",
-    "metrics": {
-        "disk.read.bytes.rate": {
-            "archive_policy_name": "low"
-        }
-    }
-}
-`
-
 // ResourceUpdateLinkMetricsResponse represents a raw server responce to the ResourceUpdateLinkMetricsRequest.
 const ResourceUpdateLinkMetricsResponse = `
 {
@@ -264,6 +252,18 @@ const ResourceUpdateLinkMetricsResponse = `
     "started_at": "2018-01-12T13:44:34.742011+00:00",
     "type": "compute_instance_network",
     "user_id": "bd5874d6-6662-4b24-a9f01c128871e4ac"
+}
+`
+
+// ResourceUpdateCreateMetricsRequest represents a request to update a resource and link some existing metrics.
+const ResourceUpdateCreateMetricsRequest = `
+{
+    "started_at":"2018-01-12T11:00:00",
+    "metrics": {
+        "disk.read.bytes.rate": {
+            "archive_policy_name": "low"
+        }
+    }
 }
 `
 
