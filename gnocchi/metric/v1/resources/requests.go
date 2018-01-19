@@ -71,30 +71,13 @@ type CreateOptsBuilder interface {
 
 // CreateOpts specifies parameters of a new Gnocchi resource.
 type CreateOpts struct {
-	// CreatedByProjectID contains the id of the Identity project that
-	// was used for a resource creation.
-	CreatedByProjectID string `json:"created_by_project_id,omitempty"`
-
-	// CreatedByUserID contains the id of the Identity user
-	// that created the Gnocchi resource.
-	CreatedByUserID string `json:"created_by_user_id,omitempty"`
-
-	// Creator shows who created the resource.
-	// Usually it contains concatenated string with values from
-	// "created_by_user_id" and "created_by_project_id" fields.
-	Creator string `json:"creator,omitempty"`
+	// ID uniquely identifies the Gnocchi resource.
+	ID string `json:"id"`
 
 	// Metrics field can be used to link existing metrics in the resource
 	// or to create metrics with the resource at the same time to save
 	// some requests.
 	Metrics map[string]interface{} `json:"metrics,omitempty"`
-
-	// ID uniquely identifies the Gnocchi resource.
-	ID string `json:"id"`
-
-	// OriginalResourceID is the orginal resource id. It can be different from the
-	// regular ID field.
-	OriginalResourceID string `json:"original_resource_id,omitempty"`
 
 	// ProjectID is the Identity project of the resource.
 	ProjectID string `json:"project_id,omitempty"`

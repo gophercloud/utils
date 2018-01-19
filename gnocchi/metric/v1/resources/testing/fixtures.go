@@ -132,36 +132,6 @@ const ResourceCreateWithoutMetricsRequest = `
 }
 `
 
-// ResourceCreateLinkMetricsRequest represents a request to create a resource with linked metrics.
-const ResourceCreateLinkMetricsRequest = `
-{
-    "id": "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
-    "project_id": "4154f088-8333-4e04-94c4-1155c33c0fc9",
-    "user_id": "bd5874d6-6662-4b24-a9f01c128871e4ac",
-    "started_at": "2018-01-02T23:23:34+00:00",
-    "ended_at": "2018-01-04T10:00:12+00:00",
-    "metrics": {
-        "network.incoming.bytes.rate": "01b2953e-de74-448a-a305-c84440697933",
-        "network.outgoing.bytes.rate": "dc9f3198-155b-4b88-a92c-58a3853ce2b2"
-    }
-}
-`
-
-// ResourceCreateWithMetricsRequest represents a request to simultaneously create a resource with metrics.
-const ResourceCreateWithMetricsRequest = `
-{
-    "id": "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
-    "project_id": "4154f088-8333-4e04-94c4-1155c33c0fc9",
-    "user_id": "bd5874d6-6662-4b24-a9f01c128871e4ac",
-    "ended_at": "2018-01-09T20:00:00+00:00",
-    "metrics": {
-        "disk.write.bytes.rate": {
-            "archive_policy_name": "high"
-        }
-    }
-}
-`
-
 // ResourceCreateWithoutMetricsResult represents a raw server responce to the ResourceCreateNoMetricsRequest.
 const ResourceCreateWithoutMetricsResult = `
 {
@@ -178,6 +148,21 @@ const ResourceCreateWithoutMetricsResult = `
     "started_at": "2018-01-03T11:44:31.155732+00:00",
     "type": "generic",
     "user_id": "bd5874d6-6662-4b24-a9f01c128871e4ac"
+}
+`
+
+// ResourceCreateLinkMetricsRequest represents a request to create a resource with linked metrics.
+const ResourceCreateLinkMetricsRequest = `
+{
+    "id": "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
+    "project_id": "4154f088-8333-4e04-94c4-1155c33c0fc9",
+    "user_id": "bd5874d6-6662-4b24-a9f01c128871e4ac",
+    "started_at": "2018-01-02T23:23:34+00:00",
+    "ended_at": "2018-01-04T10:00:12+00:00",
+    "metrics": {
+        "network.incoming.bytes.rate": "01b2953e-de74-448a-a305-c84440697933",
+        "network.outgoing.bytes.rate": "dc9f3198-155b-4b88-a92c-58a3853ce2b2"
+    }
 }
 `
 
@@ -200,6 +185,21 @@ const ResourceCreateLinkMetricsResult = `
     "started_at": "2018-01-02T23:23:34+00:00",
     "type": "compute_instance_network",
     "user_id": "bd5874d6-6662-4b24-a9f01c128871e4ac"
+}
+`
+
+// ResourceCreateWithMetricsRequest represents a request to simultaneously create a resource with metrics.
+const ResourceCreateWithMetricsRequest = `
+{
+    "id": "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
+    "project_id": "4154f088-8333-4e04-94c4-1155c33c0fc9",
+    "user_id": "bd5874d6-6662-4b24-a9f01c128871e4ac",
+    "ended_at": "2018-01-09T20:00:00+00:00",
+    "metrics": {
+        "disk.write.bytes.rate": {
+            "archive_policy_name": "high"
+        }
+    }
 }
 `
 
