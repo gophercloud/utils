@@ -2,7 +2,6 @@ package measures
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/gophercloud/gophercloud/pagination"
 )
@@ -55,9 +54,6 @@ func (r *Measure) UnmarshalJSON(b []byte) error {
 	r.TimeStamp = measuresSlice[0].(string)
 	r.Granularity = measuresSlice[1].(float64)
 	r.Value = measuresSlice[2].(float64)
-
-	fmt.Printf("measuresSlice: %#v\n", measuresSlice)
-	fmt.Printf("r: %#v\n", r)
 
 	return nil
 }

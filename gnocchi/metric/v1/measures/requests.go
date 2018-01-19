@@ -1,7 +1,6 @@
 package measures
 
 import (
-	"fmt"
 	"strings"
 	"time"
 
@@ -45,9 +44,6 @@ type ListOpts struct {
 func (opts ListOpts) ToMeasureListQuery() (string, error) {
 	q, err := gophercloud.BuildQueryString(opts)
 
-	// delete
-	fmt.Printf("ToMeasureListQuery start: %s\n", q.String())
-
 	if opts.Start != nil {
 		start := strings.Join([]string{"start=", opts.Start.Format(gnocchi.RFC3339NanoNoTimezone)}, "")
 		q.RawQuery = strings.Join([]string{q.RawQuery, start}, "&")
@@ -57,9 +53,6 @@ func (opts ListOpts) ToMeasureListQuery() (string, error) {
 		stop := strings.Join([]string{"stop=", opts.Stop.Format(gnocchi.RFC3339NanoNoTimezone)}, "")
 		q.RawQuery = strings.Join([]string{q.RawQuery, stop}, "&")
 	}
-
-	// delete
-	fmt.Printf("ToMeasureListQuery finish: %s\n", q.String())
 
 	return q.String(), err
 }
