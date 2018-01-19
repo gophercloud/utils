@@ -45,6 +45,8 @@ Example of Creating a metric without an archive policy, assuming that Gnocchi ha
 archive policy rule and can assign the policy automatically
 
 	createOpts := metrics.CreateOpts{
+		ResourceID: "1f3a0724-1807-4bd1-81f9-ee18c8ff6ccc",
+		Name: "memory.usage",
 		Unit: "MB",
 	}
 	metric, err := metrics.Create(gnocchiClient, createOpts).Extract()
