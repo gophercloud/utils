@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/gophercloud/gophercloud"
+	"github.com/gophercloud/gophercloud/acceptance/tools"
 	"github.com/gophercloud/utils/gnocchi/metric/v1/metrics"
 )
 
@@ -13,8 +14,10 @@ func CreateMetric(t *testing.T, client *gophercloud.ServiceClient) (*metrics.Met
 	// Metric will be created assuming that your Gnocchi's indexer installation was configured with
 	// the "gnocchi-manage --noskip-archive-policies-creation" command. So Gnocchi has the default policies:
 	// "low", "medium", "high", "bool".
+	name := tools.RandomString("TESTACCT-", 8)
 	createOpts := metrics.CreateOpts{
 		ArchivePolicyName: "low",
+		Name:              name,
 	}
 	t.Logf("Attempting to create a Gnocchi metric")
 
