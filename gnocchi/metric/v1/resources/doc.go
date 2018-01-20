@@ -42,13 +42,13 @@ Example of Creating a resource without a metric
 		panic(err)
 	}
 
-Example of Creating a resource with links to some existing metrics with an ending timestamp of the resource
+Example of Creating a resource with links to some existing metrics with a starting timestamp of the resource
 
-	endedAt := time.Date(2018, 1, 4, 10, 0, 0, 0, time.UTC)
+	startedAt := time.Date(2018, 1, 4, 10, 0, 0, 0, time.UTC)
 	createOpts := resources.CreateOpts{
 		ID: "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
 		ProjectID: "4154f088-8333-4e04-94c4-1155c33c0fc9",
-		EndedAt: &endedAt,
+		StartedAt: &startedAt,
 		Metrics: map[string]interface{}{
 			"disk.read.bytes.rate": "ed1bb76f-6ccc-4ad2-994c-dbb19ddccbae",
 			"disk.write.bytes.rate": "0a2da84d-4753-43f5-a65f-0f8d44d2766c",
