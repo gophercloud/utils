@@ -112,3 +112,39 @@ func TestGet(t *testing.T) {
 	})
 	th.AssertEquals(t, s.Unit, "packet/s")
 }
+
+func TestCreate(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/v1/metric", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "POST")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "Content-Type", "application/json")
+		th.TestHeader(t, r, "Accept", "application/json")
+		th.TestJSONRequest(t, r, MetricCreateRequest)
+
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+
+		fmt.Fprintf(w, MetricCreateResponse)
+	})
+
+	opts := metrics.CreateOpts{
+		ArchivePolicyName: "high",
+		Name:              "network.incoming.bytes.rate",
+		ResourceID:        "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
+		Unit:              "B/s",
+	}
+	s, err := metrics.Create(fake.ServiceClient(), opts).Extract()
+	th.AssertNoErr(t, err)
+
+	th.AssertEquals(t, s.ArchivePolicyName, "high")
+	th.AssertEquals(t, s.CreatedByProjectID, "3d40ca37-7234-4911-8987b9f288f4ae84")
+	th.AssertEquals(t, s.CreatedByUserID, "fdcfb420-c096-45e6-9e177a0bb1950884")
+	th.AssertEquals(t, s.Creator, "fdcfb420-c096-45e6-9e177a0bb1950884:3d40ca37-7234-4911-8987b9f288f4ae84")
+	th.AssertEquals(t, s.ID, "01b2953e-de74-448a-a305-c84440697933")
+	th.AssertEquals(t, s.Name, "network.incoming.bytes.rate")
+	th.AssertEquals(t, s.ResourceID, "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55")
+	th.AssertEquals(t, s.Unit, "B/s")
+}
