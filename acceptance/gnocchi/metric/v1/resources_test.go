@@ -16,12 +16,12 @@ func TestResourcesCRUD(t *testing.T) {
 		t.Fatalf("Unable to create a Gnocchi client: %v", err)
 	}
 
-	resource, err := CreateResource(t, client)
+	genericResource, err := CreateGenericResource(t, client)
 	if err != nil {
-		t.Fatalf("Unable to create Gnocchi resource: %v", err)
+		t.Fatalf("Unable to create a generic Gnocchi resource: %v", err)
 	}
 
-	tools.PrintResource(t, resource)
+	tools.PrintResource(t, genericResource)
 }
 
 func TestResourcesList(t *testing.T) {
