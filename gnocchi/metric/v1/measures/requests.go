@@ -60,8 +60,8 @@ func (opts ListOpts) ToMeasureListQuery() (string, error) {
 // List returns a Pager which allows you to iterate over a collection of
 // measures.
 // It accepts a ListOpts struct, which allows you to provide options to a Gnocchi measures List request.
-func List(c *gophercloud.ServiceClient, measureID string, opts ListOptsBuilder) pagination.Pager {
-	url := listURL(c, measureID)
+func List(c *gophercloud.ServiceClient, metricID string, opts ListOptsBuilder) pagination.Pager {
+	url := listURL(c, metricID)
 	if opts != nil {
 		query, err := opts.ToMeasureListQuery()
 		if err != nil {
