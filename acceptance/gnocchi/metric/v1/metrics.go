@@ -29,3 +29,16 @@ func CreateMetric(t *testing.T, client *gophercloud.ServiceClient) (*metrics.Met
 	t.Logf("Successfully created the Gnocchi metric.")
 	return metric, nil
 }
+
+// DeleteMetric will delete a Gnocchi metric with a specified ID.
+// A fatal error will occur if the delete was not successful.
+func DeleteMetric(t *testing.T, client *gophercloud.ServiceClient, metricID string) {
+	t.Logf("Attempting to delete the Gnocchi metric: %s", metricID)
+
+	err := metrics.Delete(client, metricID).ExtractErr()
+	if err != nil {
+		t.Fatalf("Unable to delete the Gnocchi metric %s: %v", metricID, err)
+	}
+
+	t.Logf("Deleted the Gnocchi metric: %s", metricID)
+}

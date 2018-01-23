@@ -30,6 +30,12 @@ type CreateResult struct {
 	commonResult
 }
 
+// DeleteResult represents the result of a delete operation. Call its
+// ExtractErr method to determine if the request succeeded or failed.
+type DeleteResult struct {
+	gophercloud.ErrResult
+}
+
 // Metric is an entity storing aggregates identified by an UUID.
 // It can be attached to a resource using a name.
 // How a metric stores its aggregates is defined by the archive policy

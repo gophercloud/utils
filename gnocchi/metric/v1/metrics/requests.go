@@ -115,3 +115,14 @@ func Create(client *gophercloud.ServiceClient, opts CreateOptsBuilder) (r Create
 	})
 	return
 }
+
+// Delete accepts a unique ID and deletes the Gnocchi metric associated with it.
+func Delete(c *gophercloud.ServiceClient, metricID string) (r DeleteResult) {
+	requestOpts := &gophercloud.RequestOpts{
+		MoreHeaders: map[string]string{
+			"Accept": "application/json, */*",
+		},
+	}
+	_, r.Err = c.Delete(deleteURL(c, metricID), requestOpts)
+	return
+}

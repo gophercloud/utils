@@ -23,3 +23,7 @@ func getURL(c *gophercloud.ServiceClient, metricID string) string {
 func createURL(c *gophercloud.ServiceClient) string {
 	return rootURL(c)
 }
+
+func deleteURL(c *gophercloud.ServiceClient, metricID string) string {
+	return resourceURL(c, metricID)
+}
