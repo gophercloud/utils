@@ -1,7 +1,7 @@
 package measures
 
 import (
-	"strings"
+	"net/url"
 	"time"
 
 	"github.com/gophercloud/gophercloud"
@@ -43,17 +43,17 @@ type ListOpts struct {
 // ToMeasureListQuery formats a ListOpts into a query string.
 func (opts ListOpts) ToMeasureListQuery() (string, error) {
 	q, err := gophercloud.BuildQueryString(opts)
+	params := q.Query()
 
 	if opts.Start != nil {
-		start := strings.Join([]string{"start=", opts.Start.Format(gnocchi.RFC3339NanoNoTimezone)}, "")
-		q.RawQuery = strings.Join([]string{q.RawQuery, start}, "&")
+		params.Add("start", opts.Start.Format(gnocchi.RFC3339NanoNoTimezone))
 	}
 
 	if opts.Stop != nil {
-		stop := strings.Join([]string{"stop=", opts.Stop.Format(gnocchi.RFC3339NanoNoTimezone)}, "")
-		q.RawQuery = strings.Join([]string{q.RawQuery, stop}, "&")
+		params.Add("stop", opts.Stop.Format(gnocchi.RFC3339NanoNoTimezone))
 	}
 
+	q = &url.URL{RawQuery: params.Encode()}
 	return q.String(), err
 }
 
