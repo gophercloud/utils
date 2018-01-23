@@ -53,7 +53,7 @@ func TestListMeasures(t *testing.T) {
 	th.CheckEquals(t, 1, pages)
 }
 
-func TestPushMeasures(t *testing.T) {
+func TestCreateMeasures(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
 
@@ -65,8 +65,8 @@ func TestPushMeasures(t *testing.T) {
 		w.WriteHeader(http.StatusAccepted)
 	})
 
-	pushOpts := measures.PushOpts{
-		Measures: []measures.MeasureToPush{
+	createOpts := measures.CreateOpts{
+		Measures: []measures.MeasureOpts{
 			{
 				TimeStamp: time.Date(2018, 1, 18, 12, 31, 0, 0, time.UTC),
 				Value:     101.2,
@@ -77,7 +77,7 @@ func TestPushMeasures(t *testing.T) {
 			},
 		},
 	}
-	res := measures.Push(fake.ServiceClient(), "9e5a6441-1044-4181-b66e-34e180753040", pushOpts)
+	res := measures.Create(fake.ServiceClient(), "9e5a6441-1044-4181-b66e-34e180753040", createOpts)
 	if res.Err.Error() == "EOF" {
 		res.Err = nil
 	}

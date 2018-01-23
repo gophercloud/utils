@@ -11,9 +11,9 @@ import (
 	"github.com/gophercloud/gophercloud/pagination"
 )
 
-// PushResult represents the result of a push operation. Call its
+// CreateResult represents the result of a create operation. Call its
 // ExtractErr method to determine if the request succeeded or failed.
-type PushResult struct {
+type CreateResult struct {
 	gophercloud.ErrResult
 }
 

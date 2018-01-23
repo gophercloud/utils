@@ -19,10 +19,10 @@ func TestMeasuresCRUD(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unable to create a Gnocchi metric: %v", err)
 	}
-	// defer DeleteMetric(t, client, metric.ID)
+	defer DeleteMetric(t, client, metric.ID)
 
-	if err := PushMeasures(t, client, metric.ID); err != nil {
-		t.Fatalf("Unable to push measures into the Gnocchi metric: %v", err)
+	if err := CreateMeasures(t, client, metric.ID); err != nil {
+		t.Fatalf("Unable to create measures inside the Gnocchi metric: %v", err)
 	}
 
 	listOpts := measures.ListOpts{

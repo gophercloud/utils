@@ -74,65 +74,63 @@ func List(c *gophercloud.ServiceClient, metricID string, opts ListOptsBuilder) p
 	})
 }
 
-// MeasureToPush represents a single measure that can be pushed into the Gnocchi API.
-type MeasureToPush struct {
-	// TimeStamp represents a timestamp of when measure is pushed into the Gnocchi.
+// CreateOptsBuilder is needed to add measures to the Create request.
+type CreateOptsBuilder interface {
+	ToMeasureCreateMap() (map[string]interface{}, error)
+}
+
+// MeasureOpts represents options of a single measure that can be created in the Gnocchi.
+type MeasureOpts struct {
+	// TimeStamp represents a measure creation timestamp.
 	TimeStamp time.Time
 
-	// Value represents a value of data that is pushed into the Gnocchi.
+	// Value represents a measure data value.
 	Value float64
 }
 
-// PushOptsBuilder is needed to add measures to the Push request.
-type PushOptsBuilder interface {
-	ToMeasurePushMap() (map[string]interface{}, error)
-}
-
-// PushOpts specifies a parameters for pushing measures into a single metric.
-type PushOpts struct {
-	// Measures is a set of measures that needs to be pushed to a single metric.
-	Measures []MeasureToPush
-}
-
-// ToMeasurePushMap constructs a request body from PushOpts.
-func (opts PushOpts) ToMeasurePushMap() (map[string]interface{}, error) {
-	// Struct measureToPush represents internal MeasureToPush variant with string timestamps.
-	type measureToPush struct {
+// ToMap is a helper function to convert individual MeasureOpts structure into a sub-map.
+func (opts MeasureOpts) ToMap() (map[string]interface{}, error) {
+	// Struct measureToCreate represents internal MeasureOpts variant with string timestamps.
+	type measureToCreate struct {
 		TimeStamp string  `json:"timestamp"`
 		Value     float64 `json:"value"`
 	}
-	type pushOpts struct {
-		Measures []measureToPush
-	}
 
-	// Convert exported PushOpts to internal pushOpts variant that contains measures with string timestamps.
-	internalMeasures := make([]measureToPush, len(opts.Measures))
-	for i, m := range opts.Measures {
-		internalMeasures[i] = measureToPush{
-			TimeStamp: m.TimeStamp.Format(gnocchi.RFC3339NanoNoTimezone),
-			Value:     m.Value,
-		}
+	// Convert exported MeasureOpts to its internal representation.
+	m := &measureToCreate{
+		TimeStamp: opts.TimeStamp.Format(gnocchi.RFC3339NanoNoTimezone),
+		Value:     opts.Value,
 	}
-	internalPushOpts := pushOpts{
-		Measures: internalMeasures,
-	}
-
-	b, err := gophercloud.BuildRequestBody(internalPushOpts, "")
-	if err != nil {
-		return nil, err
-	}
-
-	return b, nil
+	return gophercloud.BuildRequestBody(m, "")
 }
 
-// Push requests the creation of a new measures in the single Gnocchi metric.
-func Push(client *gophercloud.ServiceClient, metricID string, opts PushOptsBuilder) (r PushResult) {
-	b, err := opts.ToMeasurePushMap()
+// CreateOpts specifies a parameters for creating measures for a single metric.
+type CreateOpts struct {
+	// Measures is a set of measures for a single metric that needs to be created.
+	Measures []MeasureOpts
+}
+
+// ToMeasureCreateMap constructs a request body from CreateOpts.
+func (opts CreateOpts) ToMeasureCreateMap() (map[string]interface{}, error) {
+	measures := make([]map[string]interface{}, len(opts.Measures))
+	for i, m := range opts.Measures {
+		measureMap, err := m.ToMap()
+		if err != nil {
+			return nil, err
+		}
+		measures[i] = measureMap
+	}
+	return map[string]interface{}{"measures": measures}, nil
+}
+
+// Create requests the creation of a new measures in the single Gnocchi metric.
+func Create(client *gophercloud.ServiceClient, metricID string, opts CreateOptsBuilder) (r CreateResult) {
+	b, err := opts.ToMeasureCreateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(pushURL(client, metricID), b["Measures"], &r.Body, &gophercloud.RequestOpts{
+	_, r.Err = client.Post(pushURL(client, metricID), b["measures"], &r.Body, &gophercloud.RequestOpts{
 		OkCodes: []int{202},
 		MoreHeaders: map[string]string{
 			"Accept": "application/json, */*",

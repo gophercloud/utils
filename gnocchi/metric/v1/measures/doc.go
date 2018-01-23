@@ -24,10 +24,10 @@ Example of Listing measures of a known metric
 		fmt.Printf("%+v\n", measure)
 	}
 
-Example of Pushing measures to a single metric
+Example of Creating measures inside a single metric
 
-	pushOpts := measures.PushOpts{
-		Measures: []measures.MeasureToPush{
+	createOpts := measures.CreateOpts{
+		Measures: []measures.MeasureOpts{
 			{
 				TimeStamp: time.Date(2018, 1, 18, 12, 31, 0, 0, time.UTC),
 				Value:     101.2,
@@ -39,7 +39,7 @@ Example of Pushing measures to a single metric
 		},
 	}
 	metricID := "9e5a6441-1044-4181-b66e-34e180753040"
-	if err := measures.Push(gnocchiClient, metricID, pushOpts).ExtractErr(); err != nil && err.Error() != "EOF" {
+	if err := measures.Create(gnocchiClient, metricID, createOpts).ExtractErr(); err != nil && err.Error() != "EOF" {
 		panic(err)
 	}
 */
