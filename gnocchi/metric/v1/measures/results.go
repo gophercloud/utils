@@ -2,6 +2,11 @@ package measures
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
+	"time"
+
+	"github.com/gophercloud/utils/gnocchi"
 
 	"github.com/gophercloud/gophercloud/pagination"
 )
@@ -9,7 +14,7 @@ import (
 // Measure is an datapoint thats is composed with a timestamp and a value.
 type Measure struct {
 	// TimeStamp represents a timestamp of when measure was pushed into the Gnocchi.
-	TimeStamp string `json:"-"`
+	TimeStamp time.Time `json:"-"`
 
 	// Granularity is a level of precision that is kept when aggregating data.
 	Granularity float64 `json:"-"`
@@ -39,21 +44,47 @@ Gnocchi APIv1 returns measures in a such format:
 Helper unmarshals every nested array into the Measure type.
 */
 func (r *Measure) UnmarshalJSON(b []byte) error {
-	type tmp Measure
 	var measuresSlice []interface{}
-
-	var s struct {
-		tmp
-	}
 	err := json.Unmarshal(b, &measuresSlice)
 	if err != nil {
 		return err
 	}
 
+	// We need to check that a measure contains all needed data.
+	if len(measuresSlice) != 3 {
+		errMsg := fmt.Sprintf("got an invalid measure: %v", measuresSlice)
+		return errors.New(errMsg)
+	}
+
+	type tmp Measure
+	var s struct {
+		tmp
+	}
 	*r = Measure(s.tmp)
-	r.TimeStamp = measuresSlice[0].(string)
-	r.Granularity = measuresSlice[1].(float64)
-	r.Value = measuresSlice[2].(float64)
+
+	// Populate a measure's timestamp.
+	var timeStamp string
+	var ok bool
+	if timeStamp, ok = measuresSlice[0].(string); !ok {
+		errMsg := fmt.Sprintf("got an invalid timestamp of a measure %v: %v", measuresSlice, measuresSlice[0])
+		return errors.New(errMsg)
+	}
+	r.TimeStamp, err = time.Parse(gnocchi.RFC3339NanoTimezone, timeStamp)
+	if err != nil {
+		return err
+	}
+
+	// Populate a measure's granularity.
+	if r.Granularity, ok = measuresSlice[1].(float64); !ok {
+		errMsg := fmt.Sprintf("got an invalid granularity of a measure %v: %v", measuresSlice, measuresSlice[1])
+		return errors.New(errMsg)
+	}
+
+	// Populate a measure's value.
+	if r.Value = measuresSlice[2].(float64); !ok {
+		errMsg := fmt.Sprintf("got an invalid value of a measure %v: %v", measuresSlice, measuresSlice[2])
+		return errors.New(errMsg)
+	}
 
 	return nil
 }
