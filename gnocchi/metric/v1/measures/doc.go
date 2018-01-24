@@ -42,5 +42,35 @@ Example of Creating measures inside a single metric
 	if err := measures.Create(gnocchiClient, metricID, createOpts).ExtractErr(); err != nil && err.Error() != "EOF" {
 		panic(err)
 	}
+
+Example of Creating measures inside different metrics via metric ID references in one request
+
+	createOpts := measures.CreateBatchMetricsOpts{
+		BatchOpts: map[string][]measures.MeasureOpts{
+			"777a01d6-4694-49cb-b86a-5ba9fd4e609e": []measures.MeasureOpts{
+				{
+					TimeStamp: time.Date(2018, 1, 10, 01, 00, 0, 0, time.UTC),
+					Value:     200.5,
+				},
+				{
+					TimeStamp: time.Date(2018, 1, 10, 01, 30, 0, 0, time.UTC),
+					Value:     300,
+				},
+			},
+			"6dbc97c5-bfdf-47a2-b184-02e7fa348d21": []measures.MeasureOpts{
+				{
+					TimeStamp: time.Date(2018, 1, 10, 01, 00, 0, 0, time.UTC),
+					Value:     111.1,
+				},
+				{
+					TimeStamp: time.Date(2018, 1, 10, 02, 45, 0, 0, time.UTC),
+					Value:     222.22,
+				},
+			},
+		},
+	}
+	if err := measures.CreateBatchMetrics(gnocchiClient, createOpts).ExtractErr(); err != nil && err.Error() != "EOF" {
+		panic(err)
+	}
 */
 package measures

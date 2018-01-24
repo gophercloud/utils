@@ -17,6 +17,12 @@ type CreateResult struct {
 	gophercloud.ErrResult
 }
 
+// CreateBatchMetricsResult represents the result of a create batch operation. Call its
+// ExtractErr method to determine if the request succeeded or failed.
+type CreateBatchMetricsResult struct {
+	gophercloud.ErrResult
+}
+
 // Measure is an datapoint thats is composed with a timestamp and a value.
 type Measure struct {
 	// Timestamp represents a timestamp of when measure was pushed into the Gnocchi.

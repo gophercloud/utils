@@ -43,3 +43,54 @@ func TestMeasuresCRUD(t *testing.T) {
 
 	t.Log(metricMeasures)
 }
+
+func TestBatchMetricsMeasuresCreation(t *testing.T) {
+	client, err := clients.NewGnocchiV1Client()
+	if err != nil {
+		t.Fatalf("Unable to create a Gnocchi client: %v", err)
+	}
+
+	// Create a couple of metrics to test CreateBatchMetrics requets.
+	metricToBatchOne, err := CreateMetric(t, client)
+	if err != nil {
+		t.Fatalf("Unable to create a Gnocchi metric: %v", err)
+	}
+	defer DeleteMetric(t, client, metricToBatchOne.ID)
+
+	metricToBatchTwo, err := CreateMetric(t, client)
+	if err != nil {
+		t.Fatalf("Unable to create a Gnocchi metric: %v", err)
+	}
+	defer DeleteMetric(t, client, metricToBatchTwo.ID)
+
+	// Test create batch request based on metrics IDs.
+	if err := CreateBatchMetricsMeasures(t, client, metricToBatchOne.ID, metricToBatchTwo.ID); err != nil {
+		t.Fatalf("Unable to create measures inside Gnocchi metrics: %v", err)
+	}
+
+	// Check measures of each metric after the CreateBatchMetrics request.
+	listOpts := measures.ListOpts{
+		Refresh: true,
+	}
+	allPagesMetricOne, err := measures.List(client, metricToBatchOne.ID, listOpts).AllPages()
+	if err != nil {
+		t.Fatalf("Unable to list measures of the metric %s: %v", metricToBatchOne.ID, err)
+	}
+	metricOneMeasures, err := measures.ExtractMeasures(allPagesMetricOne)
+	if err != nil {
+		t.Fatalf("Unable to extract measures: %v", metricOneMeasures)
+	}
+
+	t.Log(metricOneMeasures)
+
+	allPagesMetricTwo, err := measures.List(client, metricToBatchTwo.ID, listOpts).AllPages()
+	if err != nil {
+		t.Fatalf("Unable to list measures of the metric %s: %v", metricToBatchTwo.ID, err)
+	}
+	metricTwoMeasures, err := measures.ExtractMeasures(allPagesMetricTwo)
+	if err != nil {
+		t.Fatalf("Unable to extract measures: %v", metricTwoMeasures)
+	}
+
+	t.Log(metricTwoMeasures)
+}
