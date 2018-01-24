@@ -12,6 +12,6 @@ func listURL(c *gophercloud.ServiceClient, metricID string) string {
 	return resourceURL(c, metricID)
 }
 
-func pushURL(c *gophercloud.ServiceClient, metricID string) string {
+func createURL(c *gophercloud.ServiceClient, metricID string) string {
 	return resourceURL(c, metricID)
 }

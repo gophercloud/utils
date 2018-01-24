@@ -130,7 +130,7 @@ func Create(client *gophercloud.ServiceClient, metricID string, opts CreateOptsB
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(pushURL(client, metricID), b["measures"], &r.Body, &gophercloud.RequestOpts{
+	_, r.Err = client.Post(createURL(client, metricID), b["measures"], &r.Body, &gophercloud.RequestOpts{
 		OkCodes: []int{202},
 		MoreHeaders: map[string]string{
 			"Accept": "application/json, */*",
