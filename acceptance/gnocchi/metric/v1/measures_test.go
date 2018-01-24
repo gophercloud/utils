@@ -15,16 +15,19 @@ func TestMeasuresCRUD(t *testing.T) {
 		t.Fatalf("Unable to create a Gnocchi client: %v", err)
 	}
 
+	// Create a single metric to test Create measures request.
 	metric, err := CreateMetric(t, client)
 	if err != nil {
 		t.Fatalf("Unable to create a Gnocchi metric: %v", err)
 	}
 	defer DeleteMetric(t, client, metric.ID)
 
+	// Test Create measures request.
 	if err := CreateMeasures(t, client, metric.ID); err != nil {
 		t.Fatalf("Unable to create measures inside the Gnocchi metric: %v", err)
 	}
 
+	// Check created measures.
 	listOpts := measures.ListOpts{
 		Refresh: true,
 	}

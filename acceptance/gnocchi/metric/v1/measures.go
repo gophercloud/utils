@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gophercloud/gophercloud"
+	"github.com/gophercloud/gophercloud/acceptance/tools"
 	"github.com/gophercloud/utils/gnocchi/metric/v1/measures"
 )
 
@@ -13,14 +14,16 @@ import (
 func CreateMeasures(t *testing.T, client *gophercloud.ServiceClient, metricID string) error {
 	currentTimeStamp := time.Now().UTC()
 	pastHourTimeStamp := currentTimeStamp.Add(-1 * time.Hour)
+	currentValue := float64(tools.RandomInt(100, 200))
+	pastHourValue := float64(tools.RandomInt(500, 600))
 	measuresToCreate := []measures.MeasureOpts{
 		{
 			TimeStamp: currentTimeStamp,
-			Value:     100.5,
+			Value:     currentValue,
 		},
 		{
 			TimeStamp: pastHourTimeStamp,
-			Value:     500,
+			Value:     pastHourValue,
 		},
 	}
 	createOpts := measures.CreateOpts{
