@@ -2,7 +2,6 @@ package measures
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"time"
 
@@ -53,7 +52,7 @@ func (r *Measure) UnmarshalJSON(b []byte) error {
 	// We need to check that a measure contains all needed data.
 	if len(measuresSlice) != 3 {
 		errMsg := fmt.Sprintf("got an invalid measure: %v", measuresSlice)
-		return errors.New(errMsg)
+		return fmt.Errorf(errMsg)
 	}
 
 	type tmp Measure
@@ -67,7 +66,7 @@ func (r *Measure) UnmarshalJSON(b []byte) error {
 	var ok bool
 	if timeStamp, ok = measuresSlice[0].(string); !ok {
 		errMsg := fmt.Sprintf("got an invalid timestamp of a measure %v: %v", measuresSlice, measuresSlice[0])
-		return errors.New(errMsg)
+		return fmt.Errorf(errMsg)
 	}
 	r.TimeStamp, err = time.Parse(gnocchi.RFC3339NanoTimezone, timeStamp)
 	if err != nil {
@@ -77,13 +76,13 @@ func (r *Measure) UnmarshalJSON(b []byte) error {
 	// Populate a measure's granularity.
 	if r.Granularity, ok = measuresSlice[1].(float64); !ok {
 		errMsg := fmt.Sprintf("got an invalid granularity of a measure %v: %v", measuresSlice, measuresSlice[1])
-		return errors.New(errMsg)
+		return fmt.Errorf(errMsg)
 	}
 
 	// Populate a measure's value.
 	if r.Value = measuresSlice[2].(float64); !ok {
 		errMsg := fmt.Sprintf("got an invalid value of a measure %v: %v", measuresSlice, measuresSlice[2])
-		return errors.New(errMsg)
+		return fmt.Errorf(errMsg)
 	}
 
 	return nil
