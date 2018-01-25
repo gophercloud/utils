@@ -43,19 +43,19 @@ func CreateMeasures(t *testing.T, client *gophercloud.ServiceClient, metricID st
 // CreateBatchMetricsMeasures will create measures inside different metrics via batch request. An error will be returned if the
 // measures could not be created.
 func CreateBatchMetricsMeasures(t *testing.T, client *gophercloud.ServiceClient, metricIDs ...string) error {
-	currentTimeStamp := time.Now().UTC()
-	pastHourTimeStamp := currentTimeStamp.Add(-1 * time.Hour)
+	currentTimestamp := time.Now().UTC()
+	pastHourTimestamp := currentTimestamp.Add(-1 * time.Hour)
 	currentValue := float64(tools.RandomInt(100, 200))
 	pastHourValue := float64(tools.RandomInt(500, 600))
 	batchOpts := make(map[string][]measures.MeasureOpts)
 	for _, m := range metricIDs {
 		batchOpts[m] = []measures.MeasureOpts{
 			{
-				TimeStamp: currentTimeStamp,
+				Timestamp: &currentTimestamp,
 				Value:     currentValue,
 			},
 			{
-				TimeStamp: pastHourTimeStamp,
+				Timestamp: &pastHourTimestamp,
 				Value:     pastHourValue,
 			},
 		}

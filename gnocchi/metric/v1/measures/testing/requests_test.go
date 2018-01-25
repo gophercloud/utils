@@ -98,25 +98,27 @@ func TestCreateBatchMetricMeasures(t *testing.T) {
 		w.WriteHeader(http.StatusAccepted)
 	})
 
+	firstTimeStamp := time.Date(2018, 1, 10, 01, 00, 0, 0, time.UTC)
+	secondTimeStamp := time.Date(2018, 1, 10, 02, 45, 0, 0, time.UTC)
 	createOpts := measures.CreateBatchMetricsOpts{
 		BatchOpts: map[string][]measures.MeasureOpts{
 			"777a01d6-4694-49cb-b86a-5ba9fd4e609e": []measures.MeasureOpts{
 				{
-					TimeStamp: time.Date(2018, 1, 10, 01, 00, 0, 0, time.UTC),
+					Timestamp: &firstTimeStamp,
 					Value:     200.5,
 				},
 				{
-					TimeStamp: time.Date(2018, 1, 10, 01, 30, 0, 0, time.UTC),
+					Timestamp: &secondTimeStamp,
 					Value:     300,
 				},
 			},
 			"6dbc97c5-bfdf-47a2-b184-02e7fa348d21": []measures.MeasureOpts{
 				{
-					TimeStamp: time.Date(2018, 1, 10, 01, 00, 0, 0, time.UTC),
+					Timestamp: &firstTimeStamp,
 					Value:     111.1,
 				},
 				{
-					TimeStamp: time.Date(2018, 1, 10, 02, 45, 0, 0, time.UTC),
+					Timestamp: &secondTimeStamp,
 					Value:     222.22,
 				},
 			},
