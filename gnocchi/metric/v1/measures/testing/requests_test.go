@@ -134,3 +134,63 @@ func TestBatchCreateMetrics(t *testing.T) {
 	}
 	th.AssertNoErr(t, res.Err)
 }
+
+func TestCreateBatchResourcesMetricsMeasures(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/v1/batch/resources/metrics/measures", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "POST")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "Content-Type", "application/json")
+		th.TestHeader(t, r, "Accept", "application/json, */*")
+		w.WriteHeader(http.StatusAccepted)
+	})
+
+	firstTimestamp := time.Date(2018, 1, 20, 12, 30, 0, 0, time.UTC)
+	secondTimestamp := time.Date(2018, 1, 20, 13, 15, 0, 0, time.UTC)
+	createOpts := measures.CreateBatchResourcesMetricsOpts{
+		CreateMetrics: true,
+		BatchResourcesMetricsMeasuresOpts: map[string]map[string][]measures.MeasureOpts{
+			"75274f99-faf6-4112-a6d5-2794cb07c789": {
+				"network.incoming.bytes.rate": []measures.MeasureOpts{
+					{
+						Timestamp: &firstTimestamp,
+						Value:     1562.82,
+					},
+					{
+						Timestamp: &secondTimestamp,
+						Value:     768.1,
+					},
+				},
+				"network.outgoing.bytes.rate": []measures.MeasureOpts{
+					{
+						Timestamp: &firstTimestamp,
+						Value:     273,
+					},
+					{
+						Timestamp: &secondTimestamp,
+						Value:     3141.14,
+					},
+				},
+			},
+			"23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55": {
+				"disk.write.bytes.rate": []measures.MeasureOpts{
+					{
+						Timestamp: &firstTimestamp,
+						Value:     1237,
+					},
+					{
+						Timestamp: &secondTimestamp,
+						Value:     132.12,
+					},
+				},
+			},
+		},
+	}
+	res := measures.CreateBatchResourcesMetrics(fake.ServiceClient(), createOpts)
+	if res.Err.Error() == "EOF" {
+		res.Err = nil
+	}
+	th.AssertNoErr(t, res.Err)
+}
