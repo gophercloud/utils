@@ -72,7 +72,7 @@ type CreateOptsBuilder interface {
 // CreateOpts specifies parameters of a new Gnocchi resource.
 type CreateOpts struct {
 	// ID uniquely identifies the Gnocchi resource.
-	ID string `json:"id"`
+	ID string `json:"id" required:"true"`
 
 	// Metrics field can be used to link existing metrics in the resource
 	// or to create metrics with the resource at the same time to save
