@@ -18,11 +18,11 @@ func CreateMeasures(t *testing.T, client *gophercloud.ServiceClient, metricID st
 	pastHourValue := float64(tools.RandomInt(500, 600))
 	measuresToCreate := []measures.MeasureOpts{
 		{
-			Timestamp: currentTimestamp,
+			Timestamp: &currentTimestamp,
 			Value:     currentValue,
 		},
 		{
-			Timestamp: pastHourTimestamp,
+			Timestamp: &pastHourTimestamp,
 			Value:     pastHourValue,
 		},
 	}

@@ -65,14 +65,16 @@ func TestCreateMeasures(t *testing.T) {
 		w.WriteHeader(http.StatusAccepted)
 	})
 
+	firstMeasureTimestamp := time.Date(2018, 1, 18, 12, 31, 0, 0, time.UTC)
+	secondMeasureTimestamp := time.Date(2018, 1, 18, 14, 32, 0, 0, time.UTC)
 	createOpts := measures.CreateOpts{
 		Measures: []measures.MeasureOpts{
 			{
-				Timestamp: time.Date(2018, 1, 18, 12, 31, 0, 0, time.UTC),
+				Timestamp: &firstMeasureTimestamp,
 				Value:     101.2,
 			},
 			{
-				Timestamp: time.Date(2018, 1, 18, 14, 32, 0, 0, time.UTC),
+				Timestamp: &secondMeasureTimestamp,
 				Value:     102,
 			},
 		},
