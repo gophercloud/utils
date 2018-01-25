@@ -82,10 +82,10 @@ type CreateOptsBuilder interface {
 // MeasureOpts represents options of a single measure that can be created in the Gnocchi.
 type MeasureOpts struct {
 	// Timestamp represents a measure creation timestamp.
-	Timestamp time.Time
+	Timestamp time.Time `json:"-" required:"true"`
 
 	// Value represents a measure data value.
-	Value float64
+	Value float64 `json:"-" required:"true"`
 }
 
 // ToMap is a helper function to convert individual MeasureOpts structure into a sub-map.
