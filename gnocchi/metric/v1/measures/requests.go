@@ -81,8 +81,8 @@ type CreateOptsBuilder interface {
 
 // MeasureOpts represents options of a single measure that can be created in the Gnocchi.
 type MeasureOpts struct {
-	// TimeStamp represents a measure creation timestamp.
-	TimeStamp time.Time
+	// Timestamp represents a measure creation timestamp.
+	Timestamp time.Time
 
 	// Value represents a measure data value.
 	Value float64
@@ -92,13 +92,13 @@ type MeasureOpts struct {
 func (opts MeasureOpts) ToMap() (map[string]interface{}, error) {
 	// Struct measureToCreate represents internal MeasureOpts variant with string timestamps.
 	type measureToCreate struct {
-		TimeStamp string  `json:"timestamp"`
+		Timestamp string  `json:"timestamp"`
 		Value     float64 `json:"value"`
 	}
 
 	// Convert exported MeasureOpts to its internal representation.
 	m := &measureToCreate{
-		TimeStamp: opts.TimeStamp.Format(gnocchi.RFC3339NanoNoTimezone),
+		Timestamp: opts.Timestamp.Format(gnocchi.RFC3339NanoNoTimezone),
 		Value:     opts.Value,
 	}
 	return gophercloud.BuildRequestBody(m, "")

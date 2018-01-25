@@ -12,17 +12,17 @@ import (
 // CreateMeasures will create measures inside a single Gnocchi metric. An error will be returned if the
 // measures could not be created.
 func CreateMeasures(t *testing.T, client *gophercloud.ServiceClient, metricID string) error {
-	currentTimeStamp := time.Now().UTC()
-	pastHourTimeStamp := currentTimeStamp.Add(-1 * time.Hour)
+	currentTimestamp := time.Now().UTC()
+	pastHourTimestamp := currentTimestamp.Add(-1 * time.Hour)
 	currentValue := float64(tools.RandomInt(100, 200))
 	pastHourValue := float64(tools.RandomInt(500, 600))
 	measuresToCreate := []measures.MeasureOpts{
 		{
-			TimeStamp: currentTimeStamp,
+			Timestamp: currentTimestamp,
 			Value:     currentValue,
 		},
 		{
-			TimeStamp: pastHourTimeStamp,
+			Timestamp: pastHourTimestamp,
 			Value:     pastHourValue,
 		},
 	}
