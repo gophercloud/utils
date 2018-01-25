@@ -1,8 +1,11 @@
 package resources
 
 import (
+	"time"
+
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/pagination"
+	"github.com/gophercloud/utils/gnocchi"
 )
 
 // ListOptsBuilder allows extensions to add additional parameters to the
@@ -57,5 +60,75 @@ func List(c *gophercloud.ServiceClient, opts ListOptsBuilder, resourceType strin
 // Get retrieves a specific Gnocchi resource based on its type and ID.
 func Get(c *gophercloud.ServiceClient, resourceType string, resourceID string) (r GetResult) {
 	_, r.Err = c.Get(getURL(c, resourceType, resourceID), &r.Body, nil)
+	return
+}
+
+// CreateOptsBuilder allows to add additional parameters to the
+// Create request.
+type CreateOptsBuilder interface {
+	ToResourceCreateMap() (map[string]interface{}, error)
+}
+
+// CreateOpts specifies parameters of a new Gnocchi resource.
+type CreateOpts struct {
+	// ID uniquely identifies the Gnocchi resource.
+	ID string `json:"id"`
+
+	// Metrics field can be used to link existing metrics in the resource
+	// or to create metrics with the resource at the same time to save
+	// some requests.
+	Metrics map[string]interface{} `json:"metrics,omitempty"`
+
+	// ProjectID is the Identity project of the resource.
+	ProjectID string `json:"project_id,omitempty"`
+
+	// UserID is the Identity user of the resource.
+	UserID string `json:"user_id,omitempty"`
+
+	// StartedAt is a resource creation timestamp.
+	StartedAt *time.Time `json:"-"`
+
+	// EndedAt is a timestamp of when the resource has ended.
+	EndedAt *time.Time `json:"-"`
+
+	// ExtraAttributes is a collection of keys and values that can be found in resources
+	// of different resource types.
+	ExtraAttributes map[string]interface{} `json:"-"`
+}
+
+// ToResourceCreateMap constructs a request body from CreateOpts.
+func (opts CreateOpts) ToResourceCreateMap() (map[string]interface{}, error) {
+	b, err := gophercloud.BuildRequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	if opts.StartedAt != nil {
+		b["started_at"] = opts.StartedAt.Format(gnocchi.RFC3339NanoTimezone)
+	}
+
+	if opts.EndedAt != nil {
+		b["ended_at"] = opts.EndedAt.Format(gnocchi.RFC3339NanoTimezone)
+	}
+
+	if opts.ExtraAttributes != nil {
+		for key, value := range opts.ExtraAttributes {
+			b[key] = value
+		}
+	}
+
+	return b, nil
+}
+
+// Create requests the creation of a new Gnocchi resource on the server.
+func Create(client *gophercloud.ServiceClient, resourceType string, opts CreateOptsBuilder) (r CreateResult) {
+	b, err := opts.ToResourceCreateMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+	_, r.Err = client.Post(createURL(client, resourceType), b, &r.Body, &gophercloud.RequestOpts{
+		OkCodes: []int{201},
+	})
 	return
 }

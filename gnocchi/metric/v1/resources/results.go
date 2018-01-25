@@ -27,6 +27,12 @@ type GetResult struct {
 	commonResult
 }
 
+// CreateResult represents the result of a create operation. Call its Extract
+// method to interpret it as a Gnocchi resource.
+type CreateResult struct {
+	commonResult
+}
+
 // Resource is an entity representing anything in your infrastructure
 // that you will associate metric(s) with.
 // It is identified by a unique ID and can contain attributes.
@@ -75,9 +81,9 @@ type Resource struct {
 	// UserID is the Identity user of the resource.
 	UserID string `json:"user_id"`
 
-	// Extra is a collection of keys and values that can be found in resources
+	// ExtraAttributes is a collection of keys and values that can be found in resources
 	// of different resource types.
-	Extra map[string]interface{} `json:"-"`
+	ExtraAttributes map[string]interface{} `json:"-"`
 }
 
 // UnmarshalJSON helps to unmarshal Resource fields into needed values.
@@ -85,11 +91,11 @@ func (r *Resource) UnmarshalJSON(b []byte) error {
 	type tmp Resource
 	var s struct {
 		tmp
-		Extra         map[string]interface{}          `json:"extra"`
-		RevisionStart gnocchi.JSONRFC3339NanoTimezone `json:"revision_start"`
-		RevisionEnd   gnocchi.JSONRFC3339NanoTimezone `json:"revision_end"`
-		StartedAt     gnocchi.JSONRFC3339NanoTimezone `json:"started_at"`
-		EndedAt       gnocchi.JSONRFC3339NanoTimezone `json:"ended_at"`
+		ExtraAttributes map[string]interface{}          `json:"extra_attributes"`
+		RevisionStart   gnocchi.JSONRFC3339NanoTimezone `json:"revision_start"`
+		RevisionEnd     gnocchi.JSONRFC3339NanoTimezone `json:"revision_end"`
+		StartedAt       gnocchi.JSONRFC3339NanoTimezone `json:"started_at"`
+		EndedAt         gnocchi.JSONRFC3339NanoTimezone `json:"ended_at"`
 	}
 	err := json.Unmarshal(b, &s)
 	if err != nil {
@@ -105,8 +111,8 @@ func (r *Resource) UnmarshalJSON(b []byte) error {
 
 	// Collect other resource fields
 	// and bundle them into Extra.
-	if s.Extra != nil {
-		r.Extra = s.Extra
+	if s.ExtraAttributes != nil {
+		r.ExtraAttributes = s.ExtraAttributes
 	} else {
 		var result interface{}
 		err := json.Unmarshal(b, &result)
@@ -118,7 +124,7 @@ func (r *Resource) UnmarshalJSON(b []byte) error {
 			delete(resultMap, "revision_end")
 			delete(resultMap, "started_at")
 			delete(resultMap, "ended_at")
-			r.Extra = internal.RemainingKeys(Resource{}, resultMap)
+			r.ExtraAttributes = internal.RemainingKeys(Resource{}, resultMap)
 		}
 	}
 

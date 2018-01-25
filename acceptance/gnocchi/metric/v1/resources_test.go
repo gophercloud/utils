@@ -10,6 +10,20 @@ import (
 	"github.com/gophercloud/utils/gnocchi/metric/v1/resources"
 )
 
+func TestResourcesCRUD(t *testing.T) {
+	client, err := clients.NewGnocchiV1Client()
+	if err != nil {
+		t.Fatalf("Unable to create a Gnocchi client: %v", err)
+	}
+
+	genericResource, err := CreateGenericResource(t, client)
+	if err != nil {
+		t.Fatalf("Unable to create a generic Gnocchi resource: %v", err)
+	}
+
+	tools.PrintResource(t, genericResource)
+}
+
 func TestResourcesList(t *testing.T) {
 	client, err := clients.NewGnocchiV1Client()
 	if err != nil {
