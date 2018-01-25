@@ -34,7 +34,7 @@ func TestListMeasures(t *testing.T) {
 		Stop:        &stopTime,
 		Granularity: "1h",
 	}
-	expected := ListArchivePoliciesExpected
+	expected := ListMeasuresExpected
 	pages := 0
 	err := measures.List(fake.ServiceClient(), metricID, opts).EachPage(func(page pagination.Page) (bool, error) {
 		pages++

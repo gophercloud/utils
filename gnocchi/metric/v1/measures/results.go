@@ -12,8 +12,8 @@ import (
 
 // Measure is an datapoint thats is composed with a timestamp and a value.
 type Measure struct {
-	// TimeStamp represents a timestamp of when measure was pushed into the Gnocchi.
-	TimeStamp time.Time `json:"-"`
+	// Timestamp represents a timestamp of when measure was pushed into the Gnocchi.
+	Timestamp time.Time `json:"-"`
 
 	// Granularity is a level of precision that is kept when aggregating data.
 	Granularity float64 `json:"-"`
@@ -68,7 +68,7 @@ func (r *Measure) UnmarshalJSON(b []byte) error {
 		errMsg := fmt.Sprintf("got an invalid timestamp of a measure %v: %v", measuresSlice, measuresSlice[0])
 		return fmt.Errorf(errMsg)
 	}
-	r.TimeStamp, err = time.Parse(gnocchi.RFC3339NanoTimezone, timeStamp)
+	r.Timestamp, err = time.Parse(gnocchi.RFC3339NanoTimezone, timeStamp)
 	if err != nil {
 		return err
 	}

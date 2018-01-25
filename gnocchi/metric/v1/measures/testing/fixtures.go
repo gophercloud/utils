@@ -27,20 +27,20 @@ const MeasuresListResult = `
 ]
 `
 
-// ListArchivePoliciesExpected represents an expected repsonse from a List request.
-var ListArchivePoliciesExpected = []measures.Measure{
+// ListMeasuresExpected represents an expected repsonse from a List request.
+var ListMeasuresExpected = []measures.Measure{
 	{
-		TimeStamp:   time.Date(2018, 1, 10, 12, 0, 0, 0, time.UTC),
+		Timestamp:   time.Date(2018, 1, 10, 12, 0, 0, 0, time.UTC),
 		Granularity: 3600.0,
 		Value:       15.0,
 	},
 	{
-		TimeStamp:   time.Date(2018, 1, 10, 13, 0, 0, 0, time.UTC),
+		Timestamp:   time.Date(2018, 1, 10, 13, 0, 0, 0, time.UTC),
 		Granularity: 3600.0,
 		Value:       10.0,
 	},
 	{
-		TimeStamp:   time.Date(2018, 1, 10, 14, 0, 0, 0, time.UTC),
+		Timestamp:   time.Date(2018, 1, 10, 14, 0, 0, 0, time.UTC),
 		Granularity: 3600.0,
 		Value:       20.0,
 	},
