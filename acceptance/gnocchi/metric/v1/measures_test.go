@@ -94,3 +94,21 @@ func TestMeasuresBatchCreateMetrics(t *testing.T) {
 
 	t.Logf("Measures for the metric: %s, %v", metricToBatchTwo.ID, metricTwoMeasures)
 }
+
+func TestBatchResourcesMetricsMeasuresCreation(t *testing.T) {
+	client, err := clients.NewGnocchiV1Client()
+	if err != nil {
+		t.Fatalf("Unable to create a Gnocchi client: %v", err)
+	}
+
+	// Create a couple of resources with metrics to test CreateBatchResourcesMetrics requets.
+	batchResourcesMetrics, err := CreateResourcesToBatchMeasures(t, client)
+	if err != nil {
+		t.Fatalf("Unable to create Gnocchi resources and metrics: %v", err)
+	}
+
+	// Test create batch request based on resource IDs.
+	if err := CreateBatchResourcesMetricsMeasures(t, client, batchResourcesMetrics); err != nil {
+		t.Fatalf("Unable to create measures inside Gnocchi metrics: %v", err)
+	}
+}

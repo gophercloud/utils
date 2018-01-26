@@ -222,7 +222,7 @@ type CreateBatchResourcesMetricsOpts struct {
 	BatchResourcesMetricsMeasuresOpts map[string]map[string][]MeasureOpts
 }
 
-// ToMeasureCreateBatchResourcesMetricsMap constructs a request body from CreateBatchMetricsOpts.
+// ToMeasureCreateBatchResourcesMetricsMap constructs a request body from the CreateBatchMetricsOpts.
 func (opts CreateBatchResourcesMetricsOpts) ToMeasureCreateBatchResourcesMetricsMap() (map[string]interface{}, error) {
 	// measures is an internal map representation of the MeasureOpts struct.
 	type measureOpts map[string]interface{}
@@ -256,13 +256,13 @@ func (opts CreateBatchResourcesMetricsOpts) ToMeasureCreateBatchResourcesMetrics
 	return map[string]interface{}{"batchResourceMetricsMeasures": batchResourceMetricsMeasuresOpts}, nil
 }
 
-// ToMeasureCreateBatchMetricsQuery formats a CreateBatchResourcesMetricsOpts into a query string.
+// ToMeasureCreateBatchMetricsQuery formats the CreateBatchResourcesMetricsOpts into a query string.
 func (opts CreateBatchResourcesMetricsOpts) ToMeasureCreateBatchMetricsQuery() (string, error) {
 	q, err := gophercloud.BuildQueryString(opts)
 	return q.String(), err
 }
 
-// CreateBatchResourcesMetrics requests the creation of a new measures inside metrics via resource IDs and metric names.
+// CreateBatchResourcesMetrics requests the creation of new measures inside metrics via resource IDs and metric names.
 func CreateBatchResourcesMetrics(client *gophercloud.ServiceClient, opts CreateBatchResourcesMetricsOptsBuilder) (r CreateBatchResourcesMetricsResult) {
 	url := createBatchResourcesMetricsURL(client)
 	if opts != nil {
