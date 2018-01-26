@@ -111,4 +111,9 @@ func TestBatchResourcesMetricsMeasuresCreation(t *testing.T) {
 	if err := CreateBatchResourcesMetricsMeasures(t, client, batchResourcesMetrics); err != nil {
 		t.Fatalf("Unable to create measures inside Gnocchi metrics: %v", err)
 	}
+
+	// Delete resources.
+	// for resourceID in batchResourcesMetrics {
+	// 	DeleteResource(t, client, "generic", resourceID)
+	// }
 }
