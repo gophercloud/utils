@@ -241,8 +241,8 @@ func (opts CreateBatchResourcesMetricsOpts) ToMeasureCreateBatchResourcesMetrics
 		metrics = make(map[string][]measureOpts)
 		for metricName, metricMeasures := range metricsMap {
 			measures = make([]measureOpts, len(metricMeasures))
-			for i, m := range metricMeasures {
-				measureMap, err := m.ToMap()
+			for i, measure := range metricMeasures {
+				measureMap, err := measure.ToMap()
 				if err != nil {
 					return nil, err
 				}
