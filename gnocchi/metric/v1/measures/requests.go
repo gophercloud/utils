@@ -158,16 +158,16 @@ func (opts CreateBatchMetricsOpts) ToMeasureCreateBatchMetricsMap() (map[string]
 	batchOpts := make(map[string][]measureOpts)
 
 	// Populate batchOpts.
-	for k, v := range opts.BatchOpts {
-		measures = make([]measureOpts, len(v))
-		for i, m := range v {
-			measureMap, err := m.ToMap()
+	for metricID, metricMeasures := range opts.BatchOpts {
+		measures = make([]measureOpts, len(metricMeasures))
+		for i, measure := range metricMeasures {
+			measureMap, err := measure.ToMap()
 			if err != nil {
 				return nil, err
 			}
 			measures[i] = measureMap
 		}
-		batchOpts[k] = measures
+		batchOpts[metricID] = measures
 	}
 
 	return map[string]interface{}{"batchMeasures": batchOpts}, nil
