@@ -73,3 +73,64 @@ func List(c *gophercloud.ServiceClient, metricID string, opts ListOptsBuilder) p
 		return MeasurePage{pagination.SinglePageBase(r)}
 	})
 }
+
+// CreateOptsBuilder is needed to add measures to the Create request.
+type CreateOptsBuilder interface {
+	ToMeasureCreateMap() (map[string]interface{}, error)
+}
+
+// MeasureOpts represents options of a single measure that can be created in the Gnocchi.
+type MeasureOpts struct {
+	// Timestamp represents a measure creation timestamp.
+	Timestamp *time.Time `json:"-" required:"true"`
+
+	// Value represents a measure data value.
+	Value float64 `json:"value" required:"true"`
+}
+
+// ToMap is a helper function to convert individual MeasureOpts structure into a sub-map.
+func (opts MeasureOpts) ToMap() (map[string]interface{}, error) {
+	b, err := gophercloud.BuildRequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+	if opts.Timestamp != nil {
+		b["timestamp"] = opts.Timestamp.Format(gnocchi.RFC3339NanoNoTimezone)
+	}
+	return b, nil
+}
+
+// CreateOpts specifies a parameters for creating measures for a single metric.
+type CreateOpts struct {
+	// Measures is a set of measures for a single metric that needs to be created.
+	Measures []MeasureOpts
+}
+
+// ToMeasureCreateMap constructs a request body from CreateOpts.
+func (opts CreateOpts) ToMeasureCreateMap() (map[string]interface{}, error) {
+	measures := make([]map[string]interface{}, len(opts.Measures))
+	for i, m := range opts.Measures {
+		measureMap, err := m.ToMap()
+		if err != nil {
+			return nil, err
+		}
+		measures[i] = measureMap
+	}
+	return map[string]interface{}{"measures": measures}, nil
+}
+
+// Create requests the creation of a new measures in the single Gnocchi metric.
+func Create(client *gophercloud.ServiceClient, metricID string, opts CreateOptsBuilder) (r CreateResult) {
+	b, err := opts.ToMeasureCreateMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+	_, r.Err = client.Post(createURL(client, metricID), b["measures"], &r.Body, &gophercloud.RequestOpts{
+		OkCodes: []int{202},
+		MoreHeaders: map[string]string{
+			"Accept": "application/json, */*",
+		},
+	})
+	return
+}
