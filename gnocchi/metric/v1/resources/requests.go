@@ -157,6 +157,10 @@ type UpdateOpts struct {
 
 	// EndedAt is a timestamp of when the resource has ended.
 	EndedAt *time.Time `json:"-"`
+
+	// ExtraAttributes is a collection of keys and values that can be found in resources
+	// of different resource types.
+	ExtraAttributes map[string]interface{} `json:"-"`
 }
 
 // ToResourceUpdateMap builds a request body from UpdateOpts.
@@ -172,6 +176,12 @@ func (opts UpdateOpts) ToResourceUpdateMap() (map[string]interface{}, error) {
 
 	if opts.EndedAt != nil {
 		b["ended_at"] = opts.EndedAt.Format(gnocchi.RFC3339NanoTimezone)
+	}
+
+	if opts.ExtraAttributes != nil {
+		for key, value := range opts.ExtraAttributes {
+			b[key] = value
+		}
 	}
 
 	return b, nil
