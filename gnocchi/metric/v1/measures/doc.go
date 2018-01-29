@@ -79,7 +79,7 @@ Example of Creating measures inside different metrics via metric ID references i
 		panic(err)
 	}
 
-Example of Creating measures inside different metrics via metric names and resource IDreferences of that metrics in one request
+Example of Creating measures inside different metrics via metric names and resource IDs references of that metrics in a one request
 
 	currentTimestamp := time.Now().UTC()
 	pastHourTimestamp := currentTimestamp.Add(-1 * time.Hour)

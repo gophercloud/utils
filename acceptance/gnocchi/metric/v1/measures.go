@@ -88,8 +88,6 @@ func CreateBatchResourcesMetricsMeasures(t *testing.T, client *gophercloud.Servi
 	batchOpts := make(map[string]map[string][]measures.MeasureOpts)
 
 	for resourceID, metricNames := range batchResourcesMetrics {
-		// DELETE
-		t.Logf("CreateBatchResourcesMetricsMeasures resourceID: %v\n", resourceID)
 		metricMap := make(map[string][]measures.MeasureOpts)
 		for _, metricName := range metricNames {
 			metricMap[metricName] = []measures.MeasureOpts{
