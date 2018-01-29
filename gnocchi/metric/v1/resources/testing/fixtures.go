@@ -227,7 +227,7 @@ const ResourceCreateWithMetricsResult = `
 // ResourceUpdateLinkMetricsRequest represents a request to update a resource and link some existing metrics.
 const ResourceUpdateLinkMetricsRequest = `
 {
-    "ended_at":"2018-01-14T13:00:00",
+    "ended_at":"2018-01-14T13:00:00+00:00",
     "metrics": {
         "network.incoming.bytes.rate": "01b2953e-de74-448a-a305-c84440697933"
     }
@@ -258,7 +258,7 @@ const ResourceUpdateLinkMetricsResponse = `
 // ResourceUpdateCreateMetricsRequest represents a request to update a resource and link some existing metrics.
 const ResourceUpdateCreateMetricsRequest = `
 {
-    "started_at":"2018-01-12T11:00:00",
+    "started_at":"2018-01-12T11:00:00+00:00",
     "metrics": {
         "disk.read.bytes.rate": {
             "archive_policy_name": "low"

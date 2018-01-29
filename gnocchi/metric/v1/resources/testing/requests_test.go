@@ -248,8 +248,9 @@ func TestUpdateLinkMetrics(t *testing.T) {
 		fmt.Fprintf(w, ResourceUpdateLinkMetricsResponse)
 	})
 
+	endedAt := time.Date(2018, 1, 14, 13, 0, 0, 0, time.UTC)
 	updateOpts := resources.UpdateOpts{
-		EndedAt: "2018-01-14T13:00:00",
+		EndedAt: &endedAt,
 		Metrics: map[string]interface{}{
 			"network.incoming.bytes.rate": "01b2953e-de74-448a-a305-c84440697933",
 		},
@@ -291,8 +292,9 @@ func TestUpdateCreateMetrics(t *testing.T) {
 		fmt.Fprintf(w, ResourceUpdateCreateMetricsResponse)
 	})
 
+	startedAt := time.Date(2018, 1, 12, 11, 0, 0, 0, time.UTC)
 	updateOpts := resources.UpdateOpts{
-		StartedAt: "2018-01-12T11:00:00",
+		StartedAt: &startedAt,
 		Metrics: map[string]interface{}{
 			"disk.read.bytes.rate": map[string]string{
 				"archive_policy_name": "low",

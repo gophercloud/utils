@@ -4,6 +4,7 @@ package v1
 
 import (
 	"testing"
+	"time"
 
 	"github.com/gophercloud/gophercloud/acceptance/tools"
 	"github.com/gophercloud/utils/acceptance/clients"
@@ -23,9 +24,11 @@ func TestResourcesCRUD(t *testing.T) {
 
 	tools.PrintResource(t, genericResource)
 
+	newStartedAt := time.Date(2018, 1, 1, 1, 1, 0, 0, time.UTC)
 	updateOpts := &resources.UpdateOpts{
-		StartedAt: "2018-01-01T01:01:01",
+		StartedAt: &newStartedAt,
 	}
+	t.Logf("Attempting to update a resource %s", genericResource.ID)
 	newGenericResource, err := resources.Update(client, genericResource.Type, genericResource.ID, updateOpts).Extract()
 	if err != nil {
 		t.Fatalf("Unable to update the generic Gnocchi resource: %v", err)

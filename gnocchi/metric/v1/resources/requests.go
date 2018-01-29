@@ -153,15 +153,28 @@ type UpdateOpts struct {
 	UserID string `json:"user_id,omitempty"`
 
 	// StartedAt is a resource creation timestamp.
-	StartedAt string `json:"started_at,omitempty"`
+	StartedAt *time.Time `json:"-"`
 
 	// EndedAt is a timestamp of when the resource has ended.
-	EndedAt string `json:"ended_at,omitempty"`
+	EndedAt *time.Time `json:"-"`
 }
 
 // ToResourceUpdateMap builds a request body from UpdateOpts.
 func (opts UpdateOpts) ToResourceUpdateMap() (map[string]interface{}, error) {
-	return gophercloud.BuildRequestBody(opts, "")
+	b, err := gophercloud.BuildRequestBody(opts, "")
+	if err != nil {
+		return nil, err
+	}
+
+	if opts.StartedAt != nil {
+		b["started_at"] = opts.StartedAt.Format(gnocchi.RFC3339NanoTimezone)
+	}
+
+	if opts.EndedAt != nil {
+		b["ended_at"] = opts.EndedAt.Format(gnocchi.RFC3339NanoTimezone)
+	}
+
+	return b, nil
 }
 
 // Update accepts a UpdateOpts struct and updates an existing Gnocchi resource using the
