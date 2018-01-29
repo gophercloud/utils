@@ -200,3 +200,14 @@ func Update(c *gophercloud.ServiceClient, resourceType, resourceID string, opts 
 	})
 	return
 }
+
+// Delete accepts a unique ID and deletes the Gnocchi resource associated with it.
+func Delete(c *gophercloud.ServiceClient, resourceType, resourceID string) (r DeleteResult) {
+	requestOpts := &gophercloud.RequestOpts{
+		MoreHeaders: map[string]string{
+			"Accept": "application/json, */*",
+		},
+	}
+	_, r.Err = c.Delete(deleteURL(c, resourceType, resourceID), requestOpts)
+	return
+}

@@ -21,6 +21,7 @@ func TestResourcesCRUD(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unable to create a generic Gnocchi resource: %v", err)
 	}
+	defer DeleteResource(t, client, genericResource.Type, genericResource.ID)
 
 	tools.PrintResource(t, genericResource)
 

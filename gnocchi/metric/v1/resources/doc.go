@@ -123,5 +123,13 @@ Example of Updating a resource and creating an associated metric at the same tim
 	if err != nil {
 		panic(err)
 	}
+
+Example of Deleting a Gnocchi resource
+
+	resourceID := "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55"
+	err := resources.Delete(gnocchiClient, resourceType, resourceID).ExtractErr()
+	if err != nil {
+		panic(err)
+	}
 */
 package resources
