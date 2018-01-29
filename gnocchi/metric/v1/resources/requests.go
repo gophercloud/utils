@@ -144,7 +144,7 @@ type UpdateOpts struct {
 	// Metrics field can be used to link existing metrics in the resource
 	// or to create metrics and update the resource at the same time to save
 	// some requests.
-	Metrics map[string]interface{} `json:"metrics,omitempty"`
+	Metrics *map[string]interface{} `json:"metrics,omitempty"`
 
 	// ProjectID is the Identity project of the resource.
 	ProjectID string `json:"project_id,omitempty"`

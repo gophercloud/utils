@@ -25,8 +25,10 @@ func TestResourcesCRUD(t *testing.T) {
 	tools.PrintResource(t, genericResource)
 
 	newStartedAt := time.Date(2018, 1, 1, 1, 1, 0, 0, time.UTC)
+	newMetrics := map[string]interface{}{}
 	updateOpts := &resources.UpdateOpts{
 		StartedAt: &newStartedAt,
+		Metrics:   &newMetrics,
 	}
 	t.Logf("Attempting to update a resource %s", genericResource.ID)
 	newGenericResource, err := resources.Update(client, genericResource.Type, genericResource.ID, updateOpts).Extract()

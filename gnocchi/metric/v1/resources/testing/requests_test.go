@@ -249,11 +249,12 @@ func TestUpdateLinkMetrics(t *testing.T) {
 	})
 
 	endedAt := time.Date(2018, 1, 14, 13, 0, 0, 0, time.UTC)
+	metrics := map[string]interface{}{
+		"network.incoming.bytes.rate": "01b2953e-de74-448a-a305-c84440697933",
+	}
 	updateOpts := resources.UpdateOpts{
 		EndedAt: &endedAt,
-		Metrics: map[string]interface{}{
-			"network.incoming.bytes.rate": "01b2953e-de74-448a-a305-c84440697933",
-		},
+		Metrics: &metrics,
 	}
 	s, err := resources.Update(fake.ServiceClient(), "compute_instance_network", "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55", updateOpts).Extract()
 	th.AssertNoErr(t, err)
@@ -293,13 +294,14 @@ func TestUpdateCreateMetrics(t *testing.T) {
 	})
 
 	startedAt := time.Date(2018, 1, 12, 11, 0, 0, 0, time.UTC)
+	metrics := map[string]interface{}{
+		"disk.read.bytes.rate": map[string]string{
+			"archive_policy_name": "low",
+		},
+	}
 	updateOpts := resources.UpdateOpts{
 		StartedAt: &startedAt,
-		Metrics: map[string]interface{}{
-			"disk.read.bytes.rate": map[string]string{
-				"archive_policy_name": "low",
-			},
-		},
+		Metrics:   &metrics,
 	}
 	s, err := resources.Update(fake.ServiceClient(), "compute_instance_network", "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55", updateOpts).Extract()
 	th.AssertNoErr(t, err)
