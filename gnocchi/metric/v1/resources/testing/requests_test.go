@@ -230,3 +230,95 @@ func TestCreateWithMetrics(t *testing.T) {
 	th.AssertEquals(t, s.Type, "compute_instance_disk")
 	th.AssertEquals(t, s.UserID, "bd5874d6-6662-4b24-a9f01c128871e4ac")
 }
+
+func TestUpdateLinkMetrics(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/v1/resource/compute_instance_network/23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "PATCH")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "Content-Type", "application/json")
+		th.TestHeader(t, r, "Accept", "application/json")
+		th.TestJSONRequest(t, r, ResourceUpdateLinkMetricsRequest)
+
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+
+		fmt.Fprintf(w, ResourceUpdateLinkMetricsResponse)
+	})
+
+	endedAt := time.Date(2018, 1, 14, 13, 0, 0, 0, time.UTC)
+	metrics := map[string]interface{}{
+		"network.incoming.bytes.rate": "01b2953e-de74-448a-a305-c84440697933",
+	}
+	updateOpts := resources.UpdateOpts{
+		EndedAt: &endedAt,
+		Metrics: &metrics,
+	}
+	s, err := resources.Update(fake.ServiceClient(), "compute_instance_network", "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55", updateOpts).Extract()
+	th.AssertNoErr(t, err)
+
+	th.AssertEquals(t, s.CreatedByProjectID, "3d40ca37-7234-4911-8987b9f288f4ae84")
+	th.AssertEquals(t, s.CreatedByUserID, "fdcfb420-c096-45e6-9e177a0bb1950884")
+	th.AssertEquals(t, s.Creator, "fdcfb420-c096-45e6-9e177a0bb1950884:3d40ca37-7234-4911-8987b9f288f4ae84")
+	th.AssertEquals(t, s.ID, "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55")
+	th.AssertDeepEquals(t, s.Metrics, map[string]string{
+		"network.incoming.bytes.rate": "01b2953e-de74-448a-a305-c84440697933",
+	})
+	th.AssertEquals(t, s.OriginalResourceID, "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55")
+	th.AssertEquals(t, s.ProjectID, "4154f088-8333-4e04-94c4-1155c33c0fc9")
+	th.AssertEquals(t, s.RevisionStart, time.Date(2018, 1, 12, 13, 44, 34, 742031000, time.UTC))
+	th.AssertEquals(t, s.RevisionEnd, time.Time{})
+	th.AssertEquals(t, s.StartedAt, time.Date(2018, 1, 12, 13, 44, 34, 742011000, time.UTC))
+	th.AssertEquals(t, s.EndedAt, time.Date(2018, 1, 14, 13, 0, 0, 0, time.UTC))
+	th.AssertEquals(t, s.Type, "compute_instance_network")
+	th.AssertEquals(t, s.UserID, "bd5874d6-6662-4b24-a9f01c128871e4ac")
+}
+
+func TestUpdateCreateMetrics(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/v1/resource/compute_instance_network/23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "PATCH")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "Content-Type", "application/json")
+		th.TestHeader(t, r, "Accept", "application/json")
+		th.TestJSONRequest(t, r, ResourceUpdateCreateMetricsRequest)
+
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+
+		fmt.Fprintf(w, ResourceUpdateCreateMetricsResponse)
+	})
+
+	startedAt := time.Date(2018, 1, 12, 11, 0, 0, 0, time.UTC)
+	metrics := map[string]interface{}{
+		"disk.read.bytes.rate": map[string]string{
+			"archive_policy_name": "low",
+		},
+	}
+	updateOpts := resources.UpdateOpts{
+		StartedAt: &startedAt,
+		Metrics:   &metrics,
+	}
+	s, err := resources.Update(fake.ServiceClient(), "compute_instance_network", "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55", updateOpts).Extract()
+	th.AssertNoErr(t, err)
+
+	th.AssertEquals(t, s.CreatedByProjectID, "3d40ca37-7234-4911-8987b9f288f4ae84")
+	th.AssertEquals(t, s.CreatedByUserID, "fdcfb420-c096-45e6-9e177a0bb1950884")
+	th.AssertEquals(t, s.Creator, "fdcfb420-c096-45e6-9e177a0bb1950884:3d40ca37-7234-4911-8987b9f288f4ae84")
+	th.AssertEquals(t, s.ID, "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55")
+	th.AssertDeepEquals(t, s.Metrics, map[string]string{
+		"disk.read.bytes.rate": "ed1bb76f-6ccc-4ad2-994c-dbb19ddccbae",
+	})
+	th.AssertEquals(t, s.OriginalResourceID, "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55")
+	th.AssertEquals(t, s.ProjectID, "4154f088-8333-4e04-94c4-1155c33c0fc9")
+	th.AssertEquals(t, s.RevisionStart, time.Date(2018, 1, 12, 12, 00, 34, 742031000, time.UTC))
+	th.AssertEquals(t, s.RevisionEnd, time.Time{})
+	th.AssertEquals(t, s.StartedAt, time.Date(2018, 1, 12, 11, 00, 00, 0, time.UTC))
+	th.AssertEquals(t, s.EndedAt, time.Time{})
+	th.AssertEquals(t, s.Type, "compute_instance_disk")
+	th.AssertEquals(t, s.UserID, "bd5874d6-6662-4b24-a9f01c128871e4ac")
+}

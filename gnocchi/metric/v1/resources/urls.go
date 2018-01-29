@@ -23,3 +23,7 @@ func getURL(c *gophercloud.ServiceClient, resourceType, resourceID string) strin
 func createURL(c *gophercloud.ServiceClient, resourceType string) string {
 	return rootURL(c, resourceType)
 }
+
+func updateURL(c *gophercloud.ServiceClient, resourceType, resourceID string) string {
+	return resourceURL(c, resourceType, resourceID)
+}

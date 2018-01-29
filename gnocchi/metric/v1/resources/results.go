@@ -33,6 +33,12 @@ type CreateResult struct {
 	commonResult
 }
 
+// UpdateResult represents the result of an update operation. Call its Extract
+// method to interpret it as a Gnocchi resource.
+type UpdateResult struct {
+	commonResult
+}
+
 // Resource is an entity representing anything in your infrastructure
 // that you will associate metric(s) with.
 // It is identified by a unique ID and can contain attributes.
