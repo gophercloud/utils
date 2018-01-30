@@ -204,17 +204,17 @@ func BatchCreateMetrics(client *gophercloud.ServiceClient, opts BatchCreateMetri
 	return
 }
 
-// CreateBatchResourcesMetricsOptsBuilder is needed to add measures to the CreateBatchResourcesMetrics request.
-type CreateBatchResourcesMetricsOptsBuilder interface {
-	// ToMeasureCreateBatchResourcesMetricsMap builds a request body.
-	ToMeasureCreateBatchResourcesMetricsMap() (map[string]interface{}, error)
+// BatchResourcesOptsBuilder is needed to add measures to the BatchResources request.
+type BatchResourcesOptsBuilder interface {
+	// ToMeasureBatchResourcesMap builds a request body.
+	ToMeasureBatchResourcesMap() (map[string]interface{}, error)
 
 	// ToMeasureCreateBatchMetricsQuery builds a query string.
 	ToMeasureCreateBatchMetricsQuery() (string, error)
 }
 
-// CreateBatchResourcesMetricsOpts specifies a parameters for creating measures for different metrics in a single request.
-type CreateBatchResourcesMetricsOpts struct {
+// BatchResourcesOpts specifies a parameters for creating measures for different metrics in a single request.
+type BatchResourcesOpts struct {
 	// CreateMetrics allows request to create metrics that don't exist yet.
 	CreateMetrics bool `q:"create_metrics"`
 
@@ -222,8 +222,8 @@ type CreateBatchResourcesMetricsOpts struct {
 	BatchResourcesMetricsMeasuresOpts map[string]map[string][]MeasureOpts
 }
 
-// ToMeasureCreateBatchResourcesMetricsMap constructs a request body from the CreateBatchMetricsOpts.
-func (opts CreateBatchResourcesMetricsOpts) ToMeasureCreateBatchResourcesMetricsMap() (map[string]interface{}, error) {
+// ToMeasureBatchResourcesMap constructs a request body from the CreateBatchMetricsOpts.
+func (opts BatchResourcesOpts) ToMeasureBatchResourcesMap() (map[string]interface{}, error) {
 	// measures is an internal map representation of the MeasureOpts struct.
 	type measureOpts map[string]interface{}
 
@@ -256,15 +256,15 @@ func (opts CreateBatchResourcesMetricsOpts) ToMeasureCreateBatchResourcesMetrics
 	return map[string]interface{}{"batchResourceMetricsMeasures": batchResourceMetricsMeasuresOpts}, nil
 }
 
-// ToMeasureCreateBatchMetricsQuery formats the CreateBatchResourcesMetricsOpts into a query string.
-func (opts CreateBatchResourcesMetricsOpts) ToMeasureCreateBatchMetricsQuery() (string, error) {
+// ToMeasureCreateBatchMetricsQuery formats the BatchResourcesOpts into a query string.
+func (opts BatchResourcesOpts) ToMeasureCreateBatchMetricsQuery() (string, error) {
 	q, err := gophercloud.BuildQueryString(opts)
 	return q.String(), err
 }
 
-// CreateBatchResourcesMetrics requests the creation of new measures inside metrics via resource IDs and metric names.
-func CreateBatchResourcesMetrics(client *gophercloud.ServiceClient, opts CreateBatchResourcesMetricsOptsBuilder) (r CreateBatchResourcesMetricsResult) {
-	url := createBatchResourcesMetricsURL(client)
+// BatchResources requests the creation of new measures inside metrics via resource IDs and metric names.
+func BatchResources(client *gophercloud.ServiceClient, opts BatchResourcesOptsBuilder) (r BatchResourcesResult) {
+	url := batchResourcesURL(client)
 	if opts != nil {
 		query, err := opts.ToMeasureCreateBatchMetricsQuery()
 		if err != nil {
@@ -274,7 +274,7 @@ func CreateBatchResourcesMetrics(client *gophercloud.ServiceClient, opts CreateB
 		url += query
 	}
 
-	b, err := opts.ToMeasureCreateBatchResourcesMetricsMap()
+	b, err := opts.ToMeasureBatchResourcesMap()
 	if err != nil {
 		r.Err = err
 		return

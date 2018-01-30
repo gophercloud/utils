@@ -135,7 +135,7 @@ func TestBatchCreateMetrics(t *testing.T) {
 	th.AssertNoErr(t, res.Err)
 }
 
-func TestCreateBatchResourcesMetricsMeasures(t *testing.T) {
+func TestBatchResourcesMeasures(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
 
@@ -149,7 +149,7 @@ func TestCreateBatchResourcesMetricsMeasures(t *testing.T) {
 
 	firstTimestamp := time.Date(2018, 1, 20, 12, 30, 0, 0, time.UTC)
 	secondTimestamp := time.Date(2018, 1, 20, 13, 15, 0, 0, time.UTC)
-	createOpts := measures.CreateBatchResourcesMetricsOpts{
+	createOpts := measures.BatchResourcesOpts{
 		CreateMetrics: true,
 		BatchResourcesMetricsMeasuresOpts: map[string]map[string][]measures.MeasureOpts{
 			"75274f99-faf6-4112-a6d5-2794cb07c789": {
@@ -188,7 +188,7 @@ func TestCreateBatchResourcesMetricsMeasures(t *testing.T) {
 			},
 		},
 	}
-	res := measures.CreateBatchResourcesMetrics(fake.ServiceClient(), createOpts)
+	res := measures.BatchResources(fake.ServiceClient(), createOpts)
 	if res.Err.Error() == "EOF" {
 		res.Err = nil
 	}

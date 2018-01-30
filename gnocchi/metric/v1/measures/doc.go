@@ -83,7 +83,7 @@ Example of Creating measures inside different metrics via metric names and resou
 
 	currentTimestamp := time.Now().UTC()
 	pastHourTimestamp := currentTimestamp.Add(-1 * time.Hour)
-	createOpts := measures.CreateBatchResourcesMetricsOpts{
+	createOpts := measures.BatchResourcesOpts{
 		BatchResourcesMetricsMeasuresOpts: map[string]map[string][]measures.MeasureOpts{
 			"1f3a0724-1807-4bd1-81f9-ee18c8ff6ccc": {
 				"memory.usage": []measures.MeasureOpts{
@@ -121,7 +121,7 @@ Example of Creating measures inside different metrics via metric names and resou
 			},
 		},
 	}
-	if err := measures.CreateBatchResourcesMetrics(gnocchiClient, createOpts).ExtractErr(); err != nil && err.Error() != "EOF" {
+	if err := measures.BatchResources(gnocchiClient, createOpts).ExtractErr(); err != nil && err.Error() != "EOF" {
 		panic(err)
 	}
 */
