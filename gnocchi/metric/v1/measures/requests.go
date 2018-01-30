@@ -135,19 +135,19 @@ func Create(client *gophercloud.ServiceClient, metricID string, opts CreateOptsB
 	return
 }
 
-// CreateBatchMetricsOptsBuilder is needed to add measures to the CreateBatchMetrics request.
-type CreateBatchMetricsOptsBuilder interface {
-	ToMeasureCreateBatchMetricsMap() (map[string]interface{}, error)
+// BatchMetricsOptsBuilder is needed to add measures to the BatchMetrics request.
+type BatchMetricsOptsBuilder interface {
+	ToMeasureBatchMetricsMap() (map[string]interface{}, error)
 }
 
-// CreateBatchMetricsOpts specifies a parameters for creating measures for different metrics in a single request.
-type CreateBatchMetricsOpts struct {
+// BatchMetricsOpts specifies a parameters for creating measures for different metrics in a single request.
+type BatchMetricsOpts struct {
 	// BatchOpts is a map of metric ids and corresponding measures that needs to be created.
 	BatchOpts map[string][]MeasureOpts
 }
 
-// ToMeasureCreateBatchMetricsMap constructs a request body from CreateBatchMetricsOpts.
-func (opts CreateBatchMetricsOpts) ToMeasureCreateBatchMetricsMap() (map[string]interface{}, error) {
+// ToMeasureBatchMetricsMap constructs a request body from BatchMetricsOpts.
+func (opts BatchMetricsOpts) ToMeasureBatchMetricsMap() (map[string]interface{}, error) {
 	// measures is an internal map representation of the MeasureOpts struct.
 	type measureOpts map[string]interface{}
 
@@ -173,15 +173,15 @@ func (opts CreateBatchMetricsOpts) ToMeasureCreateBatchMetricsMap() (map[string]
 	return map[string]interface{}{"batchMeasures": batchOpts}, nil
 }
 
-// CreateBatchMetrics requests the creation of a new measures for different metrics.
-func CreateBatchMetrics(client *gophercloud.ServiceClient, opts CreateBatchMetricsOptsBuilder) (r CreateBatchMetricsResult) {
-	b, err := opts.ToMeasureCreateBatchMetricsMap()
+// BatchMetrics requests the creation of a new measures for different metrics.
+func BatchMetrics(client *gophercloud.ServiceClient, opts BatchMetricsOptsBuilder) (r BatchMetricsResult) {
+	b, err := opts.ToMeasureBatchMetricsMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
 
-	_, r.Err = client.Post(createBatchMetricsURL(client), b["batchMeasures"], &r.Body, &gophercloud.RequestOpts{
+	_, r.Err = client.Post(batchMetricsURL(client), b["batchMeasures"], &r.Body, &gophercloud.RequestOpts{
 		OkCodes: []int{202},
 		MoreHeaders: map[string]string{
 			"Accept": "application/json, */*",

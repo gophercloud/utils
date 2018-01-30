@@ -40,9 +40,9 @@ func CreateMeasures(t *testing.T, client *gophercloud.ServiceClient, metricID st
 	return nil
 }
 
-// CreateBatchMetricsMeasures will create measures inside different metrics via batch request. An error will be returned if the
+// BatchMetricsMeasures will create measures inside different metrics via batch request. An error will be returned if the
 // measures could not be created.
-func CreateBatchMetricsMeasures(t *testing.T, client *gophercloud.ServiceClient, metricIDs ...string) error {
+func BatchMetricsMeasures(t *testing.T, client *gophercloud.ServiceClient, metricIDs ...string) error {
 	currentTimestamp := time.Now().UTC()
 	pastHourTimestamp := currentTimestamp.Add(-1 * time.Hour)
 	currentValue := float64(tools.RandomInt(100, 200))
@@ -60,13 +60,13 @@ func CreateBatchMetricsMeasures(t *testing.T, client *gophercloud.ServiceClient,
 			},
 		}
 	}
-	createOpts := measures.CreateBatchMetricsOpts{
+	createOpts := measures.BatchMetricsOpts{
 		BatchOpts: batchOpts,
 	}
 
 	t.Logf("Attempting to create measures inside Gnocchi metrics via batch request")
 
-	if err := measures.CreateBatchMetrics(client, createOpts).ExtractErr(); err != nil && err.Error() != "EOF" {
+	if err := measures.BatchMetrics(client, createOpts).ExtractErr(); err != nil && err.Error() != "EOF" {
 		return err
 	}
 

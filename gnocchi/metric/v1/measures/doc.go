@@ -47,7 +47,7 @@ Example of Creating measures inside different metrics via metric ID references i
 
 	currentTimestamp := time.Now().UTC()
 	pastHourTimestamp := currentTimestamp.Add(-1 * time.Hour)
-	createOpts := measures.CreateBatchMetricsOpts{
+	createOpts := measures.BatchMetricsOpts{
 		BatchOpts: map[string][]measures.MeasureOpts{
 			"777a01d6-4694-49cb-b86a-5ba9fd4e609e": []measures.MeasureOpts{
 				{
@@ -71,7 +71,7 @@ Example of Creating measures inside different metrics via metric ID references i
 			},
 		},
 	}
-	if err := measures.CreateBatchMetrics(gnocchiClient, createOpts).ExtractErr(); err != nil && err.Error() != "EOF" {
+	if err := measures.BatchMetrics(gnocchiClient, createOpts).ExtractErr(); err != nil && err.Error() != "EOF" {
 		panic(err)
 	}
 */

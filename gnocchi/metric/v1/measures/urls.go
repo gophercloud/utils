@@ -19,6 +19,6 @@ func createURL(c *gophercloud.ServiceClient, metricID string) string {
 	return resourceURL(c, metricID)
 }
 
-func createBatchMetricsURL(c *gophercloud.ServiceClient) string {
+func batchMetricsURL(c *gophercloud.ServiceClient) string {
 	return c.ServiceURL(batchMetricsPath, "measures")
 }

@@ -100,7 +100,7 @@ func TestCreateBatchMetricMeasures(t *testing.T) {
 
 	firstTimestamp := time.Date(2018, 1, 10, 01, 00, 0, 0, time.UTC)
 	secondTimestamp := time.Date(2018, 1, 10, 02, 45, 0, 0, time.UTC)
-	createOpts := measures.CreateBatchMetricsOpts{
+	createOpts := measures.BatchMetricsOpts{
 		BatchOpts: map[string][]measures.MeasureOpts{
 			"777a01d6-4694-49cb-b86a-5ba9fd4e609e": []measures.MeasureOpts{
 				{
@@ -124,7 +124,7 @@ func TestCreateBatchMetricMeasures(t *testing.T) {
 			},
 		},
 	}
-	res := measures.CreateBatchMetrics(fake.ServiceClient(), createOpts)
+	res := measures.BatchMetrics(fake.ServiceClient(), createOpts)
 	if res.Err.Error() == "EOF" {
 		res.Err = nil
 	}

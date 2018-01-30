@@ -44,13 +44,13 @@ func TestMeasuresCRUD(t *testing.T) {
 	t.Log(metricMeasures)
 }
 
-func TestBatchMetricsMeasuresCreation(t *testing.T) {
+func TestMeasuresBatchMetrics(t *testing.T) {
 	client, err := clients.NewGnocchiV1Client()
 	if err != nil {
 		t.Fatalf("Unable to create a Gnocchi client: %v", err)
 	}
 
-	// Create a couple of metrics to test CreateBatchMetrics requets.
+	// Create a couple of metrics to test BatchMetrics requets.
 	metricToBatchOne, err := CreateMetric(t, client)
 	if err != nil {
 		t.Fatalf("Unable to create a Gnocchi metric: %v", err)
@@ -64,11 +64,11 @@ func TestBatchMetricsMeasuresCreation(t *testing.T) {
 	defer DeleteMetric(t, client, metricToBatchTwo.ID)
 
 	// Test create batch request based on metrics IDs.
-	if err := CreateBatchMetricsMeasures(t, client, metricToBatchOne.ID, metricToBatchTwo.ID); err != nil {
+	if err := BatchMetricsMeasures(t, client, metricToBatchOne.ID, metricToBatchTwo.ID); err != nil {
 		t.Fatalf("Unable to create measures inside Gnocchi metrics: %v", err)
 	}
 
-	// Check measures of each metric after the CreateBatchMetrics request.
+	// Check measures of each metric after the BatchMetrics request.
 	listOpts := measures.ListOpts{
 		Refresh: true,
 	}
