@@ -3,8 +3,8 @@ package measures
 import "github.com/gophercloud/gophercloud"
 
 const (
-	resourcePath     = "metric"
-	batchMetricsPath = "batch/metrics"
+	resourcePath           = "metric"
+	batchCreateMetricsPath = "batch/metrics"
 )
 
 func resourceURL(c *gophercloud.ServiceClient, metricID string) string {
@@ -19,6 +19,6 @@ func createURL(c *gophercloud.ServiceClient, metricID string) string {
 	return resourceURL(c, metricID)
 }
 
-func batchMetricsURL(c *gophercloud.ServiceClient) string {
-	return c.ServiceURL(batchMetricsPath, "measures")
+func batchCreateMetricsURL(c *gophercloud.ServiceClient) string {
+	return c.ServiceURL(batchCreateMetricsPath, "measures")
 }

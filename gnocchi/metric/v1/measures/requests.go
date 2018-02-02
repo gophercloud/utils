@@ -135,53 +135,69 @@ func Create(client *gophercloud.ServiceClient, metricID string, opts CreateOptsB
 	return
 }
 
-// BatchMetricsOptsBuilder is needed to add measures to the BatchMetrics request.
-type BatchMetricsOptsBuilder interface {
-	ToMeasureBatchMetricsMap() (map[string]interface{}, error)
+// BatchCreateMetricsOptsBuilder is needed to add measures to the BatchCreateMetrics request.
+type BatchCreateMetricsOptsBuilder interface {
+	ToBatchCreateMetricsMap() (map[string]interface{}, error)
 }
 
-// BatchMetricsOpts specifies a parameters for creating measures for different metrics in a single request.
-type BatchMetricsOpts struct {
-	// BatchOpts is a map of metric ids and corresponding measures that needs to be created.
-	BatchOpts map[string][]MeasureOpts
+// BatchCreateMetricsOpts specifies a parameters for creating measures for different metrics in a single request.
+type BatchCreateMetricsOpts struct {
+	BatchMetricsOpts []MetricOpts
 }
 
-// ToMeasureBatchMetricsMap constructs a request body from BatchMetricsOpts.
-func (opts BatchMetricsOpts) ToMeasureBatchMetricsMap() (map[string]interface{}, error) {
-	// measures is an internal map representation of the MeasureOpts struct.
-	type measureOpts map[string]interface{}
+// MetricOpts represents measures of a single metric of the BatchCreateMetrics request.
+type MetricOpts struct {
+	ID       string
+	Measures []MeasureOpts
+}
 
+// ToMap is a helper function to convert individual MetricOpts structure into a sub-map.
+func (opts MetricOpts) ToMap() (map[string]interface{}, error) {
 	// measures is a slice of measures maps.
-	var measures []measureOpts
+	measures := make([]map[string]interface{}, len(opts.Measures))
 
-	// batchOpts is a internal representation of the BatchOpts, where MeasureOpts represented as maps.
-	batchOpts := make(map[string][]measureOpts)
+	// metricOpts is an internal map representation of the MetricOpts struct.
+	metricOpts := make(map[string]interface{})
 
-	// Populate batchOpts.
-	for metricID, metricMeasures := range opts.BatchOpts {
-		measures = make([]measureOpts, len(metricMeasures))
-		for i, measure := range metricMeasures {
-			measureMap, err := measure.ToMap()
-			if err != nil {
-				return nil, err
-			}
-			measures[i] = measureMap
+	for i, measure := range opts.Measures {
+		measureMap, err := measure.ToMap()
+		if err != nil {
+			return nil, err
 		}
-		batchOpts[metricID] = measures
+		measures[i] = measureMap
+	}
+	metricOpts[opts.ID] = measures
+
+	return metricOpts, nil
+}
+
+// ToBatchCreateMetricsMap constructs a request body from BatchCreateMetricsOpts.
+func (opts BatchCreateMetricsOpts) ToBatchCreateMetricsMap() (map[string]interface{}, error) {
+	// batchCreateMetricsOpts is an internal representation of the BatchCreateMetricsOpts struct.
+	batchCreateMetricsOpts := make(map[string]interface{})
+
+	for _, metricOpts := range opts.BatchMetricsOpts {
+		metricOptsMap, err := metricOpts.ToMap()
+		if err != nil {
+			return nil, err
+		}
+		for k, v := range metricOptsMap {
+			batchCreateMetricsOpts[k] = v
+		}
 	}
 
-	return map[string]interface{}{"batchMeasures": batchOpts}, nil
+	return map[string]interface{}{"batchCreateMetrics": batchCreateMetricsOpts}, nil
 }
 
-// BatchMetrics requests the creation of a new measures for different metrics.
-func BatchMetrics(client *gophercloud.ServiceClient, opts BatchMetricsOptsBuilder) (r BatchMetricsResult) {
-	b, err := opts.ToMeasureBatchMetricsMap()
+// BatchCreateMetrics requests the creation of a new measures for different metrics.
+func BatchCreateMetrics(client *gophercloud.ServiceClient, opts BatchCreateMetricsOpts) (r BatchCreateMetricsResult) {
+	b, err := opts.ToBatchCreateMetricsMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
 
-	_, r.Err = client.Post(batchMetricsURL(client), b["batchMeasures"], &r.Body, &gophercloud.RequestOpts{
+	_, r.Err = client.Post(batchCreateMetricsURL(client), b["batchCreateMetrics"], &r.Body, &gophercloud.RequestOpts{
 		OkCodes: []int{202},
 		MoreHeaders: map[string]string{
 			"Accept": "application/json, */*",

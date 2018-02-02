@@ -86,7 +86,7 @@ func TestCreateMeasures(t *testing.T) {
 	th.AssertNoErr(t, res.Err)
 }
 
-func TestCreateBatchMetricMeasures(t *testing.T) {
+func TestBatchCreateMetrics(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
 
@@ -100,31 +100,37 @@ func TestCreateBatchMetricMeasures(t *testing.T) {
 
 	firstTimestamp := time.Date(2018, 1, 10, 01, 00, 0, 0, time.UTC)
 	secondTimestamp := time.Date(2018, 1, 10, 02, 45, 0, 0, time.UTC)
-	createOpts := measures.BatchMetricsOpts{
-		BatchOpts: map[string][]measures.MeasureOpts{
-			"777a01d6-4694-49cb-b86a-5ba9fd4e609e": []measures.MeasureOpts{
-				{
-					Timestamp: &firstTimestamp,
-					Value:     200.5,
-				},
-				{
-					Timestamp: &secondTimestamp,
-					Value:     300,
+	createOpts := measures.BatchCreateMetricsOpts{
+		BatchMetricsOpts: []measures.MetricOpts{
+			{
+				ID: "777a01d6-4694-49cb-b86a-5ba9fd4e609e",
+				Measures: []measures.MeasureOpts{
+					{
+						Timestamp: &firstTimestamp,
+						Value:     200,
+					},
+					{
+						Timestamp: &secondTimestamp,
+						Value:     300,
+					},
 				},
 			},
-			"6dbc97c5-bfdf-47a2-b184-02e7fa348d21": []measures.MeasureOpts{
-				{
-					Timestamp: &firstTimestamp,
-					Value:     111.1,
-				},
-				{
-					Timestamp: &secondTimestamp,
-					Value:     222.22,
+			{
+				ID: "6dbc97c5-bfdf-47a2-b184-02e7fa348d21",
+				Measures: []measures.MeasureOpts{
+					{
+						Timestamp: &firstTimestamp,
+						Value:     111,
+					},
+					{
+						Timestamp: &secondTimestamp,
+						Value:     222,
+					},
 				},
 			},
 		},
 	}
-	res := measures.BatchMetrics(fake.ServiceClient(), createOpts)
+	res := measures.BatchCreateMetrics(fake.ServiceClient(), createOpts)
 	if res.Err.Error() == "EOF" {
 		res.Err = nil
 	}
