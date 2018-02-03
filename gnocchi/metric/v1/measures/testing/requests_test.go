@@ -101,31 +101,29 @@ func TestBatchCreateMetrics(t *testing.T) {
 	firstTimestamp := time.Date(2018, 1, 10, 01, 00, 0, 0, time.UTC)
 	secondTimestamp := time.Date(2018, 1, 10, 02, 45, 0, 0, time.UTC)
 	createOpts := measures.BatchCreateMetricsOpts{
-		BatchMetricsOpts: []measures.MetricOpts{
-			{
-				ID: "777a01d6-4694-49cb-b86a-5ba9fd4e609e",
-				Measures: []measures.MeasureOpts{
-					{
-						Timestamp: &firstTimestamp,
-						Value:     200,
-					},
-					{
-						Timestamp: &secondTimestamp,
-						Value:     300,
-					},
+		{
+			ID: "777a01d6-4694-49cb-b86a-5ba9fd4e609e",
+			Measures: []measures.MeasureOpts{
+				{
+					Timestamp: &firstTimestamp,
+					Value:     200,
+				},
+				{
+					Timestamp: &secondTimestamp,
+					Value:     300,
 				},
 			},
-			{
-				ID: "6dbc97c5-bfdf-47a2-b184-02e7fa348d21",
-				Measures: []measures.MeasureOpts{
-					{
-						Timestamp: &firstTimestamp,
-						Value:     111,
-					},
-					{
-						Timestamp: &secondTimestamp,
-						Value:     222,
-					},
+		},
+		{
+			ID: "6dbc97c5-bfdf-47a2-b184-02e7fa348d21",
+			Measures: []measures.MeasureOpts{
+				{
+					Timestamp: &firstTimestamp,
+					Value:     111,
+				},
+				{
+					Timestamp: &secondTimestamp,
+					Value:     222,
 				},
 			},
 		},

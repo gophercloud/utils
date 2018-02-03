@@ -47,11 +47,11 @@ func MeasuresBatchCreateMetrics(t *testing.T, client *gophercloud.ServiceClient,
 	pastHourTimestamp := currentTimestamp.Add(-1 * time.Hour)
 	currentValue := float64(tools.RandomInt(100, 200))
 	pastHourValue := float64(tools.RandomInt(500, 600))
-	batchMetricsOpts := make([]measures.MetricOpts, len(metricIDs))
+	createOpts := make([]measures.MetricOpts, len(metricIDs))
 
 	// Populate batch options with provided metric IDs and generated values.
 	for i, m := range metricIDs {
-		batchMetricsOpts[i] = measures.MetricOpts{
+		createOpts[i] = measures.MetricOpts{
 			ID: m,
 			Measures: []measures.MeasureOpts{
 				{
@@ -64,9 +64,6 @@ func MeasuresBatchCreateMetrics(t *testing.T, client *gophercloud.ServiceClient,
 				},
 			},
 		}
-	}
-	createOpts := measures.BatchCreateMetricsOpts{
-		BatchMetricsOpts: batchMetricsOpts,
 	}
 
 	t.Logf("Attempting to create measures inside Gnocchi metrics via batch request")

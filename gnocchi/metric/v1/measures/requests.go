@@ -141,9 +141,7 @@ type BatchCreateMetricsOptsBuilder interface {
 }
 
 // BatchCreateMetricsOpts specifies a parameters for creating measures for different metrics in a single request.
-type BatchCreateMetricsOpts struct {
-	BatchMetricsOpts []MetricOpts
-}
+type BatchCreateMetricsOpts []MetricOpts
 
 // MetricOpts represents measures of a single metric of the BatchCreateMetrics request.
 type MetricOpts struct {
@@ -176,7 +174,7 @@ func (opts BatchCreateMetricsOpts) ToMeasuresBatchCreateMetricsMap() (map[string
 	// batchCreateMetricsOpts is an internal representation of the BatchCreateMetricsOpts struct.
 	batchCreateMetricsOpts := make(map[string]interface{})
 
-	for _, metricOpts := range opts.BatchMetricsOpts {
+	for _, metricOpts := range opts {
 		metricOptsMap, err := metricOpts.ToMap()
 		if err != nil {
 			return nil, err

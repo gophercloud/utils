@@ -48,31 +48,29 @@ Example of Creating measures inside different metrics via metric ID references i
 	currentTimestamp := time.Now().UTC()
 	pastHourTimestamp := currentTimestamp.Add(-1 * time.Hour)
 	createOpts := measures.BatchCreateMetricsOpts{
-		BatchMetricsOpts: []measures.MetricOpts{
-			{
-				ID: "777a01d6-4694-49cb-b86a-5ba9fd4e609e",
-				Measures: []measures.MeasureOpts{
-					{
-						Timestamp: &currentTimestamp,
-						Value:     200,
-					},
-					{
-						Timestamp: &pastHourTimestamp,
-						Value:     300,
-					},
+		{
+			ID: "777a01d6-4694-49cb-b86a-5ba9fd4e609e",
+			Measures: []measures.MeasureOpts{
+				{
+					Timestamp: &currentTimestamp,
+					Value:     200,
+				},
+				{
+					Timestamp: &pastHourTimestamp,
+					Value:     300,
 				},
 			},
-			{
-				ID: "6dbc97c5-bfdf-47a2-b184-02e7fa348d21",
-				Measures: []measures.MeasureOpts{
-					{
-						Timestamp: &currentTimestamp,
-						Value:     111,
-					},
-					{
-						Timestamp: &pastHourTimestamp,
-						Value:     222,
-					},
+		},
+		{
+			ID: "6dbc97c5-bfdf-47a2-b184-02e7fa348d21",
+			Measures: []measures.MeasureOpts{
+				{
+					Timestamp: &currentTimestamp,
+					Value:     111,
+				},
+				{
+					Timestamp: &pastHourTimestamp,
+					Value:     222,
 				},
 			},
 		},
