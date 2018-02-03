@@ -137,7 +137,7 @@ func Create(client *gophercloud.ServiceClient, metricID string, opts CreateOptsB
 
 // BatchCreateMetricsOptsBuilder is needed to add measures to the BatchCreateMetrics request.
 type BatchCreateMetricsOptsBuilder interface {
-	ToBatchCreateMetricsMap() (map[string]interface{}, error)
+	ToMeasuresBatchCreateMetricsMap() (map[string]interface{}, error)
 }
 
 // BatchCreateMetricsOpts specifies a parameters for creating measures for different metrics in a single request.
@@ -171,8 +171,8 @@ func (opts MetricOpts) ToMap() (map[string]interface{}, error) {
 	return metricOpts, nil
 }
 
-// ToBatchCreateMetricsMap constructs a request body from BatchCreateMetricsOpts.
-func (opts BatchCreateMetricsOpts) ToBatchCreateMetricsMap() (map[string]interface{}, error) {
+// ToMeasuresBatchCreateMetricsMap constructs a request body from BatchCreateMetricsOpts.
+func (opts BatchCreateMetricsOpts) ToMeasuresBatchCreateMetricsMap() (map[string]interface{}, error) {
 	// batchCreateMetricsOpts is an internal representation of the BatchCreateMetricsOpts struct.
 	batchCreateMetricsOpts := make(map[string]interface{})
 
@@ -191,7 +191,7 @@ func (opts BatchCreateMetricsOpts) ToBatchCreateMetricsMap() (map[string]interfa
 
 // BatchCreateMetrics requests the creation of a new measures for different metrics.
 func BatchCreateMetrics(client *gophercloud.ServiceClient, opts BatchCreateMetricsOpts) (r BatchCreateMetricsResult) {
-	b, err := opts.ToBatchCreateMetricsMap()
+	b, err := opts.ToMeasuresBatchCreateMetricsMap()
 	if err != nil {
 		r.Err = err
 		return
