@@ -134,3 +134,72 @@ func Create(client *gophercloud.ServiceClient, metricID string, opts CreateOptsB
 	})
 	return
 }
+
+// BatchCreateMetricsOptsBuilder is needed to add measures to the BatchCreateMetrics request.
+type BatchCreateMetricsOptsBuilder interface {
+	ToMeasuresBatchCreateMetricsMap() (map[string]interface{}, error)
+}
+
+// BatchCreateMetricsOpts specifies a parameters for creating measures for different metrics in a single request.
+type BatchCreateMetricsOpts []MetricOpts
+
+// MetricOpts represents measures of a single metric of the BatchCreateMetrics request.
+type MetricOpts struct {
+	ID       string
+	Measures []MeasureOpts
+}
+
+// ToMap is a helper function to convert individual MetricOpts structure into a sub-map.
+func (opts MetricOpts) ToMap() (map[string]interface{}, error) {
+	// measures is a slice of measures maps.
+	measures := make([]map[string]interface{}, len(opts.Measures))
+
+	// metricOpts is an internal map representation of the MetricOpts struct.
+	metricOpts := make(map[string]interface{})
+
+	for i, measure := range opts.Measures {
+		measureMap, err := measure.ToMap()
+		if err != nil {
+			return nil, err
+		}
+		measures[i] = measureMap
+	}
+	metricOpts[opts.ID] = measures
+
+	return metricOpts, nil
+}
+
+// ToMeasuresBatchCreateMetricsMap constructs a request body from BatchCreateMetricsOpts.
+func (opts BatchCreateMetricsOpts) ToMeasuresBatchCreateMetricsMap() (map[string]interface{}, error) {
+	// batchCreateMetricsOpts is an internal representation of the BatchCreateMetricsOpts struct.
+	batchCreateMetricsOpts := make(map[string]interface{})
+
+	for _, metricOpts := range opts {
+		metricOptsMap, err := metricOpts.ToMap()
+		if err != nil {
+			return nil, err
+		}
+		for k, v := range metricOptsMap {
+			batchCreateMetricsOpts[k] = v
+		}
+	}
+
+	return map[string]interface{}{"batchCreateMetrics": batchCreateMetricsOpts}, nil
+}
+
+// BatchCreateMetrics requests the creation of a new measures for different metrics.
+func BatchCreateMetrics(client *gophercloud.ServiceClient, opts BatchCreateMetricsOpts) (r BatchCreateMetricsResult) {
+	b, err := opts.ToMeasuresBatchCreateMetricsMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+
+	_, r.Err = client.Post(batchCreateMetricsURL(client), b["batchCreateMetrics"], &r.Body, &gophercloud.RequestOpts{
+		OkCodes: []int{202},
+		MoreHeaders: map[string]string{
+			"Accept": "application/json, */*",
+		},
+	})
+	return
+}

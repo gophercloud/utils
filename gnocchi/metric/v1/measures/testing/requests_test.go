@@ -85,3 +85,52 @@ func TestCreateMeasures(t *testing.T) {
 	}
 	th.AssertNoErr(t, res.Err)
 }
+
+func TestBatchCreateMetrics(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/v1/batch/metrics/measures", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "POST")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "Content-Type", "application/json")
+		th.TestHeader(t, r, "Accept", "application/json, */*")
+		w.WriteHeader(http.StatusAccepted)
+	})
+
+	firstTimestamp := time.Date(2018, 1, 10, 01, 00, 0, 0, time.UTC)
+	secondTimestamp := time.Date(2018, 1, 10, 02, 45, 0, 0, time.UTC)
+	createOpts := measures.BatchCreateMetricsOpts{
+		{
+			ID: "777a01d6-4694-49cb-b86a-5ba9fd4e609e",
+			Measures: []measures.MeasureOpts{
+				{
+					Timestamp: &firstTimestamp,
+					Value:     200,
+				},
+				{
+					Timestamp: &secondTimestamp,
+					Value:     300,
+				},
+			},
+		},
+		{
+			ID: "6dbc97c5-bfdf-47a2-b184-02e7fa348d21",
+			Measures: []measures.MeasureOpts{
+				{
+					Timestamp: &firstTimestamp,
+					Value:     111,
+				},
+				{
+					Timestamp: &secondTimestamp,
+					Value:     222,
+				},
+			},
+		},
+	}
+	res := measures.BatchCreateMetrics(fake.ServiceClient(), createOpts)
+	if res.Err.Error() == "EOF" {
+		res.Err = nil
+	}
+	th.AssertNoErr(t, res.Err)
+}
