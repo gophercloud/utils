@@ -135,7 +135,7 @@ func TestBatchCreateMetrics(t *testing.T) {
 	th.AssertNoErr(t, res.Err)
 }
 
-func TestBatchResourcesMeasures(t *testing.T) {
+func TestBatchCreateResourcesMetrics(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
 
@@ -149,46 +149,67 @@ func TestBatchResourcesMeasures(t *testing.T) {
 
 	firstTimestamp := time.Date(2018, 1, 20, 12, 30, 0, 0, time.UTC)
 	secondTimestamp := time.Date(2018, 1, 20, 13, 15, 0, 0, time.UTC)
-	createOpts := measures.BatchResourcesOpts{
+	createOpts := measures.BatchCreateResourcesMetricsOpts{
 		CreateMetrics: true,
-		BatchResourcesMetricsMeasuresOpts: map[string]map[string][]measures.MeasureOpts{
-			"75274f99-faf6-4112-a6d5-2794cb07c789": {
-				"network.incoming.bytes.rate": []measures.MeasureOpts{
+		BatchResourcesMetrics: []measures.BatchResourcesMetricsOpts{
+			{
+				ResourceID: "75274f99-faf6-4112-a6d5-2794cb07c789",
+				ResourcesMetrics: []measures.ResourcesMetricsOpts{
 					{
-						Timestamp: &firstTimestamp,
-						Value:     1562.82,
+						MetricName:        "network.incoming.bytes.rate",
+						ArchivePolicyName: "high",
+						Unit:              "B/s",
+						Measures: []measures.MeasureOpts{
+							{
+								Timestamp: &firstTimestamp,
+								Value:     1562.82,
+							},
+							{
+								Timestamp: &secondTimestamp,
+								Value:     768.1,
+							},
+						},
 					},
 					{
-						Timestamp: &secondTimestamp,
-						Value:     768.1,
-					},
-				},
-				"network.outgoing.bytes.rate": []measures.MeasureOpts{
-					{
-						Timestamp: &firstTimestamp,
-						Value:     273,
-					},
-					{
-						Timestamp: &secondTimestamp,
-						Value:     3141.14,
+						MetricName:        "network.outgoing.bytes.rate",
+						ArchivePolicyName: "high",
+						Unit:              "B/s",
+						Measures: []measures.MeasureOpts{
+							{
+								Timestamp: &firstTimestamp,
+								Value:     273,
+							},
+							{
+								Timestamp: &secondTimestamp,
+								Value:     3141.14,
+							},
+						},
 					},
 				},
 			},
-			"23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55": {
-				"disk.write.bytes.rate": []measures.MeasureOpts{
+			{
+				ResourceID: "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
+				ResourcesMetrics: []measures.ResourcesMetricsOpts{
 					{
-						Timestamp: &firstTimestamp,
-						Value:     1237,
-					},
-					{
-						Timestamp: &secondTimestamp,
-						Value:     132.12,
+						MetricName:        "disk.write.bytes.rate",
+						ArchivePolicyName: "low",
+						Unit:              "B/s",
+						Measures: []measures.MeasureOpts{
+							{
+								Timestamp: &firstTimestamp,
+								Value:     1237,
+							},
+							{
+								Timestamp: &secondTimestamp,
+								Value:     132.12,
+							},
+						},
 					},
 				},
 			},
 		},
 	}
-	res := measures.BatchResources(fake.ServiceClient(), createOpts)
+	res := measures.BatchCreateResourcesMetrics(fake.ServiceClient(), createOpts)
 	if res.Err.Error() == "EOF" {
 		res.Err = nil
 	}

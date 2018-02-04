@@ -23,9 +23,9 @@ type BatchCreateMetricsResult struct {
 	gophercloud.ErrResult
 }
 
-// BatchResourcesResult represents the result of a create batch via resource IDs operation.
+// BatchCreateResourcesMetricsResult represents the result of a batch create via resource IDs operation.
 // Call its ExtractErr method to determine if the request succeeded or failed.
-type BatchResourcesResult struct {
+type BatchCreateResourcesMetricsResult struct {
 	gophercloud.ErrResult
 }
 

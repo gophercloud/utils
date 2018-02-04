@@ -43,7 +43,7 @@ Example of Creating measures inside a single metric
 		panic(err)
 	}
 
-Example of Creating measures inside different metrics via metric ID references in one request
+Example of Creating measures inside different metrics via metric ID references in a single request
 
 	currentTimestamp := time.Now().UTC()
 	pastHourTimestamp := currentTimestamp.Add(-1 * time.Hour)
@@ -79,49 +79,71 @@ Example of Creating measures inside different metrics via metric ID references i
 		panic(err)
 	}
 
-Example of Creating measures inside different metrics via metric names and resource IDs references of that metrics in a one request
+Example of Creating measures inside different metrics via metric names and resource IDs references of that metrics in a single request
 
 	currentTimestamp := time.Now().UTC()
 	pastHourTimestamp := currentTimestamp.Add(-1 * time.Hour)
-	createOpts := measures.BatchResourcesOpts{
-		BatchResourcesMetricsMeasuresOpts: map[string]map[string][]measures.MeasureOpts{
-			"1f3a0724-1807-4bd1-81f9-ee18c8ff6ccc": {
-				"memory.usage": []measures.MeasureOpts{
+	createOpts := measures.BatchCreateResourcesMetricsOpts{
+		CreateMetrics: true,
+		BatchResourcesMetrics: []measures.BatchResourcesMetricsOpts{
+			{
+				ResourceID: "75274f99-faf6-4112-a6d5-2794cb07c789",
+				ResourcesMetrics: []measures.ResourcesMetricsOpts{
 					{
-						Timestamp: &currentTimestamp,
-						Value:     1562.82,
+						MetricName:        "network.incoming.bytes.rate",
+						ArchivePolicyName: "high",
+						Unit:              "B/s",
+						Measures: []measures.MeasureOpts{
+							{
+								Timestamp: &currentTimestamp,
+								Value:     1562.82,
+							},
+							{
+								Timestamp: &pastHourTimestamp,
+								Value:     768.1,
+							},
+						},
 					},
 					{
-						Timestamp: &pastHourTimestamp,
-						Value:     768.1,
+						MetricName:        "network.outgoing.bytes.rate",
+						ArchivePolicyName: "high",
+						Unit:              "B/s",
+						Measures: []measures.MeasureOpts{
+							{
+								Timestamp: &currentTimestamp,
+								Value:     273,
+							},
+							{
+								Timestamp: &pastHourTimestamp,
+								Value:     3141.14,
+							},
+						},
 					},
 				},
 			},
-			"789a7f65-977d-40f4-beed-f717100125f5": {
-				"cpu.util": []measures.MeasureOpts{
+			{
+				ResourceID: "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
+				ResourcesMetrics: []measures.ResourcesMetricsOpts{
 					{
-						Timestamp: &currentTimestamp,
-						Value:     89.9,
-					},
-					{
-						Timestamp: &pastHourTimestamp,
-						Value:     56,
-					},
-				},
-				"network.incoming.bytes.rate": []measures.MeasureOpts{
-					{
-						Timestamp: &currentTimestamp,
-						Value:     15671.32,
-					},
-					{
-						Timestamp: &pastHourTimestamp,
-						Value:     87123,
+						MetricName:        "disk.write.bytes.rate",
+						ArchivePolicyName: "low",
+						Unit:              "B/s",
+						Measures: []measures.MeasureOpts{
+							{
+								Timestamp: &currentTimestamp,
+								Value:     1237,
+							},
+							{
+								Timestamp: &pastHourTimestamp,
+								Value:     132.12,
+							},
+						},
 					},
 				},
 			},
 		},
 	}
-	if err := measures.BatchResources(gnocchiClient, createOpts).ExtractErr(); err != nil && err.Error() != "EOF" {
+	if err := measures.BatchCreateResourcesMetrics(gnocchiClient, createOpts).ExtractErr(); err != nil && err.Error() != "EOF" {
 		panic(err)
 	}
 */
