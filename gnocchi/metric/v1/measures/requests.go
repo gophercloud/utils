@@ -228,10 +228,10 @@ type BatchCreateResourcesMetricsOpts struct {
 // BatchResourcesMetricsOpts represents parameters of a single resource of the BatchCreateResourcesMetrics request.
 type BatchResourcesMetricsOpts struct {
 	// ResourceID uniquely identifies the Gnocchi resource.
-	ResourceID string
+	ResourceID string `json:"-" required:"true"`
 
 	// ResourcesMetrics specifies metrics whose measures will be updated.
-	ResourcesMetrics []ResourcesMetricsOpts
+	ResourcesMetrics []ResourcesMetricsOpts `json:"-" required:"true"`
 }
 
 // ToMap is a helper function to convert individual BatchResourcesMetricsOpts structure into a sub-map.
