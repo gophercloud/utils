@@ -1,6 +1,7 @@
 package measures
 
 import (
+	"fmt"
 	"net/url"
 	"time"
 
@@ -146,14 +147,24 @@ type BatchCreateMetricsOpts []MetricOpts
 // MetricOpts represents measures of a single metric of the BatchCreateMetrics request.
 type MetricOpts struct {
 	// ID uniquely identifies the Gnocchi metric.
-	ID string `json:"-" required:"true"`
+	ID string
 
 	// Measures is a set of measures for a single metric that needs to be created.
-	Measures []MeasureOpts `json:"-" required:"true"`
+	Measures []MeasureOpts
 }
 
 // ToMap is a helper function to convert individual MetricOpts structure into a sub-map.
 func (opts MetricOpts) ToMap() (map[string]interface{}, error) {
+	// Check provided MetricOpts fields.
+	if opts.ID == "" {
+		errMsg := "missing input for the MetricOpts 'ID' argument"
+		return nil, fmt.Errorf(errMsg)
+	}
+	if opts.Measures == nil {
+		errMsg := "missing input for the MetricOpts 'Measures' argument"
+		return nil, fmt.Errorf(errMsg)
+	}
+
 	// measures is a slice of measures maps.
 	measures := make([]map[string]interface{}, len(opts.Measures))
 
@@ -228,14 +239,24 @@ type BatchCreateResourcesMetricsOpts struct {
 // BatchResourcesMetricsOpts represents parameters of a single resource of the BatchCreateResourcesMetrics request.
 type BatchResourcesMetricsOpts struct {
 	// ResourceID uniquely identifies the Gnocchi resource.
-	ResourceID string `json:"-" required:"true"`
+	ResourceID string
 
 	// ResourcesMetrics specifies metrics whose measures will be updated.
-	ResourcesMetrics []ResourcesMetricsOpts `json:"-" required:"true"`
+	ResourcesMetrics []ResourcesMetricsOpts
 }
 
 // ToMap is a helper function to convert individual BatchResourcesMetricsOpts structure into a sub-map.
 func (opts BatchResourcesMetricsOpts) ToMap() (map[string]interface{}, error) {
+	// Check provided BatchResourcesMetricsOpts fields.
+	if opts.ResourceID == "" {
+		errMsg := "missing input for the BatchResourcesMetricsOpts 'ResourceID' argument"
+		return nil, fmt.Errorf(errMsg)
+	}
+	if opts.ResourcesMetrics == nil {
+		errMsg := "missing input for the BatchResourcesMetricsOpts 'ResourcesMetrics' argument"
+		return nil, fmt.Errorf(errMsg)
+	}
+
 	// batchResourcesMetricsOpts is an internal map representation of the BatchResourcesMetricsOpts struct.
 	batchResourcesMetricsOpts := make(map[string]interface{})
 
@@ -270,7 +291,7 @@ func (opts BatchResourcesMetricsOpts) ToMap() (map[string]interface{}, error) {
 // ResourcesMetricsOpts represents measures of a single metric of the resource from BatchResourcesMetricsOpts.
 type ResourcesMetricsOpts struct {
 	// MetricName is a human-readable name for the Gnocchi metric.
-	MetricName string `json:"-" required:"true"`
+	MetricName string
 
 	// ArchivePolicyName is a name of the Gnocchi archive policy that describes
 	// the aggregate storage policy of a metric.
@@ -280,11 +301,21 @@ type ResourcesMetricsOpts struct {
 	Unit string
 
 	// Measures is a set of measures for a single metric that needs to be created.
-	Measures []MeasureOpts `json:"-" required:"true"`
+	Measures []MeasureOpts
 }
 
 // ToMap is a helper function to convert individual ResourcesMetricsOpts structure into a sub-map.
 func (opts ResourcesMetricsOpts) ToMap() (map[string]interface{}, error) {
+	// Check provided ResourcesMetricsOpts fields.
+	if opts.MetricName == "" {
+		errMsg := "missing input for the ResourcesMetricsOpts 'MetricName' argument"
+		return nil, fmt.Errorf(errMsg)
+	}
+	if opts.Measures == nil {
+		errMsg := "missing input for the ResourcesMetricsOpts 'Measures' argument"
+		return nil, fmt.Errorf(errMsg)
+	}
+
 	// measures is a slice of measures maps.
 	measures := make([]map[string]interface{}, len(opts.Measures))
 
