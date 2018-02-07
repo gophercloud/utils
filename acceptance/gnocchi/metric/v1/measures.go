@@ -31,8 +31,7 @@ func CreateMeasures(t *testing.T, client *gophercloud.ServiceClient, metricID st
 	}
 
 	t.Logf("Attempting to create measures inside a Gnocchi metric %s", metricID)
-
-	if err := measures.Create(client, metricID, createOpts).ExtractErr(); err != nil && err.Error() != "EOF" {
+	if err := measures.Create(client, metricID, createOpts).ExtractErr(); err != nil {
 		return err
 	}
 
@@ -67,8 +66,7 @@ func MeasuresBatchCreateMetrics(t *testing.T, client *gophercloud.ServiceClient,
 	}
 
 	t.Logf("Attempting to create measures inside Gnocchi metrics via batch request")
-
-	if err := measures.BatchCreateMetrics(client, createOpts).ExtractErr(); err != nil && err.Error() != "EOF" {
+	if err := measures.BatchCreateMetrics(client, createOpts).ExtractErr(); err != nil {
 		return err
 	}
 
@@ -125,7 +123,7 @@ func MeasuresBatchCreateResourcesMetrics(t *testing.T, client *gophercloud.Servi
 	}
 
 	t.Logf("Attempting to create measures inside Gnocchi metrics via batch request with resource IDs")
-	if err := measures.BatchCreateResourcesMetrics(client, createOpts).ExtractErr(); err != nil && err.Error() != "EOF" {
+	if err := measures.BatchCreateResourcesMetrics(client, createOpts).ExtractErr(); err != nil {
 		return err
 	}
 

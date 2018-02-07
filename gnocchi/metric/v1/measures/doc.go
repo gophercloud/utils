@@ -39,7 +39,7 @@ Example of Creating measures inside a single metric
 		},
 	}
 	metricID := "9e5a6441-1044-4181-b66e-34e180753040"
-	if err := measures.Create(gnocchiClient, metricID, createOpts).ExtractErr(); err != nil && err.Error() != "EOF" {
+	if err := measures.Create(gnocchiClient, metricID, createOpts).ExtractErr(); err != nil {
 		panic(err)
 	}
 
@@ -75,7 +75,7 @@ Example of Creating measures inside different metrics via metric ID references i
 			},
 		},
 	}
-	if err := measures.BatchCreateMetrics(gnocchiClient, createOpts).ExtractErr(); err != nil && err.Error() != "EOF" {
+	if err := measures.BatchCreateMetrics(gnocchiClient, createOpts).ExtractErr(); err != nil {
 		panic(err)
 	}
 
@@ -143,7 +143,7 @@ Example of Creating measures inside different metrics via metric names and resou
 			},
 		},
 	}
-	if err := measures.BatchCreateResourcesMetrics(gnocchiClient, createOpts).ExtractErr(); err != nil && err.Error() != "EOF" {
+	if err := measures.BatchCreateResourcesMetrics(gnocchiClient, createOpts).ExtractErr(); err != nil {
 		panic(err)
 	}
 */
