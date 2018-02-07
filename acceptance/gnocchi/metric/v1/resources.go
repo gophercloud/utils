@@ -20,11 +20,12 @@ func CreateGenericResource(t *testing.T, client *gophercloud.ServiceClient) (*re
 
 	randomDay := tools.RandomInt(1, 100)
 	now := time.Now().UTC().AddDate(0, 0, -randomDay)
+	metricName := tools.RandomString("TESTACCT-", 8)
 	createOpts := resources.CreateOpts{
 		ID:        id.String(),
 		StartedAt: &now,
 		Metrics: map[string]interface{}{
-			"cpu.delta": map[string]string{
+			metricName: map[string]string{
 				"archive_policy_name": "medium",
 			},
 		},
@@ -52,4 +53,82 @@ func DeleteResource(t *testing.T, client *gophercloud.ServiceClient, resourceTyp
 	}
 
 	t.Logf("Deleted the Gnocchi resource: %s", resourceID)
+}
+
+// CreateResourcesToBatchMeasures will create Gnocchi resources with metrics to test batch measures requests and
+// return a map with references of resource IDs and metric names.
+// An error will be returned if resources or metrics could not be created.
+func CreateResourcesToBatchMeasures(t *testing.T, client *gophercloud.ServiceClient) (map[string][]string, error) {
+	// Prepare metric names.
+	firstMetricName := tools.RandomString("TESTACCT-", 8)
+	secondMetricName := tools.RandomString("TESTACCT-", 8)
+	thirdMetricName := tools.RandomString("TESTACCT-", 8)
+
+	// Prepare the first resource.
+	firstResourceID, err := uuid.NewV4()
+	if err != nil {
+		return nil, err
+	}
+	firstRandomDay := tools.RandomInt(1, 100)
+	firstStartTimestamp := time.Now().UTC().AddDate(0, 0, -firstRandomDay)
+	firstResourceCreateOpts := resources.CreateOpts{
+		ID:        firstResourceID.String(),
+		StartedAt: &firstStartTimestamp,
+		Metrics: map[string]interface{}{
+			firstMetricName: map[string]string{
+				"archive_policy_name": "medium",
+			},
+			secondMetricName: map[string]string{
+				"archive_policy_name": "low",
+			},
+		},
+	}
+	firstResourceType := "generic"
+
+	t.Logf("Attempting to create a generic Gnocchi resource")
+	firstResource, err := resources.Create(client, firstResourceType, firstResourceCreateOpts).Extract()
+	if err != nil {
+		return nil, err
+	}
+
+	t.Logf("Successfully created the generic Gnocchi resource.")
+	tools.PrintResource(t, firstResource)
+
+	// Prepare the second resource.
+	secondResourceID, err := uuid.NewV4()
+	if err != nil {
+		return nil, err
+	}
+	secondRandomDay := tools.RandomInt(1, 100)
+	secondStartTimestamp := time.Now().UTC().AddDate(0, 0, -secondRandomDay)
+	secondResourceCreateOpts := resources.CreateOpts{
+		ID:        secondResourceID.String(),
+		StartedAt: &secondStartTimestamp,
+		Metrics: map[string]interface{}{
+			thirdMetricName: map[string]string{
+				"archive_policy_name": "low",
+			},
+		},
+	}
+	secondResourceType := "generic"
+
+	t.Logf("Attempting to create a generic Gnocchi resource")
+	secondResource, err := resources.Create(client, secondResourceType, secondResourceCreateOpts).Extract()
+	if err != nil {
+		return nil, err
+	}
+
+	t.Logf("Successfully created the generic Gnocchi resource.")
+	tools.PrintResource(t, secondResource)
+
+	resourcesReferenceMap := map[string][]string{
+		firstResource.ID: []string{
+			firstMetricName,
+			secondMetricName,
+		},
+		secondResource.ID: []string{
+			thirdMetricName,
+		},
+	}
+	return resourcesReferenceMap, nil
 }

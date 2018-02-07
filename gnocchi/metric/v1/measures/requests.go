@@ -1,6 +1,7 @@
 package measures
 
 import (
+	"fmt"
 	"net/url"
 	"time"
 
@@ -145,12 +146,25 @@ type BatchCreateMetricsOpts []MetricOpts
 
 // MetricOpts represents measures of a single metric of the BatchCreateMetrics request.
 type MetricOpts struct {
-	ID       string
+	// ID uniquely identifies the Gnocchi metric.
+	ID string
+
+	// Measures is a set of measures for a single metric that needs to be created.
 	Measures []MeasureOpts
 }
 
 // ToMap is a helper function to convert individual MetricOpts structure into a sub-map.
 func (opts MetricOpts) ToMap() (map[string]interface{}, error) {
+	// Check provided MetricOpts fields.
+	if opts.ID == "" {
+		errMsg := "missing input for the MetricOpts 'ID' argument"
+		return nil, fmt.Errorf(errMsg)
+	}
+	if opts.Measures == nil {
+		errMsg := "missing input for the MetricOpts 'Measures' argument"
+		return nil, fmt.Errorf(errMsg)
+	}
+
 	// measures is a slice of measures maps.
 	measures := make([]map[string]interface{}, len(opts.Measures))
 
@@ -196,6 +210,186 @@ func BatchCreateMetrics(client *gophercloud.ServiceClient, opts BatchCreateMetri
 	}
 
 	_, r.Err = client.Post(batchCreateMetricsURL(client), b["batchCreateMetrics"], &r.Body, &gophercloud.RequestOpts{
+		OkCodes: []int{202},
+		MoreHeaders: map[string]string{
+			"Accept": "application/json, */*",
+		},
+	})
+	return
+}
+
+// BatchCreateResourcesMetricsOptsBuilder is needed to add measures to the BatchCreateResourcesMetrics request.
+type BatchCreateResourcesMetricsOptsBuilder interface {
+	// ToMeasuresBatchCreateResourcesMetricsMap builds a request body.
+	ToMeasuresBatchCreateResourcesMetricsMap() (map[string]interface{}, error)
+
+	// ToMeasuresBatchCreateResourcesMetricsQuery builds a query string.
+	ToMeasuresBatchCreateResourcesMetricsQuery() (string, error)
+}
+
+// BatchCreateResourcesMetricsOpts specifies a parameters for creating measures inside metrics via resource IDs and metric names.
+type BatchCreateResourcesMetricsOpts struct {
+	// CreateMetrics allows request to create metrics that don't exist yet.
+	CreateMetrics bool `q:"create_metrics"`
+
+	// BatchResourcesMetrics is a map of resource IDs, metrics names and corresponding measures that needs to be created.
+	BatchResourcesMetrics []BatchResourcesMetricsOpts
+}
+
+// BatchResourcesMetricsOpts represents parameters of a single resource of the BatchCreateResourcesMetrics request.
+type BatchResourcesMetricsOpts struct {
+	// ResourceID uniquely identifies the Gnocchi resource.
+	ResourceID string
+
+	// ResourcesMetrics specifies metrics whose measures will be updated.
+	ResourcesMetrics []ResourcesMetricsOpts
+}
+
+// ToMap is a helper function to convert individual BatchResourcesMetricsOpts structure into a sub-map.
+func (opts BatchResourcesMetricsOpts) ToMap() (map[string]interface{}, error) {
+	// Check provided BatchResourcesMetricsOpts fields.
+	if opts.ResourceID == "" {
+		errMsg := "missing input for the BatchResourcesMetricsOpts 'ResourceID' argument"
+		return nil, fmt.Errorf(errMsg)
+	}
+	if opts.ResourcesMetrics == nil {
+		errMsg := "missing input for the BatchResourcesMetricsOpts 'ResourcesMetrics' argument"
+		return nil, fmt.Errorf(errMsg)
+	}
+
+	// batchResourcesMetricsOpts is an internal map representation of the BatchResourcesMetricsOpts struct.
+	batchResourcesMetricsOpts := make(map[string]interface{})
+
+	// resourcesMetricsMaps is a temporary slice that contains different metrics for a single resource.
+	resourcesMetricsMaps := make([]map[string]interface{}, len(opts.ResourcesMetrics))
+
+	// resourcesMetricsOptsMap is a temporary map that contains join of different maps from resourcesMetricsMaps slice.
+	resourcesMetricsOptsMap := make(map[string]interface{})
+
+	// Populate the temporary resourcesMetricsMaps slice.
+	for i, resourcesMetrics := range opts.ResourcesMetrics {
+		resourcesMetricsMap, err := resourcesMetrics.ToMap()
+		if err != nil {
+			return nil, err
+		}
+		resourcesMetricsMaps[i] = resourcesMetricsMap
+	}
+
+	// Populate the temporary resourcesMetricsOptsMap map.
+	for _, resourcesMetricsMap := range resourcesMetricsMaps {
+		for k, v := range resourcesMetricsMap {
+			resourcesMetricsOptsMap[k] = v
+		}
+	}
+
+	// Populate the final map batchResourcesMetricsOpts.
+	batchResourcesMetricsOpts[opts.ResourceID] = resourcesMetricsOptsMap
+
+	return batchResourcesMetricsOpts, nil
+}
+
+// ResourcesMetricsOpts represents measures of a single metric of the resource from BatchResourcesMetricsOpts.
+type ResourcesMetricsOpts struct {
+	// MetricName is a human-readable name for the Gnocchi metric.
+	MetricName string
+
+	// ArchivePolicyName is a name of the Gnocchi archive policy that describes
+	// the aggregate storage policy of a metric.
+	ArchivePolicyName string
+
+	// Unit is a unit of measurement for measures of that Gnocchi metric.
+	Unit string
+
+	// Measures is a set of measures for a single metric that needs to be created.
+	Measures []MeasureOpts
+}
+
+// ToMap is a helper function to convert individual ResourcesMetricsOpts structure into a sub-map.
+func (opts ResourcesMetricsOpts) ToMap() (map[string]interface{}, error) {
+	// Check provided ResourcesMetricsOpts fields.
+	if opts.MetricName == "" {
+		errMsg := "missing input for the ResourcesMetricsOpts 'MetricName' argument"
+		return nil, fmt.Errorf(errMsg)
+	}
+	if opts.Measures == nil {
+		errMsg := "missing input for the ResourcesMetricsOpts 'Measures' argument"
+		return nil, fmt.Errorf(errMsg)
+	}
+
+	// measures is a slice of measures maps.
+	measures := make([]map[string]interface{}, len(opts.Measures))
+
+	// resourcesMetricsOpts is an internal map representation of the ResourcesMetricsOpts struct.
+	resourcesMetricsOpts := make(map[string]interface{})
+
+	// metricOpts is an internal nested map for each metric in the resourcesMetricsOpts.
+	metricOpts := make(map[string]interface{})
+
+	// Populate metricOpts with values from provided opts.
+	if opts.ArchivePolicyName != "" {
+		metricOpts["archive_policy_name"] = opts.ArchivePolicyName
+	}
+	if opts.Unit != "" {
+		metricOpts["unit"] = opts.Unit
+	}
+	for i, measure := range opts.Measures {
+		measureMap, err := measure.ToMap()
+		if err != nil {
+			return nil, err
+		}
+		measures[i] = measureMap
+	}
+	metricOpts["measures"] = measures
+
+	resourcesMetricsOpts[opts.MetricName] = metricOpts
+
+	return resourcesMetricsOpts, nil
+}
+
+// ToMeasuresBatchCreateResourcesMetricsMap constructs a request body from the BatchCreateResourcesMetricsOpts.
+func (opts BatchCreateResourcesMetricsOpts) ToMeasuresBatchCreateResourcesMetricsMap() (map[string]interface{}, error) {
+	// batchCreateResourcesMetricsOpts is an internal representation of the
+	// BatchCreateResourcesMetricsOpts's BatchResourcesMetrics field.
+	batchCreateResourcesMetricsOpts := make(map[string]interface{})
+
+	for _, resourceMetricsOpts := range opts.BatchResourcesMetrics {
+		resourceMetricsOptsMap, err := resourceMetricsOpts.ToMap()
+		if err != nil {
+			return nil, err
+		}
+		for k, v := range resourceMetricsOptsMap {
+			batchCreateResourcesMetricsOpts[k] = v
+		}
+	}
+
+	return map[string]interface{}{"batchCreateResourcesMetrics": batchCreateResourcesMetricsOpts}, nil
+}
+
+// ToMeasuresBatchCreateResourcesMetricsQuery formats the BatchCreateResourcesMetricsOpts into a query string.
+func (opts BatchCreateResourcesMetricsOpts) ToMeasuresBatchCreateResourcesMetricsQuery() (string, error) {
+	q, err := gophercloud.BuildQueryString(opts)
+	return q.String(), err
+}
+
+// BatchCreateResourcesMetrics requests the creation of new measures inside metrics via resource IDs and metric names.
+func BatchCreateResourcesMetrics(client *gophercloud.ServiceClient, opts BatchCreateResourcesMetricsOptsBuilder) (r BatchCreateResourcesMetricsResult) {
+	url := batchCreateResourcesMetricsURL(client)
+	if opts != nil {
+		query, err := opts.ToMeasuresBatchCreateResourcesMetricsQuery()
+		if err != nil {
+			r.Err = err
+			return
+		}
+		url += query
+	}
+
+	b, err := opts.ToMeasuresBatchCreateResourcesMetricsMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+
+	_, r.Err = client.Post(url, b["batchCreateResourcesMetrics"], &r.Body, &gophercloud.RequestOpts{
 		OkCodes: []int{202},
 		MoreHeaders: map[string]string{
 			"Accept": "application/json, */*",
