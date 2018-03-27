@@ -28,4 +28,12 @@ clouds:
     regions:
       - SAN
       - LAX
-
+  arizona:
+    profile: "Some profile"
+    auth_type: "token"
+    auth:
+      auth_url: "https://az.example.com:5000/v3"
+      token: "12345"
+      project_id: "1234"
+      project_name: "Some Project"
+    region_name: "PHX"

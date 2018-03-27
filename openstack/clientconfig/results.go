@@ -10,6 +10,7 @@ type Clouds struct {
 // Cloud represents an entry in a clouds.yaml file.
 type Cloud struct {
 	Auth       *CloudAuth    `yaml:"auth"`
+	AuthType   string        `yaml:"auth_type"`
 	RegionName string        `yaml:"region_name"`
 	Regions    []interface{} `yaml:"regions"`
 
@@ -21,6 +22,7 @@ type Cloud struct {
 // CloudAuth represents the auth section of a cloud entry.
 type CloudAuth struct {
 	AuthURL           string `yaml:"auth_url"`
+	Token             string `yaml:"token"`
 	Username          string `yaml:"username"`
 	Password          string `yaml:"password"`
 	ProjectName       string `yaml:"project_name"`

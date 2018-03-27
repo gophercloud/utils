@@ -168,19 +168,23 @@ func AuthOptions(opts *ClientOpts) (*gophercloud.AuthOptions, error) {
 		ao.DomainName = v
 	}
 
+	// If an auth_type of "token" was specified, then make sure
+	// Gophercloud properly authenticates with a token. This involves
+	// unsetting a few other auth options. The reason this is done
+	// here is to wait until all auth settings (both in clouds.yaml
+	// and via environment variables) are set and then unset them.
+	if cloud.AuthType == "token" {
+		ao.TokenID = auth.Token
+		ao.Username = ""
+		ao.Password = ""
+		ao.UserID = ""
+		ao.DomainID = ""
+		ao.DomainName = ""
+	}
+
 	// Check for absolute minimum requirements.
 	if ao.IdentityEndpoint == "" {
 		err := gophercloud.ErrMissingInput{Argument: "authURL"}
-		return nil, err
-	}
-
-	if ao.Username == "" {
-		err := gophercloud.ErrMissingInput{Argument: "username"}
-		return nil, err
-	}
-
-	if ao.Password == "" {
-		err := gophercloud.ErrMissingInput{Argument: "password"}
 		return nil, err
 	}
 
