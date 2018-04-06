@@ -65,3 +65,42 @@ func fileExists(filename string) bool {
 	}
 	return false
 }
+
+// isProjectScoped determines if an auth struct is project scoped.
+func isProjectScoped(auth *Auth) bool {
+	if auth.ProjectID == "" && auth.ProjectName == "" {
+		return false
+	}
+
+	return true
+}
+
+// setDomainIfNeeded will set a DomainID and DomainName
+// to ProjectDomain* and UserDomain* if not already set.
+func setDomainIfNeeded(cloud *Cloud) *Cloud {
+	if cloud.Auth.DomainID != "" {
+		if cloud.Auth.UserDomainID == "" {
+			cloud.Auth.UserDomainID = cloud.Auth.DomainID
+		}
+
+		if cloud.Auth.ProjectDomainID == "" {
+			cloud.Auth.ProjectDomainID = cloud.Auth.DomainID
+		}
+
+		cloud.Auth.DomainID = ""
+	}
+
+	if cloud.Auth.DomainName != "" {
+		if cloud.Auth.UserDomainName == "" {
+			cloud.Auth.UserDomainName = cloud.Auth.DomainName
+		}
+
+		if cloud.Auth.ProjectDomainName == "" {
+			cloud.Auth.ProjectDomainName = cloud.Auth.DomainName
+		}
+
+		cloud.Auth.DomainName = ""
+	}
+
+	return cloud
+}
