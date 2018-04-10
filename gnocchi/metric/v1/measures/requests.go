@@ -86,7 +86,7 @@ type MeasureOpts struct {
 	Timestamp *time.Time `json:"-" required:"true"`
 
 	// Value represents a measure data value.
-	Value float64 `json:"value" required:"true"`
+	Value float64 `json:"value"`
 }
 
 // ToMap is a helper function to convert individual MeasureOpts structure into a sub-map.
