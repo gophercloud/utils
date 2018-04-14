@@ -67,8 +67,8 @@ func fileExists(filename string) bool {
 }
 
 // isProjectScoped determines if an auth struct is project scoped.
-func isProjectScoped(auth *Auth) bool {
-	if auth.ProjectID == "" && auth.ProjectName == "" {
+func isProjectScoped(authInfo *AuthInfo) bool {
+	if authInfo.ProjectID == "" && authInfo.ProjectName == "" {
 		return false
 	}
 
@@ -78,28 +78,28 @@ func isProjectScoped(auth *Auth) bool {
 // setDomainIfNeeded will set a DomainID and DomainName
 // to ProjectDomain* and UserDomain* if not already set.
 func setDomainIfNeeded(cloud *Cloud) *Cloud {
-	if cloud.Auth.DomainID != "" {
-		if cloud.Auth.UserDomainID == "" {
-			cloud.Auth.UserDomainID = cloud.Auth.DomainID
+	if cloud.AuthInfo.DomainID != "" {
+		if cloud.AuthInfo.UserDomainID == "" {
+			cloud.AuthInfo.UserDomainID = cloud.AuthInfo.DomainID
 		}
 
-		if cloud.Auth.ProjectDomainID == "" {
-			cloud.Auth.ProjectDomainID = cloud.Auth.DomainID
+		if cloud.AuthInfo.ProjectDomainID == "" {
+			cloud.AuthInfo.ProjectDomainID = cloud.AuthInfo.DomainID
 		}
 
-		cloud.Auth.DomainID = ""
+		cloud.AuthInfo.DomainID = ""
 	}
 
-	if cloud.Auth.DomainName != "" {
-		if cloud.Auth.UserDomainName == "" {
-			cloud.Auth.UserDomainName = cloud.Auth.DomainName
+	if cloud.AuthInfo.DomainName != "" {
+		if cloud.AuthInfo.UserDomainName == "" {
+			cloud.AuthInfo.UserDomainName = cloud.AuthInfo.DomainName
 		}
 
-		if cloud.Auth.ProjectDomainName == "" {
-			cloud.Auth.ProjectDomainName = cloud.Auth.DomainName
+		if cloud.AuthInfo.ProjectDomainName == "" {
+			cloud.AuthInfo.ProjectDomainName = cloud.AuthInfo.DomainName
 		}
 
-		cloud.Auth.DomainName = ""
+		cloud.AuthInfo.DomainName = ""
 	}
 
 	return cloud

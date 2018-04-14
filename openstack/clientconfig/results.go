@@ -9,8 +9,8 @@ type Clouds struct {
 
 // Cloud represents an entry in a clouds.yaml file.
 type Cloud struct {
-	Auth       *Auth         `yaml:"auth"`
-	AuthType   string        `yaml:"auth_type"`
+	AuthInfo   *AuthInfo     `yaml:"auth"`
+	AuthType   AuthType      `yaml:"auth_type"`
 	RegionName string        `yaml:"region_name"`
 	Regions    []interface{} `yaml:"regions"`
 
@@ -21,7 +21,7 @@ type Cloud struct {
 
 // Auth represents the auth section of a cloud entry or
 // auth options entered explicitly in ClientOpts.
-type Auth struct {
+type AuthInfo struct {
 	// AuthURL is the keystone/identity endpoint URL.
 	AuthURL string `yaml:"auth_url"`
 

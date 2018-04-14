@@ -11,6 +11,20 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// AuthType respresents a valid method of authentication.
+type AuthType string
+
+const (
+	AuthPassword AuthType = "password"
+	AuthToken    AuthType = "token"
+
+	AuthV2Password AuthType = "v2password"
+	AuthV2Token    AuthType = "v2token"
+
+	AuthV3Password AuthType = "v3password"
+	AuthV3Token    AuthType = "v3token"
+)
+
 // ClientOpts represents options to customize the way a client is
 // configured.
 type ClientOpts struct {
@@ -22,11 +36,11 @@ type ClientOpts struct {
 
 	// AuthType specifies the type of authentication to use.
 	// By default, this is "password".
-	AuthType string
+	AuthType AuthType
 
-	// Auth defines the authentication information needed to
+	// AuthInfo defines the authentication information needed to
 	// authenticate to a cloud when clouds.yaml isn't used.
-	Auth *Auth
+	AuthInfo *AuthInfo
 }
 
 // LoadYAML will load a clouds.yaml file and return the full config.
@@ -138,17 +152,17 @@ func AuthOptions(opts *ClientOpts) (*gophercloud.AuthOptions, error) {
 		}
 	}
 
-	// If cloud.Auth is nil, then no cloud was specified.
-	if cloud.Auth == nil {
+	// If cloud.AuthInfo is nil, then no cloud was specified.
+	if cloud.AuthInfo == nil {
 		// If opts.Auth is not nil, then try using the auth settings from it.
-		if opts.Auth != nil {
-			cloud.Auth = opts.Auth
+		if opts.AuthInfo != nil {
+			cloud.AuthInfo = opts.AuthInfo
 		}
 
-		// If cloud.Auth is still nil, then set it to an empty Auth struct
+		// If cloud.AuthInfo is still nil, then set it to an empty Auth struct
 		// and rely on environment variables to do the authentication.
-		if cloud.Auth == nil {
-			cloud.Auth = new(Auth)
+		if cloud.AuthInfo == nil {
+			cloud.AuthInfo = new(AuthInfo)
 		}
 	}
 
@@ -179,12 +193,12 @@ func determineIdentityAPI(cloud *Cloud, opts *ClientOpts) string {
 	}
 
 	if identityAPI == "" {
-		if cloud.Auth != nil {
-			if strings.Contains(cloud.Auth.AuthURL, "v2.0") {
+		if cloud.AuthInfo != nil {
+			if strings.Contains(cloud.AuthInfo.AuthURL, "v2.0") {
 				identityAPI = "2.0"
 			}
 
-			if strings.Contains(cloud.Auth.AuthURL, "v3") {
+			if strings.Contains(cloud.AuthInfo.AuthURL, "v3") {
 				identityAPI = "3"
 			}
 		}
@@ -192,13 +206,13 @@ func determineIdentityAPI(cloud *Cloud, opts *ClientOpts) string {
 
 	if identityAPI == "" {
 		switch cloud.AuthType {
-		case "v2password":
+		case AuthV2Password:
 			identityAPI = "2.0"
-		case "v2token":
+		case AuthV2Token:
 			identityAPI = "2.0"
-		case "v3password":
+		case AuthV3Password:
 			identityAPI = "3"
-		case "v3token":
+		case AuthV3Token:
 			identityAPI = "3"
 		}
 	}
@@ -221,48 +235,48 @@ func v2auth(cloud *Cloud, opts *ClientOpts) (*gophercloud.AuthOptions, error) {
 	}
 
 	if v := os.Getenv(envPrefix + "AUTH_URL"); v != "" {
-		cloud.Auth.AuthURL = v
+		cloud.AuthInfo.AuthURL = v
 	}
 
 	if v := os.Getenv(envPrefix + "TOKEN"); v != "" {
-		cloud.Auth.Token = v
+		cloud.AuthInfo.Token = v
 	}
 
 	if v := os.Getenv(envPrefix + "AUTH_TOKEN"); v != "" {
-		cloud.Auth.Token = v
+		cloud.AuthInfo.Token = v
 	}
 
 	if v := os.Getenv(envPrefix + "USERNAME"); v != "" {
-		cloud.Auth.Username = v
+		cloud.AuthInfo.Username = v
 	}
 
 	if v := os.Getenv(envPrefix + "PASSWORD"); v != "" {
-		cloud.Auth.Password = v
+		cloud.AuthInfo.Password = v
 	}
 
 	if v := os.Getenv(envPrefix + "TENANT_ID"); v != "" {
-		cloud.Auth.ProjectID = v
+		cloud.AuthInfo.ProjectID = v
 	}
 
 	if v := os.Getenv(envPrefix + "PROJECT_ID"); v != "" {
-		cloud.Auth.ProjectID = v
+		cloud.AuthInfo.ProjectID = v
 	}
 
 	if v := os.Getenv(envPrefix + "TENANT_NAME"); v != "" {
-		cloud.Auth.ProjectName = v
+		cloud.AuthInfo.ProjectName = v
 	}
 
 	if v := os.Getenv(envPrefix + "PROJECT_NAME"); v != "" {
-		cloud.Auth.ProjectName = v
+		cloud.AuthInfo.ProjectName = v
 	}
 
 	ao := &gophercloud.AuthOptions{
-		IdentityEndpoint: cloud.Auth.AuthURL,
-		TokenID:          cloud.Auth.Token,
-		Username:         cloud.Auth.Username,
-		Password:         cloud.Auth.Password,
-		TenantID:         cloud.Auth.ProjectID,
-		TenantName:       cloud.Auth.ProjectName,
+		IdentityEndpoint: cloud.AuthInfo.AuthURL,
+		TokenID:          cloud.AuthInfo.Token,
+		Username:         cloud.AuthInfo.Username,
+		Password:         cloud.AuthInfo.Password,
+		TenantID:         cloud.AuthInfo.ProjectID,
+		TenantName:       cloud.AuthInfo.ProjectName,
 	}
 
 	return ao, nil
@@ -277,104 +291,104 @@ func v3auth(cloud *Cloud, opts *ClientOpts) (*gophercloud.AuthOptions, error) {
 	}
 
 	if v := os.Getenv(envPrefix + "AUTH_URL"); v != "" {
-		cloud.Auth.AuthURL = v
+		cloud.AuthInfo.AuthURL = v
 	}
 
 	if v := os.Getenv(envPrefix + "TOKEN"); v != "" {
-		cloud.Auth.Token = v
+		cloud.AuthInfo.Token = v
 	}
 
 	if v := os.Getenv(envPrefix + "AUTH_TOKEN"); v != "" {
-		cloud.Auth.Token = v
+		cloud.AuthInfo.Token = v
 	}
 
 	if v := os.Getenv(envPrefix + "USERNAME"); v != "" {
-		cloud.Auth.Username = v
+		cloud.AuthInfo.Username = v
 	}
 
 	if v := os.Getenv(envPrefix + "USER_ID"); v != "" {
-		cloud.Auth.UserID = v
+		cloud.AuthInfo.UserID = v
 	}
 
 	if v := os.Getenv(envPrefix + "PASSWORD"); v != "" {
-		cloud.Auth.Password = v
+		cloud.AuthInfo.Password = v
 	}
 
 	if v := os.Getenv(envPrefix + "TENANT_ID"); v != "" {
-		cloud.Auth.ProjectID = v
+		cloud.AuthInfo.ProjectID = v
 	}
 
 	if v := os.Getenv(envPrefix + "PROJECT_ID"); v != "" {
-		cloud.Auth.ProjectID = v
+		cloud.AuthInfo.ProjectID = v
 	}
 
 	if v := os.Getenv(envPrefix + "TENANT_NAME"); v != "" {
-		cloud.Auth.ProjectName = v
+		cloud.AuthInfo.ProjectName = v
 	}
 
 	if v := os.Getenv(envPrefix + "PROJECT_NAME"); v != "" {
-		cloud.Auth.ProjectName = v
+		cloud.AuthInfo.ProjectName = v
 	}
 
 	if v := os.Getenv(envPrefix + "DOMAIN_ID"); v != "" {
-		cloud.Auth.DomainID = v
+		cloud.AuthInfo.DomainID = v
 	}
 
 	if v := os.Getenv(envPrefix + "DOMAIN_NAME"); v != "" {
-		cloud.Auth.DomainName = v
+		cloud.AuthInfo.DomainName = v
 	}
 
 	if v := os.Getenv(envPrefix + "PROJECT_DOMAIN_ID"); v != "" {
-		cloud.Auth.ProjectDomainID = v
+		cloud.AuthInfo.ProjectDomainID = v
 	}
 
 	if v := os.Getenv(envPrefix + "PROJECT_DOMAIN_NAME"); v != "" {
-		cloud.Auth.ProjectDomainName = v
+		cloud.AuthInfo.ProjectDomainName = v
 	}
 
 	if v := os.Getenv(envPrefix + "USER_DOMAIN_ID"); v != "" {
-		cloud.Auth.UserDomainID = v
+		cloud.AuthInfo.UserDomainID = v
 	}
 
 	if v := os.Getenv(envPrefix + "USER_DOMAIN_NAME"); v != "" {
-		cloud.Auth.UserDomainName = v
+		cloud.AuthInfo.UserDomainName = v
 	}
 
 	// Build a scope and try to do it correctly.
 	// https://github.com/openstack/os-client-config/blob/master/os_client_config/config.py#L595
 	scope := new(gophercloud.AuthScope)
 
-	if !isProjectScoped(cloud.Auth) {
-		if cloud.Auth.DomainID != "" {
-			scope.DomainID = cloud.Auth.DomainID
-		} else if cloud.Auth.DomainName != "" {
-			scope.DomainName = cloud.Auth.DomainName
+	if !isProjectScoped(cloud.AuthInfo) {
+		if cloud.AuthInfo.DomainID != "" {
+			scope.DomainID = cloud.AuthInfo.DomainID
+		} else if cloud.AuthInfo.DomainName != "" {
+			scope.DomainName = cloud.AuthInfo.DomainName
 		}
 	} else {
 		// If Domain* is set, but UserDomain* or ProjectDomain* aren't,
 		// then use Domain* as the default setting.
 		cloud = setDomainIfNeeded(cloud)
 
-		if cloud.Auth.ProjectID != "" {
-			scope.ProjectID = cloud.Auth.ProjectID
+		if cloud.AuthInfo.ProjectID != "" {
+			scope.ProjectID = cloud.AuthInfo.ProjectID
 		} else {
-			scope.ProjectName = cloud.Auth.ProjectName
-			scope.DomainID = cloud.Auth.ProjectDomainID
-			scope.DomainName = cloud.Auth.ProjectDomainName
+			scope.ProjectName = cloud.AuthInfo.ProjectName
+			scope.DomainID = cloud.AuthInfo.ProjectDomainID
+			scope.DomainName = cloud.AuthInfo.ProjectDomainName
 		}
 	}
 
 	ao := &gophercloud.AuthOptions{
 		Scope:            scope,
-		IdentityEndpoint: cloud.Auth.AuthURL,
-		TokenID:          cloud.Auth.Token,
-		Username:         cloud.Auth.Username,
-		UserID:           cloud.Auth.UserID,
-		Password:         cloud.Auth.Password,
-		TenantID:         cloud.Auth.ProjectID,
-		TenantName:       cloud.Auth.ProjectName,
-		DomainID:         cloud.Auth.UserDomainID,
-		DomainName:       cloud.Auth.UserDomainName,
+		IdentityEndpoint: cloud.AuthInfo.AuthURL,
+		TokenID:          cloud.AuthInfo.Token,
+		Username:         cloud.AuthInfo.Username,
+		UserID:           cloud.AuthInfo.UserID,
+		Password:         cloud.AuthInfo.Password,
+		TenantID:         cloud.AuthInfo.ProjectID,
+		TenantName:       cloud.AuthInfo.ProjectName,
+		DomainID:         cloud.AuthInfo.UserDomainID,
+		DomainName:       cloud.AuthInfo.UserDomainName,
 	}
 
 	// If an auth_type of "token" was specified, then make sure
@@ -382,7 +396,7 @@ func v3auth(cloud *Cloud, opts *ClientOpts) (*gophercloud.AuthOptions, error) {
 	// unsetting a few other auth options. The reason this is done
 	// here is to wait until all auth settings (both in clouds.yaml
 	// and via environment variables) are set and then unset them.
-	if strings.Contains(cloud.AuthType, "token") || ao.TokenID != "" {
+	if strings.Contains(string(cloud.AuthType), "token") || ao.TokenID != "" {
 		ao.Username = ""
 		ao.Password = ""
 		ao.UserID = ""
@@ -392,7 +406,7 @@ func v3auth(cloud *Cloud, opts *ClientOpts) (*gophercloud.AuthOptions, error) {
 
 	// Check for absolute minimum requirements.
 	if ao.IdentityEndpoint == "" {
-		err := gophercloud.ErrMissingInput{Argument: "authURL"}
+		err := gophercloud.ErrMissingInput{Argument: "auth_url"}
 		return nil, err
 	}
 
@@ -423,7 +437,7 @@ func NewServiceClient(service string, opts *ClientOpts) (*gophercloud.ServiceCli
 	}
 
 	if cloud == nil {
-		cloud.Auth = opts.Auth
+		cloud.AuthInfo = opts.AuthInfo
 	}
 
 	// Environment variable overrides.

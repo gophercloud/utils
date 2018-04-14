@@ -7,7 +7,7 @@ import (
 
 var HawaiiCloudYAML = clientconfig.Cloud{
 	RegionName: "HNL",
-	Auth: &clientconfig.Auth{
+	AuthInfo: &clientconfig.AuthInfo{
 		AuthURL:     "https://hi.example.com:5000/v3",
 		Username:    "jdoe",
 		Password:    "password",
@@ -17,7 +17,7 @@ var HawaiiCloudYAML = clientconfig.Cloud{
 }
 
 var HawaiiClientOpts = &clientconfig.ClientOpts{
-	Auth: &clientconfig.Auth{
+	AuthInfo: &clientconfig.AuthInfo{
 		AuthURL:     "https://hi.example.com:5000/v3",
 		Username:    "jdoe",
 		Password:    "password",
@@ -48,7 +48,7 @@ var HawaiiAuthOpts = &gophercloud.AuthOptions{
 
 var FloridaCloudYAML = clientconfig.Cloud{
 	RegionName: "MIA",
-	Auth: &clientconfig.Auth{
+	AuthInfo: &clientconfig.AuthInfo{
 		AuthURL:      "https://fl.example.com:5000/v3",
 		Username:     "jdoe",
 		Password:     "password",
@@ -58,7 +58,7 @@ var FloridaCloudYAML = clientconfig.Cloud{
 }
 
 var FloridaClientOpts = &clientconfig.ClientOpts{
-	Auth: &clientconfig.Auth{
+	AuthInfo: &clientconfig.AuthInfo{
 		AuthURL:      "https://fl.example.com:5000/v3",
 		Username:     "jdoe",
 		Password:     "password",
@@ -91,7 +91,7 @@ var CaliforniaCloudYAML = clientconfig.Cloud{
 		"SAN",
 		"LAX",
 	},
-	Auth: &clientconfig.Auth{
+	AuthInfo: &clientconfig.AuthInfo{
 		AuthURL:           "https://ca.example.com:5000/v3",
 		Username:          "jdoe",
 		Password:          "password",
@@ -102,7 +102,7 @@ var CaliforniaCloudYAML = clientconfig.Cloud{
 }
 
 var CaliforniaClientOpts = &clientconfig.ClientOpts{
-	Auth: &clientconfig.Auth{
+	AuthInfo: &clientconfig.AuthInfo{
 		AuthURL:           "https://ca.example.com:5000/v3",
 		Username:          "jdoe",
 		Password:          "password",
@@ -135,8 +135,8 @@ var CaliforniaAuthOpts = &gophercloud.AuthOptions{
 
 var ArizonaCloudYAML = clientconfig.Cloud{
 	RegionName: "PHX",
-	AuthType:   "token",
-	Auth: &clientconfig.Auth{
+	AuthType:   clientconfig.AuthToken,
+	AuthInfo: &clientconfig.AuthInfo{
 		AuthURL:     "https://az.example.com:5000/v3",
 		Token:       "12345",
 		ProjectName: "Some Project",
@@ -145,7 +145,7 @@ var ArizonaCloudYAML = clientconfig.Cloud{
 }
 
 var ArizonaClientOpts = &clientconfig.ClientOpts{
-	Auth: &clientconfig.Auth{
+	AuthInfo: &clientconfig.AuthInfo{
 		AuthURL:     "https://az.example.com:5000/v3",
 		Token:       "12345",
 		ProjectName: "Some Project",
@@ -172,8 +172,8 @@ var ArizonaAuthOpts = &gophercloud.AuthOptions{
 
 var NewMexicoCloudYAML = clientconfig.Cloud{
 	RegionName: "SAF",
-	AuthType:   "password",
-	Auth: &clientconfig.Auth{
+	AuthType:   clientconfig.AuthPassword,
+	AuthInfo: &clientconfig.AuthInfo{
 		AuthURL:           "https://nm.example.com:5000/v3",
 		Username:          "jdoe",
 		Password:          "password",
@@ -185,7 +185,7 @@ var NewMexicoCloudYAML = clientconfig.Cloud{
 }
 
 var NewMexicoClientOpts = &clientconfig.ClientOpts{
-	Auth: &clientconfig.Auth{
+	AuthInfo: &clientconfig.AuthInfo{
 		AuthURL:           "https://nm.example.com:5000/v3",
 		Username:          "jdoe",
 		Password:          "password",
@@ -220,7 +220,7 @@ var NewMexicoAuthOpts = &gophercloud.AuthOptions{
 
 var NevadaCloudYAML = clientconfig.Cloud{
 	RegionName: "LAS",
-	Auth: &clientconfig.Auth{
+	AuthInfo: &clientconfig.AuthInfo{
 		AuthURL:           "https://nv.example.com:5000/v3",
 		UserID:            "12345",
 		Password:          "password",
@@ -230,7 +230,7 @@ var NevadaCloudYAML = clientconfig.Cloud{
 }
 
 var NevadaClientOpts = &clientconfig.ClientOpts{
-	Auth: &clientconfig.Auth{
+	AuthInfo: &clientconfig.AuthInfo{
 		AuthURL:           "https://nv.example.com:5000/v3",
 		UserID:            "12345",
 		Password:          "password",
@@ -271,8 +271,8 @@ var CloudYAML = clientconfig.Clouds{
 
 var AlbertaCloudYAML = clientconfig.Cloud{
 	RegionName: "YYC",
-	AuthType:   "password",
-	Auth: &clientconfig.Auth{
+	AuthType:   clientconfig.AuthPassword,
+	AuthInfo: &clientconfig.AuthInfo{
 		AuthURL:     "https://ab.example.com:5000/v2.0",
 		Username:    "jdoe",
 		Password:    "password",
@@ -281,7 +281,7 @@ var AlbertaCloudYAML = clientconfig.Cloud{
 }
 
 var AlbertaClientOpts = &clientconfig.ClientOpts{
-	Auth: &clientconfig.Auth{
+	AuthInfo: &clientconfig.AuthInfo{
 		AuthURL:     "https://ab.example.com:5000/v2.0",
 		Username:    "jdoe",
 		Password:    "password",
@@ -306,8 +306,8 @@ var AlbertaAuthOpts = &gophercloud.AuthOptions{
 
 var YukonCloudYAML = clientconfig.Cloud{
 	RegionName: "YXY",
-	AuthType:   "v2token",
-	Auth: &clientconfig.Auth{
+	AuthType:   clientconfig.AuthV2Token,
+	AuthInfo: &clientconfig.AuthInfo{
 		AuthURL:     "https://yt.example.com:5000/v2.0",
 		Token:       "12345",
 		ProjectName: "Some Project",
@@ -315,7 +315,7 @@ var YukonCloudYAML = clientconfig.Cloud{
 }
 
 var YukonClientOpts = &clientconfig.ClientOpts{
-	Auth: &clientconfig.Auth{
+	AuthInfo: &clientconfig.AuthInfo{
 		AuthURL:     "https://yt.example.com:5000/v2.0",
 		Token:       "12345",
 		ProjectName: "Some Project",
