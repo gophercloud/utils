@@ -25,7 +25,55 @@ clouds:
       password: "password"
       project_name: "Some Project"
       project_domain_name: "default"
+      user_domain_name: "default"
     regions:
       - SAN
       - LAX
-
+  arizona:
+    profile: "Some profile"
+    auth_type: "token"
+    auth:
+      auth_url: "https://az.example.com:5000/v3"
+      token: "12345"
+      project_name: "Some Project"
+      domain_name: "default"
+    region_name: "PHX"
+  newmexico:
+    profile: "Some profile"
+    auth_type: "password"
+    auth:
+      auth_url: "https://nm.example.com:5000/v3"
+      username: "jdoe"
+      password: "password"
+      project_name: "Some Project"
+      project_domain_name: "Some Domain"
+      user_domain_name: "Other Domain"
+      domain_name: "default"
+    region_name: "SAF"
+  nevada:
+    profile: "Some profile"
+    auth_type: "password"
+    auth:
+      auth_url: "https://nv.example.com:5000/v3"
+      user_id: "12345"
+      password: "password"
+      project_name: "Some Project"
+      project_domain_name: "Some Domain"
+    region_name: "LAS"
+  alberta:
+    profile: "Some profile"
+    auth_type: "password"
+    auth:
+      auth_url: "https://ab.example.com:5000/v2.0"
+      username: "jdoe"
+      password: "password"
+      project_name: "Some Project"
+    region_name: "YYC"
+  yukon:
+    profile: "Some profile"
+    auth_type: "v2token"
+    auth:
+      auth_url: "https://yt.example.com:5000/v2.0"
+      token: "12345"
+      project_name: "Some Project"
+    region_name: "YXY"
