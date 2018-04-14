@@ -41,11 +41,23 @@ var CloudYAMLCalifornia = clientconfig.Cloud{
 	},
 }
 
+var CloudYAMLArizona = clientconfig.Cloud{
+	RegionName: "PHX",
+	AuthType:   "token",
+	Auth: &clientconfig.CloudAuth{
+		AuthURL:     "https://az.example.com:5000/v3",
+		Token:       "12345",
+		ProjectID:   "1234",
+		ProjectName: "Some Project",
+	},
+}
+
 var CloudYAML = clientconfig.Clouds{
 	Clouds: map[string]clientconfig.Cloud{
 		"hawaii":     CloudYAMLHawaii,
 		"florida":    CloudYAMLFlorida,
 		"california": CloudYAMLCalifornia,
+		"arizona":    CloudYAMLArizona,
 	},
 }
 
@@ -55,4 +67,11 @@ var HawaiiAuthOpts = &gophercloud.AuthOptions{
 	Password:         "password",
 	TenantName:       "Some Project",
 	DomainName:       "default",
+}
+
+var ArizonaAuthOpts = &gophercloud.AuthOptions{
+	IdentityEndpoint: "https://az.example.com:5000/v3",
+	TokenID:          "12345",
+	TenantID:         "1234",
+	TenantName:       "Some Project",
 }

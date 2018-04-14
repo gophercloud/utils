@@ -57,3 +57,18 @@ func TestAuthOptionsOSCLOUD(t *testing.T) {
 
 	th.AssertDeepEquals(t, HawaiiAuthOpts, actual)
 }
+
+func TestAuthOptionsToken(t *testing.T) {
+	os.Setenv("OS_CLOUD", "arizona")
+
+	clientOpts := &clientconfig.ClientOpts{
+		Cloud: "arizona",
+	}
+
+	actual, err := clientconfig.AuthOptions(clientOpts)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	th.AssertDeepEquals(t, ArizonaAuthOpts, actual)
+}
