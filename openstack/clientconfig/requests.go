@@ -277,6 +277,7 @@ func v2auth(cloud *Cloud, opts *ClientOpts) (*gophercloud.AuthOptions, error) {
 		Password:         cloud.AuthInfo.Password,
 		TenantID:         cloud.AuthInfo.ProjectID,
 		TenantName:       cloud.AuthInfo.ProjectName,
+		AllowReauth:      true,
 	}
 
 	return ao, nil
@@ -389,6 +390,7 @@ func v3auth(cloud *Cloud, opts *ClientOpts) (*gophercloud.AuthOptions, error) {
 		TenantName:       cloud.AuthInfo.ProjectName,
 		DomainID:         cloud.AuthInfo.UserDomainID,
 		DomainName:       cloud.AuthInfo.UserDomainName,
+		AllowReauth:      true,
 	}
 
 	// If an auth_type of "token" was specified, then make sure

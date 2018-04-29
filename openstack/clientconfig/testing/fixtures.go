@@ -44,6 +44,7 @@ var HawaiiAuthOpts = &gophercloud.AuthOptions{
 	Password:         "password",
 	TenantName:       "Some Project",
 	DomainName:       "default",
+	AllowReauth:      true,
 }
 
 var FloridaCloudYAML = clientconfig.Cloud{
@@ -84,6 +85,7 @@ var FloridaAuthOpts = &gophercloud.AuthOptions{
 	Password:         "password",
 	TenantID:         "12345",
 	DomainID:         "abcde",
+	AllowReauth:      true,
 }
 
 var CaliforniaCloudYAML = clientconfig.Cloud{
@@ -131,6 +133,7 @@ var CaliforniaAuthOpts = &gophercloud.AuthOptions{
 	Password:         "password",
 	TenantName:       "Some Project",
 	DomainName:       "default",
+	AllowReauth:      true,
 }
 
 var ArizonaCloudYAML = clientconfig.Cloud{
@@ -168,6 +171,7 @@ var ArizonaAuthOpts = &gophercloud.AuthOptions{
 	IdentityEndpoint: "https://az.example.com:5000/v3",
 	TokenID:          "12345",
 	TenantName:       "Some Project",
+	AllowReauth:      true,
 }
 
 var NewMexicoCloudYAML = clientconfig.Cloud{
@@ -216,6 +220,7 @@ var NewMexicoAuthOpts = &gophercloud.AuthOptions{
 	Password:         "password",
 	TenantName:       "Some Project",
 	DomainName:       "Other Domain",
+	AllowReauth:      true,
 }
 
 var NevadaCloudYAML = clientconfig.Cloud{
@@ -256,6 +261,7 @@ var NevadaAuthOpts = &gophercloud.AuthOptions{
 	UserID:           "12345",
 	Password:         "password",
 	TenantName:       "Some Project",
+	AllowReauth:      true,
 }
 
 var CloudYAML = clientconfig.Clouds{
@@ -302,6 +308,7 @@ var AlbertaAuthOpts = &gophercloud.AuthOptions{
 	Username:         "jdoe",
 	Password:         "password",
 	TenantName:       "Some Project",
+	AllowReauth:      true,
 }
 
 var YukonCloudYAML = clientconfig.Cloud{
@@ -333,6 +340,7 @@ var YukonAuthOpts = &gophercloud.AuthOptions{
 	IdentityEndpoint: "https://yt.example.com:5000/v2.0",
 	TokenID:          "12345",
 	TenantName:       "Some Project",
+	AllowReauth:      true,
 }
 
 var LegacyCloudYAML = clientconfig.Clouds{
