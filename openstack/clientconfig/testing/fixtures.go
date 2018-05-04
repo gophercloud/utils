@@ -326,7 +326,7 @@ var YukonEnvAuth = map[string]string{
 	"OS_AUTH_URL":             "https://yt.example.com:5000/v2.0",
 	"OS_TOKEN":                "12345",
 	"OS_PROJECT_NAME":         "Some Project",
-	"OS_IDENTITY_API_VERSION": "2.0",
+	"OS_IDENTITY_API_VERSION": "2",
 }
 
 var YukonAuthOpts = &gophercloud.AuthOptions{
