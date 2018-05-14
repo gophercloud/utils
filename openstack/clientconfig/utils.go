@@ -17,7 +17,7 @@ import (
 // 4. unix-specific site_config_dir (/etc/openstack/clouds.yaml)
 //
 // If found, the contents of the file is returned.
-func findAndReadYAML() ([]byte, error) {
+func findAndReadYAML(yamlname string) ([]byte, error) {
 	// OS_CLIENT_CONFIG_FILE
 	if v := os.Getenv("OS_CLIENT_CONFIG_FILE"); v != "" {
 		if ok := fileExists(v); ok {
@@ -31,7 +31,7 @@ func findAndReadYAML() ([]byte, error) {
 		return nil, fmt.Errorf("unable to determine working directory: %s", err)
 	}
 
-	filename := filepath.Join(cwd, "clouds.yaml")
+	filename := filepath.Join(cwd, yamlname)
 	if ok := fileExists(filename); ok {
 		return ioutil.ReadFile(filename)
 	}
@@ -44,18 +44,18 @@ func findAndReadYAML() ([]byte, error) {
 
 	homeDir := currentUser.HomeDir
 	if homeDir != "" {
-		filename := filepath.Join(homeDir, ".config/openstack/clouds.yaml")
+		filename := filepath.Join(homeDir, ".config/openstack/" + yamlname)
 		if ok := fileExists(filename); ok {
 			return ioutil.ReadFile(filename)
 		}
 	}
 
 	// unix-specific site config directory: /etc/openstack.
-	if ok := fileExists("/etc/openstack/clouds.yaml"); ok {
-		return ioutil.ReadFile("/etc/openstack/clouds.yaml")
+	if ok := fileExists("/etc/openstack/" + yamlname); ok {
+		return ioutil.ReadFile("/etc/openstack/" + yamlname)
 	}
 
-	return nil, fmt.Errorf("no clouds.yaml file found")
+	return nil, fmt.Errorf("no " + yamlname + " file found")
 }
 
 // fileExists checks for the existence of a file at a given location.

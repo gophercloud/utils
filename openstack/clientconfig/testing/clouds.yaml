@@ -77,3 +77,10 @@ clouds:
       token: "12345"
       project_name: "Some Project"
     region_name: "YXY"
+  privatecloud:
+    auth:
+      auth_url: "https://nv.example.com:5000/v3"
+      user_id: "12345"
+      password: "password"
+      project_name: "Some Project"
+      project_domain_name: "Some Domain"

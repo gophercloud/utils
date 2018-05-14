@@ -9,6 +9,7 @@ import (
 	"github.com/gophercloud/gophercloud/openstack"
 
 	"gopkg.in/yaml.v2"
+	"log"
 )
 
 // AuthType respresents a valid method of authentication.
@@ -43,9 +44,9 @@ type ClientOpts struct {
 	AuthInfo *AuthInfo
 }
 
-// LoadYAML will load a clouds.yaml file and return the full config.
-func LoadYAML() (map[string]Cloud, error) {
-	content, err := findAndReadYAML()
+// LoadYAML will load a yaml file whose name is specified by yamlName and return the full config.
+func LoadYAML(yamlName string) (map[string]Cloud, error) {
+	content, err := findAndReadYAML(yamlName)
 	if err != nil {
 		return nil, err
 	}
@@ -56,15 +57,27 @@ func LoadYAML() (map[string]Cloud, error) {
 		return nil, fmt.Errorf("failed to unmarshal yaml: %v", err)
 	}
 
+
 	return clouds.Clouds, nil
 }
 
-// GetCloudFromYAML will return a cloud entry from a clouds.yaml file.
+// GetCloudFromYAML will return a cloud entry from a the yaml files used to specify the Clouds.
 func GetCloudFromYAML(opts *ClientOpts) (*Cloud, error) {
-	clouds, err := LoadYAML()
+
+	privateClouds, err := LoadYAML("clouds.yaml")
 	if err != nil {
 		return nil, fmt.Errorf("unable to load clouds.yaml: %s", err)
 	}
+
+	publicClouds, err := LoadYAML("clouds-public.yaml")
+	if err != nil {
+		// It's optional to have a clouds-public.yaml file so this is not an error
+		log.Println("clouds-public.yaml does not exist")
+		publicClouds = nil
+	}
+
+	// Merge the cloud options read from the config files. The settings in clouds.yaml override the settings in clouds-public.yaml
+	clouds := mergeCloudMaps(privateClouds, publicClouds)
 
 	// Determine which cloud to use.
 	// First see if a cloud name was explicitly set in opts.
@@ -106,6 +119,80 @@ func GetCloudFromYAML(opts *ClientOpts) (*Cloud, error) {
 	}
 
 	return cloud, nil
+}
+
+func mergeCloudMaps(overridingClouds map[string]Cloud, clouds map[string]Cloud) map[string]Cloud {
+
+	resultingClouds := clouds
+
+	// First see whether there is anything to merge at all
+	if resultingClouds == nil {
+		return overridingClouds
+	}else if overridingClouds == nil {
+		return resultingClouds
+	}
+
+	// For each individual cloud see whether cloud options have to be merged
+	for cloudName, overridingCloud := range overridingClouds {
+		if existingCloud, ok := clouds[cloudName]; ok {
+			resultingClouds[cloudName] = mergeClouds(existingCloud, overridingCloud)
+		} else {
+			resultingClouds[cloudName] = overridingCloud
+		}
+	}
+	return resultingClouds
+}
+
+// merges two Cloud structs. The attributes in the second Cloud override the ones in the first cloud.
+func mergeClouds(base Cloud, override Cloud) Cloud {
+	var resultingCloud Cloud
+
+	if override.IdentityAPIVersion != "" {
+		resultingCloud.IdentityAPIVersion = override.IdentityAPIVersion
+	} else {
+		resultingCloud.IdentityAPIVersion = base.IdentityAPIVersion
+	}
+
+	if override.RegionName != "" {
+		resultingCloud.RegionName = override.RegionName
+	} else {
+		resultingCloud.RegionName = base.RegionName
+	}
+
+	if override.VolumeAPIVersion != "" {
+		resultingCloud.VolumeAPIVersion = override.VolumeAPIVersion
+	} else {
+		resultingCloud.VolumeAPIVersion = base.VolumeAPIVersion
+	}
+
+	if override.AuthInfo != nil && base.AuthInfo != nil{
+		var authInfo AuthInfo
+		// override the public cloud options
+		aiPublic, _ := yaml.Marshal((*base.AuthInfo))
+		yaml.Unmarshal(aiPublic, authInfo)
+		aiPrivate, _ := yaml.Marshal((*override.AuthInfo))
+		yaml.Unmarshal(aiPrivate, authInfo)
+
+		resultingCloud.AuthInfo = &authInfo
+	}else if override.AuthInfo == nil {
+		resultingCloud.AuthInfo = base.AuthInfo
+	}else {
+		resultingCloud.AuthInfo = override.AuthInfo
+	}
+
+	if override.AuthType != "" {
+		resultingCloud.AuthType = override.AuthType
+	} else {
+		resultingCloud.AuthType = base.AuthType
+	}
+
+	if override.Regions != nil {
+		resultingCloud.Regions = override.Regions
+	} else {
+		resultingCloud.Regions = base.Regions
+	}
+
+	return resultingCloud
 }
 
 // AuthOptions creates a gophercloud.AuthOptions structure with the
