@@ -482,8 +482,12 @@ func NewServiceClient(service string, opts *ClientOpts) (*gophercloud.ServiceCli
 	}
 
 	switch service {
+	case "clustering":
+		return openstack.NewClusteringV1(pClient, eo)
 	case "compute":
 		return openstack.NewComputeV2(pClient, eo)
+	case "container":
+		return openstack.NewContainerV1(pClient, eo)
 	case "database":
 		return openstack.NewDBV1(pClient, eo)
 	case "dns":
@@ -504,6 +508,8 @@ func NewServiceClient(service string, opts *ClientOpts) (*gophercloud.ServiceCli
 		}
 	case "image":
 		return openstack.NewImageServiceV2(pClient, eo)
+	case "load-balancer":
+		return openstack.NewLoadBalancerV2(pClient, eo)
 	case "network":
 		return openstack.NewNetworkV2(pClient, eo)
 	case "object-store":
@@ -523,6 +529,8 @@ func NewServiceClient(service string, opts *ClientOpts) (*gophercloud.ServiceCli
 			return openstack.NewBlockStorageV1(pClient, eo)
 		case "v2", "2":
 			return openstack.NewBlockStorageV2(pClient, eo)
+		case "v3", "3":
+			return openstack.NewBlockStorageV3(pClient, eo)
 		default:
 			return nil, fmt.Errorf("invalid volume API version")
 		}
