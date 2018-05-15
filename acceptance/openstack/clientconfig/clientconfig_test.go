@@ -14,10 +14,8 @@ import (
 )
 
 func TestServerCreateDestroy(t *testing.T) {
-	clientOpts := &cc.ClientOpts{
-		Cloud:     "acctest",
-		EnvPrefix: "FOO",
-	}
+	// This will be populated by environment variables.
+	clientOpts := &cc.ClientOpts{}
 
 	client, err := cc.NewServiceClient("compute", clientOpts)
 	if err != nil {

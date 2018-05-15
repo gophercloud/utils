@@ -426,24 +426,39 @@ func AuthenticatedClient(opts *ClientOpts) (*gophercloud.ProviderClient, error) 
 
 // NewServiceClient is a convenience function to get a new service client.
 func NewServiceClient(service string, opts *ClientOpts) (*gophercloud.ServiceClient, error) {
-	var cloud *Cloud
+	cloud := new(Cloud)
+
+	// If no opts were passed in, create an empty ClientOpts.
+	if opts == nil {
+		opts = new(ClientOpts)
+	}
+
+	// Determine if a clouds.yaml entry should be retrieved.
+	// Start by figuring out the cloud name.
+	// First check if one was explicitly specified in opts.
+	var cloudName string
 	if opts.Cloud != "" {
+		cloudName = opts.Cloud
+	}
+
+	// Next see if a cloud name was specified as an environment variable.
+	envPrefix := "OS_"
+	if opts.EnvPrefix != "" {
+		envPrefix = opts.EnvPrefix
+	}
+
+	if v := os.Getenv(envPrefix + "CLOUD"); v != "" {
+		cloudName = v
+	}
+
+	// If a cloud name was determined, try to look it up in clouds.yaml.
+	if cloudName != "" {
 		// Get the requested cloud.
 		var err error
 		cloud, err = GetCloudFromYAML(opts)
 		if err != nil {
 			return nil, err
 		}
-	}
-
-	if cloud == nil {
-		cloud.AuthInfo = opts.AuthInfo
-	}
-
-	// Environment variable overrides.
-	envPrefix := "OS_"
-	if opts != nil && opts.EnvPrefix != "" {
-		envPrefix = opts.EnvPrefix
 	}
 
 	// Get a Provider Client
