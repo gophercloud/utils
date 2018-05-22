@@ -60,6 +60,16 @@ clouds:
       project_name: "Some Project"
       project_domain_name: "Some Domain"
     region_name: "LAS"
+  texas:
+    profile: "Some profile"
+    auth:
+      auth_url: "https://tx.example.com:5000/v3"
+      username: "jdoe"
+      password: "password"
+      project_name: "Some Project"
+      user_domain_name: "Some Domain"
+      default_domain: "default"
+    region_name: "AUS"
   alberta:
     profile: "Some profile"
     auth_type: "password"

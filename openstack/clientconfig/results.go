@@ -81,4 +81,8 @@ type AuthInfo struct {
 	// used as a default choice.
 	// It can also be used be used to specify a domain-only scope.
 	DomainID string `yaml:"domain_id"`
+
+	// DefaultDomain is the domain ID to fall back on if no other domain has
+	// been specified and a domain is required for scope.
+	DefaultDomain string `yaml:"default_domain"`
 }

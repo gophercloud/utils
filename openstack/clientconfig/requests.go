@@ -338,6 +338,10 @@ func v3auth(cloud *Cloud, opts *ClientOpts) (*gophercloud.AuthOptions, error) {
 		cloud.AuthInfo.DomainName = v
 	}
 
+	if v := os.Getenv(envPrefix + "DEFAULT_DOMAIN"); v != "" {
+		cloud.AuthInfo.DefaultDomain = v
+	}
+
 	if v := os.Getenv(envPrefix + "PROJECT_DOMAIN_ID"); v != "" {
 		cloud.AuthInfo.ProjectDomainID = v
 	}
@@ -537,4 +541,56 @@ func NewServiceClient(service string, opts *ClientOpts) (*gophercloud.ServiceCli
 	}
 
 	return nil, fmt.Errorf("unable to create a service client for %s", service)
+}
+
+// isProjectScoped determines if an auth struct is project scoped.
+func isProjectScoped(authInfo *AuthInfo) bool {
+	if authInfo.ProjectID == "" && authInfo.ProjectName == "" {
+		return false
+	}
+
+	return true
+}
+
+// setDomainIfNeeded will set a DomainID and DomainName
+// to ProjectDomain* and UserDomain* if not already set.
+func setDomainIfNeeded(cloud *Cloud) *Cloud {
+	if cloud.AuthInfo.DomainID != "" {
+		if cloud.AuthInfo.UserDomainID == "" {
+			cloud.AuthInfo.UserDomainID = cloud.AuthInfo.DomainID
+		}
+
+		if cloud.AuthInfo.ProjectDomainID == "" {
+			cloud.AuthInfo.ProjectDomainID = cloud.AuthInfo.DomainID
+		}
+
+		cloud.AuthInfo.DomainID = ""
+	}
+
+	if cloud.AuthInfo.DomainName != "" {
+		if cloud.AuthInfo.UserDomainName == "" {
+			cloud.AuthInfo.UserDomainName = cloud.AuthInfo.DomainName
+		}
+
+		if cloud.AuthInfo.ProjectDomainName == "" {
+			cloud.AuthInfo.ProjectDomainName = cloud.AuthInfo.DomainName
+		}
+
+		cloud.AuthInfo.DomainName = ""
+	}
+
+	// If Domain fields are still not set, and if DefaultDomain has a value,
+	// set UserDomainID and ProjectDomainID to DefaultDomain.
+	// https://github.com/openstack/osc-lib/blob/86129e6f88289ef14bfaa3f7c9cdfbea8d9fc944/osc_lib/cli/client_config.py#L117-L146
+	if cloud.AuthInfo.DefaultDomain != "" {
+		if cloud.AuthInfo.UserDomainName == "" && cloud.AuthInfo.UserDomainID == "" {
+			cloud.AuthInfo.UserDomainID = cloud.AuthInfo.DefaultDomain
+		}
+
+		if cloud.AuthInfo.ProjectDomainName == "" && cloud.AuthInfo.ProjectDomainID == "" {
+			cloud.AuthInfo.ProjectDomainID = cloud.AuthInfo.DefaultDomain
+		}
+	}
+
+	return cloud
 }
