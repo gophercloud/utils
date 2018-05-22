@@ -258,6 +258,50 @@ var NevadaAuthOpts = &gophercloud.AuthOptions{
 	TenantName:       "Some Project",
 }
 
+var TexasCloudYAML = clientconfig.Cloud{
+	RegionName: "AUS",
+	AuthInfo: &clientconfig.AuthInfo{
+		AuthURL:        "https://tx.example.com:5000/v3",
+		Username:       "jdoe",
+		Password:       "password",
+		ProjectName:    "Some Project",
+		UserDomainName: "Some Domain",
+		DefaultDomain:  "default",
+	},
+}
+
+var TexasClientOpts = &clientconfig.ClientOpts{
+	AuthInfo: &clientconfig.AuthInfo{
+		AuthURL:        "https://tx.example.com:5000/v3",
+		Username:       "jdoe",
+		Password:       "password",
+		ProjectName:    "Some Project",
+		UserDomainName: "Some Domain",
+		DefaultDomain:  "default",
+	},
+}
+
+var TexasEnvAuth = map[string]string{
+	"OS_AUTH_URL":         "https://tx.example.com:5000/v3",
+	"OS_USERNAME":         "jdoe",
+	"OS_PASSWORD":         "password",
+	"OS_PROJECT_NAME":     "Some Project",
+	"OS_USER_DOMAIN_NAME": "Some Domain",
+	"OS_DEFAULT_DOMAIN":   "default",
+}
+
+var TexasAuthOpts = &gophercloud.AuthOptions{
+	Scope: &gophercloud.AuthScope{
+		ProjectName: "Some Project",
+		DomainID:    "default",
+	},
+	IdentityEndpoint: "https://tx.example.com:5000/v3",
+	Username:         "jdoe",
+	Password:         "password",
+	TenantName:       "Some Project",
+	DomainName:       "Some Domain",
+}
+
 var CloudYAML = clientconfig.Clouds{
 	Clouds: map[string]clientconfig.Cloud{
 		"hawaii":     HawaiiCloudYAML,
@@ -266,6 +310,7 @@ var CloudYAML = clientconfig.Clouds{
 		"arizona":    ArizonaCloudYAML,
 		"newmexico":  NewMexicoCloudYAML,
 		"nevada":     NevadaCloudYAML,
+		"texas":      TexasCloudYAML,
 	},
 }
 

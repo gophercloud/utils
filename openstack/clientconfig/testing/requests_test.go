@@ -72,6 +72,7 @@ func TestAuthOptionsCreationFromCloudsYAML(t *testing.T) {
 		"arizona":    ArizonaAuthOpts,
 		"newmexico":  NewMexicoAuthOpts,
 		"nevada":     NevadaAuthOpts,
+		"texas":      TexasAuthOpts,
 	}
 
 	for cloud, expected := range allClouds {
@@ -123,6 +124,7 @@ func TestAuthOptionsCreationFromClientConfig(t *testing.T) {
 		"arizona":    ArizonaAuthOpts,
 		"newmexico":  NewMexicoAuthOpts,
 		"nevada":     NevadaAuthOpts,
+		"texas":      TexasAuthOpts,
 	}
 
 	allClientOpts := map[string]*clientconfig.ClientOpts{
@@ -132,6 +134,7 @@ func TestAuthOptionsCreationFromClientConfig(t *testing.T) {
 		"arizona":    ArizonaClientOpts,
 		"newmexico":  NewMexicoClientOpts,
 		"nevada":     NevadaClientOpts,
+		"texas":      TexasClientOpts,
 	}
 
 	for cloud, clientOpts := range allClientOpts {
@@ -171,6 +174,7 @@ func TestAuthOptionsCreationFromEnv(t *testing.T) {
 		"arizona":    ArizonaEnvAuth,
 		"newmexico":  NewMexicoEnvAuth,
 		"nevada":     NevadaEnvAuth,
+		"texas":      TexasEnvAuth,
 	}
 
 	expectedAuthOpts := map[string]*gophercloud.AuthOptions{
@@ -180,6 +184,7 @@ func TestAuthOptionsCreationFromEnv(t *testing.T) {
 		"arizona":    ArizonaAuthOpts,
 		"newmexico":  NewMexicoAuthOpts,
 		"nevada":     NevadaAuthOpts,
+		"texas":      TexasAuthOpts,
 	}
 
 	for cloud, envVars := range allEnvVars {
