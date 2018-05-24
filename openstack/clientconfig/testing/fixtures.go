@@ -380,6 +380,47 @@ var YukonAuthOpts = &gophercloud.AuthOptions{
 	TenantName:       "Some Project",
 }
 
+var PrivateCloudYAML = clientconfig.Cloud{
+	RegionName: "LAS",
+	AuthInfo: &clientconfig.AuthInfo{
+		AuthURL:           "https://nv.example.com:5000/v3",
+		UserID:            "12345",
+		Password:          "password",
+		ProjectName:       "Some Project",
+		ProjectDomainName: "Some Domain",
+	},
+}
+
+var PrivateCloudClientOpts = &clientconfig.ClientOpts{
+	AuthInfo: &clientconfig.AuthInfo{
+		AuthURL:           "https://nv.example.com:5000/v3",
+		UserID:            "12345",
+		Password:          "password",
+		ProjectName:       "Some Project",
+		ProjectDomainName: "Some Domain",
+	},
+}
+
+var PrivateCloudEnvAuth = map[string]string{
+	"OS_AUTH_URL":            "https://nv.example.com:5000/v3",
+	"OS_USER_ID":             "12345",
+	"OS_PASSWORD":            "password",
+	"OS_PROJECT_NAME":        "Some Project",
+	"OS_PROJECT_DOMAIN_NAME": "Some Domain",
+}
+
+var PrivateCloudAuthOpts = &gophercloud.AuthOptions{
+	Scope: &gophercloud.AuthScope{
+		ProjectName: "Some Project",
+		DomainName:  "Some Domain",
+	},
+	IdentityEndpoint: "https://nv.example.com:5000/v3",
+	UserID:           "12345",
+	Password:         "password",
+	TenantName:       "Some Project",
+}
+
+
 var LegacyCloudYAML = clientconfig.Clouds{
 	Clouds: map[string]clientconfig.Cloud{
 		"alberta": AlbertaCloudYAML,

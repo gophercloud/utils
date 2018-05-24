@@ -92,6 +92,36 @@ func TestAuthOptionsCreationFromCloudsYAML(t *testing.T) {
 	}
 }
 
+func TestAuthOptionsCreationFromPublicCloudsYAML(t *testing.T) {
+	os.Unsetenv("OS_CLOUD")
+
+	allClouds := map[string]*gophercloud.AuthOptions{
+		"privatecloud":     PrivateCloudAuthOpts,
+		"hawaii":     HawaiiAuthOpts,
+		"florida":    FloridaAuthOpts,
+		"california": CaliforniaAuthOpts,
+		"arizona":    ArizonaAuthOpts,
+		"newmexico":  NewMexicoAuthOpts,
+		"nevada":     NevadaAuthOpts,
+	}
+
+	for cloud, expected := range allClouds {
+		clientOpts := &clientconfig.ClientOpts{
+			Cloud: cloud,
+		}
+
+		actual, err := clientconfig.AuthOptions(clientOpts)
+		th.AssertNoErr(t, err)
+		th.AssertDeepEquals(t, expected, actual)
+
+		scope, err := expected.ToTokenV3ScopeMap()
+		th.AssertNoErr(t, err)
+
+		_, err = expected.ToTokenV3CreateMap(scope)
+		th.AssertNoErr(t, err)
+	}
+}
+
 func TestAuthOptionsCreationFromLegacyCloudsYAML(t *testing.T) {
 	os.Unsetenv("OS_CLOUD")
 

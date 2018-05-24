@@ -1,0 +1,5 @@
+clouds:
+  privatecloud:
+    profile: "Some profile"
+    auth_type: "password"
+    region_name: "LAS"
