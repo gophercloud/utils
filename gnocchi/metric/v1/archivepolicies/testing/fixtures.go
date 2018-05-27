@@ -126,3 +126,51 @@ const ArchivePolicyGetResult = `
     "name": "test_policy"
 }
 `
+
+// ArchivePolicyCreateRequest represents a raw create request.
+const ArchivePolicyCreateRequest = `
+{
+    "aggregation_methods": [
+        "sum",
+        "mean",
+        "count"
+    ],
+    "back_window": 31,
+    "definition": [
+        {
+            "granularity": "1:00:00",
+            "timespan": "90 days, 0:00:00"
+        },
+        {
+            "granularity": "1 day, 0:00:00",
+            "timespan": "100 days, 0:00:00"
+        }
+    ],
+    "name": "test_policy"
+}
+`
+
+// ArchivePolicyCreateResponse represents a raw server response from a server to a create request.
+const ArchivePolicyCreateResponse = `
+{
+    "aggregation_methods": [
+        "sum",
+        "mean",
+        "count"
+    ],
+    "back_window": 31,
+    "definition": [
+        {
+            "granularity": "1:00:00",
+            "points": 2160,
+            "timespan": "90 days, 0:00:00"
+        },
+        {
+            "granularity": "1 day, 0:00:00",
+            "points": 100,
+            "timespan": "100 days, 0:00:00"
+        }
+    ],
+    "name": "test_policy"
+}
+`
