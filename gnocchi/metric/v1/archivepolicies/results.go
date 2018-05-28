@@ -28,6 +28,12 @@ type CreateResult struct {
 	commonResult
 }
 
+// UpdateResult represents the result of an update operation. Call its Extract
+// method to interpret it as a Gnocchi archive policy.
+type UpdateResult struct {
+	commonResult
+}
+
 // ArchivePolicy represents a Gnocchi archive policy.
 // Archive policy is an aggregate storage policy attached to a metric.
 // It determines how long aggregates will be kept in a metric and how they will be aggregated.
