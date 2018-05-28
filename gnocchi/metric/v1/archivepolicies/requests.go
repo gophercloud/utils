@@ -36,21 +36,22 @@ type CreateOpts struct {
 
 	// Definition is a list of parameters that configures
 	// archive policy precision and timespan.
-	Definition []ArchivePolicyCreateDefinition `json:"definition"`
+	Definition []ArchivePolicyDefinitionOpts `json:"definition"`
 
 	// Name is a name of an archive policy.
 	Name string `json:"name"`
 }
 
-// ArchivePolicyCreateDefinition represents definition of how metrics will
-// be saved with the selected archive policy.
+// ArchivePolicyDefinitionOpts represents definition of how metrics of new or
+// updated Archive Policy will be saved with the selected archive policy.
 // It configures precision and timespan.
-type ArchivePolicyCreateDefinition struct {
+type ArchivePolicyDefinitionOpts struct {
 	// Granularity is the level of  precision that must be kept when aggregating data.
 	Granularity string `json:"granularity"`
 
 	// Points is a given aggregates or samples in the lifespan of a time series.
 	// Time series is a list of aggregates ordered by time.
+	// It can be ommited to allow Gnocchi server to calculate it automatically.
 	Points *int `json:"points,omitempty"`
 
 	// TimeSpan is the time period for which a metric keeps its aggregates.

@@ -26,7 +26,7 @@ Example of Getting an archive policy
 	  panic(err)
 	}
 
-Example of Creating an archive policy.
+Example of Creating an archive policy
 
   createOpts := archivepolicies.CreateOpts{
     BackWindow: 31,
@@ -35,7 +35,7 @@ Example of Creating an archive policy.
       "mean",
       "count",
     },
-    Definition: []archivepolicies.ArchivePolicyCreateDefinition{
+    Definition: []archivepolicies.ArchivePolicyNewDefinition{
       {
         Granularity: "1:00:00",
         TimeSpan:    "90 days, 0:00:00",

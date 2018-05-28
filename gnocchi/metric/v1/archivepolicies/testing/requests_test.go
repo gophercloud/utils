@@ -126,7 +126,7 @@ func TestCreate(t *testing.T) {
 			"mean",
 			"count",
 		},
-		Definition: []archivepolicies.ArchivePolicyCreateDefinition{
+		Definition: []archivepolicies.ArchivePolicyDefinitionOpts{
 			{
 				Granularity: "1:00:00",
 				TimeSpan:    "90 days, 0:00:00",
