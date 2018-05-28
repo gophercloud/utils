@@ -35,7 +35,7 @@ Example of Creating an archive policy
       "mean",
       "count",
     },
-    Definition: []archivepolicies.ArchivePolicyNewDefinition{
+    Definition: []archivepolicies.ArchivePolicyDefinitionOpts{
       {
         Granularity: "1:00:00",
         TimeSpan:    "90 days, 0:00:00",

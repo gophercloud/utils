@@ -51,7 +51,7 @@ type ArchivePolicyDefinitionOpts struct {
 
 	// Points is a given aggregates or samples in the lifespan of a time series.
 	// Time series is a list of aggregates ordered by time.
-	// It can be ommited to allow Gnocchi server to calculate it automatically.
+	// It can be omitted to allow Gnocchi server to calculate it automatically.
 	Points *int `json:"points,omitempty"`
 
 	// TimeSpan is the time period for which a metric keeps its aggregates.
