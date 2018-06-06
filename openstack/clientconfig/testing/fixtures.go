@@ -14,6 +14,7 @@ var HawaiiCloudYAML = clientconfig.Cloud{
 		ProjectName: "Some Project",
 		DomainName:  "default",
 	},
+	Verify: true,
 }
 
 var HawaiiClientOpts = &clientconfig.ClientOpts{
@@ -55,6 +56,37 @@ var FloridaCloudYAML = clientconfig.Cloud{
 		ProjectID:    "12345",
 		UserDomainID: "abcde",
 	},
+	Verify: true,
+}
+
+var InsecureFloridaCloudYAML = clientconfig.Cloud{
+	RegionName: "MIA",
+	AuthInfo: &clientconfig.AuthInfo{
+		AuthURL:      "https://fl.example.com:5000/v3",
+		Username:     "jdoe",
+		Password:     "password",
+		ProjectID:    "12345",
+		UserDomainID: "abcde",
+	},
+	Verify:         false,
+	ClientKeyFile:  "",
+	ClientCertFile: "",
+	CACertFile:     "",
+}
+
+var SecureFloridaCloudYAML = clientconfig.Cloud{
+	RegionName: "MIA",
+	AuthInfo: &clientconfig.AuthInfo{
+		AuthURL:      "https://fl.example.com:5000/v3",
+		Username:     "jdoe",
+		Password:     "password",
+		ProjectID:    "12345",
+		UserDomainID: "abcde",
+	},
+	Verify:         true,
+	ClientKeyFile:  "/home/myhome/client-cert.key",
+	ClientCertFile: "/home/myhome/client-cert.crt",
+	CACertFile:     "/home/myhome/ca.crt",
 }
 
 var FloridaClientOpts = &clientconfig.ClientOpts{
@@ -99,6 +131,7 @@ var CaliforniaCloudYAML = clientconfig.Cloud{
 		ProjectDomainName: "default",
 		UserDomainName:    "default",
 	},
+	Verify: true,
 }
 
 var CaliforniaClientOpts = &clientconfig.ClientOpts{
@@ -142,6 +175,7 @@ var ArizonaCloudYAML = clientconfig.Cloud{
 		ProjectName: "Some Project",
 		DomainName:  "default",
 	},
+	Verify: true,
 }
 
 var ArizonaClientOpts = &clientconfig.ClientOpts{
@@ -182,6 +216,7 @@ var NewMexicoCloudYAML = clientconfig.Cloud{
 		UserDomainName:    "Some OtherDomain",
 		DomainName:        "default",
 	},
+	Verify: true,
 }
 
 var NewMexicoClientOpts = &clientconfig.ClientOpts{
@@ -227,6 +262,7 @@ var NevadaCloudYAML = clientconfig.Cloud{
 		ProjectName:       "Some Project",
 		ProjectDomainName: "Some Domain",
 	},
+	Verify: true,
 }
 
 var NevadaClientOpts = &clientconfig.ClientOpts{
@@ -268,6 +304,7 @@ var TexasCloudYAML = clientconfig.Cloud{
 		UserDomainName: "Some Domain",
 		DefaultDomain:  "default",
 	},
+	Verify: true,
 }
 
 var TexasClientOpts = &clientconfig.ClientOpts{
@@ -323,6 +360,7 @@ var AlbertaCloudYAML = clientconfig.Cloud{
 		Password:    "password",
 		ProjectName: "Some Project",
 	},
+	Verify: true,
 }
 
 var AlbertaClientOpts = &clientconfig.ClientOpts{
@@ -357,6 +395,7 @@ var YukonCloudYAML = clientconfig.Cloud{
 		Token:       "12345",
 		ProjectName: "Some Project",
 	},
+	Verify: true,
 }
 
 var YukonClientOpts = &clientconfig.ClientOpts{

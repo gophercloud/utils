@@ -11,23 +11,36 @@ import (
 )
 
 func TestGetCloudFromYAML(t *testing.T) {
-	clientOpts := &clientconfig.ClientOpts{
-		Cloud:     "hawaii",
-		EnvPrefix: "FOO",
+
+	allClientOpts := map[string]*clientconfig.ClientOpts{
+		"hawaii": &clientconfig.ClientOpts{
+			Cloud:     "hawaii",
+			EnvPrefix: "FOO",
+		},
+		"california": &clientconfig.ClientOpts{
+			Cloud:     "california",
+			EnvPrefix: "FOO",
+		},
+		"florida_insecure": &clientconfig.ClientOpts{
+			Cloud: "florida_insecure",
+		},
+		"florida_secure": &clientconfig.ClientOpts{
+			Cloud: "florida_secure",
+		},
 	}
 
-	actual, err := clientconfig.GetCloudFromYAML(clientOpts)
-	th.AssertNoErr(t, err)
-	th.AssertDeepEquals(t, &HawaiiCloudYAML, actual)
-
-	clientOpts = &clientconfig.ClientOpts{
-		Cloud:     "california",
-		EnvPrefix: "FOO",
+	expectedClouds := map[string]*clientconfig.Cloud{
+		"hawaii":           &HawaiiCloudYAML,
+		"california":       &CaliforniaCloudYAML,
+		"florida_insecure": &InsecureFloridaCloudYAML,
+		"florida_secure":   &SecureFloridaCloudYAML,
 	}
 
-	actual, err = clientconfig.GetCloudFromYAML(clientOpts)
-	th.AssertNoErr(t, err)
-	th.AssertDeepEquals(t, &CaliforniaCloudYAML, actual)
+	for cloud, clientOpts := range allClientOpts {
+		actual, err := clientconfig.GetCloudFromYAML(clientOpts)
+		th.AssertNoErr(t, err)
+		th.AssertDeepEquals(t, expectedClouds[cloud], actual)
+	}
 }
 
 func TestAuthOptionsExplicitCloud(t *testing.T) {
@@ -196,7 +209,7 @@ func TestAuthOptionsCreationFromEnv(t *testing.T) {
 		th.AssertNoErr(t, err)
 		th.AssertDeepEquals(t, expectedAuthOpts[cloud], actualAuthOpts)
 
-		for k, _ := range envVars {
+		for k := range envVars {
 			os.Unsetenv(k)
 		}
 	}
@@ -224,7 +237,7 @@ func TestAuthOptionsCreationFromLegacyEnv(t *testing.T) {
 		th.AssertNoErr(t, err)
 		th.AssertDeepEquals(t, expectedAuthOpts[cloud], actualAuthOpts)
 
-		for k, _ := range envVars {
+		for k := range envVars {
 			os.Unsetenv(k)
 		}
 	}
