@@ -41,6 +41,11 @@ type ClientOpts struct {
 	// AuthInfo defines the authentication information needed to
 	// authenticate to a cloud when clouds.yaml isn't used.
 	AuthInfo *AuthInfo
+
+	// RegionName is the region to create a Service Client in.
+	// This will override a region in clouds.yaml or can be used
+	// when authenticating directly with AuthInfo.
+	RegionName string
 }
 
 // LoadYAML will load a clouds.yaml file and return the full config.
@@ -472,11 +477,20 @@ func NewServiceClient(service string, opts *ClientOpts) (*gophercloud.ServiceCli
 	}
 
 	// Determine the region to use.
+	// First, see if the cloud entry has one.
 	var region string
 	if v := cloud.RegionName; v != "" {
-		region = cloud.RegionName
+		region = v
 	}
 
+	// Next, see if one was specified in the ClientOpts.
+	// If so, this takes precedence.
+	if v := opts.RegionName; v != "" {
+		region = v
+	}
+
+	// Finally, see if there's an environment variable.
+	// This should always override prior settings.
 	if v := os.Getenv(envPrefix + "REGION_NAME"); v != "" {
 		region = v
 	}
