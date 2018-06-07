@@ -19,8 +19,7 @@ type Cloud struct {
 	VolumeAPIVersion   string `yaml:"volume_api_version"`
 
 	// Verify whether or not SSL API requests should be verified.
-	// Note! Type is not set to bool to be able to set correct default value.
-	Verify interface{} `yaml:"verify"`
+	Verify *bool `yaml:"verify"`
 
 	// CACertFile a path to a CA Cert bundle that can be used as part of
 	// verifying SSL API requests.

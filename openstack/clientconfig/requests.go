@@ -113,7 +113,8 @@ func GetCloudFromYAML(opts *ClientOpts) (*Cloud, error) {
 
 	// Default is to verify SSL API requests
 	if cloud.Verify == nil {
-		cloud.Verify = true
+		iTrue := true
+		cloud.Verify = &iTrue
 	}
 
 	return cloud, nil
