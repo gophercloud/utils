@@ -10,6 +10,21 @@ import (
 	"github.com/gophercloud/utils/gnocchi/metric/v1/archivepolicies"
 )
 
+func TestArchivePoliciesCRUD(t *testing.T) {
+	client, err := clients.NewGnocchiV1Client()
+	if err != nil {
+		t.Fatalf("Unable to create a Gnocchi client: %v", err)
+	}
+
+	archivePolicy, err := CreateArchivePolicy(t, client)
+	if err != nil {
+		t.Fatalf("Unable to create a Gnocchi archive policy: %v", err)
+	}
+	// defer DeleteArchivePolicy(t, client, archivePolicy.ID)
+
+	tools.PrintResource(t, archivePolicy)
+}
+
 func TestArchivePoliciesList(t *testing.T) {
 	client, err := clients.NewGnocchiV1Client()
 	if err != nil {
