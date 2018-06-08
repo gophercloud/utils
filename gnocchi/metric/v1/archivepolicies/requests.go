@@ -107,3 +107,14 @@ func Update(client *gophercloud.ServiceClient, archivePolicyName string, opts Up
 
 	return
 }
+
+// Delete accepts a Gnocchi archive policy by its name.
+func Delete(c *gophercloud.ServiceClient, archivePolicyName string) (r DeleteResult) {
+	requestOpts := &gophercloud.RequestOpts{
+		MoreHeaders: map[string]string{
+			"Accept": "application/json, */*",
+		},
+	}
+	_, r.Err = c.Delete(deleteURL(c, archivePolicyName), requestOpts)
+	return
+}

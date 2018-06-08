@@ -70,5 +70,12 @@ Example of Updating an archive policy
   if err != nil {
     panic(err)
   }
+
+Example of Deleting a Gnocchi archive policy
+
+  err := archivepolicies.Delete(gnocchiClient, "test_policy").ExtractErr()
+  if err != nil {
+    panic(err)
+  }
 */
 package archivepolicies

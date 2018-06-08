@@ -212,3 +212,17 @@ func TestUpdateArchivePolicy(t *testing.T) {
 	})
 	th.AssertEquals(t, s.Name, "test_policy")
 }
+
+func TestDelete(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/v1/archive_policy/test_policy", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "DELETE")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		w.WriteHeader(http.StatusNoContent)
+	})
+
+	res := archivepolicies.Delete(fake.ServiceClient(), "test_policy")
+	th.AssertNoErr(t, res.Err)
+}

@@ -20,7 +20,7 @@ func TestArchivePoliciesCRUD(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unable to create a Gnocchi archive policy: %v", err)
 	}
-	// defer DeleteArchivePolicy(t, client, archivePolicy.ID)
+	defer DeleteArchivePolicy(t, client, archivePolicy.Name)
 
 	tools.PrintResource(t, archivePolicy)
 

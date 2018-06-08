@@ -34,6 +34,12 @@ type UpdateResult struct {
 	commonResult
 }
 
+// DeleteResult represents the result of a delete operation. Call its
+// ExtractErr method to determine if the request succeeded or failed.
+type DeleteResult struct {
+	gophercloud.ErrResult
+}
+
 // ArchivePolicy represents a Gnocchi archive policy.
 // Archive policy is an aggregate storage policy attached to a metric.
 // It determines how long aggregates will be kept in a metric and how they will be aggregated.
