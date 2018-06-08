@@ -87,3 +87,24 @@ clouds:
       token: "12345"
       project_name: "Some Project"
     region_name: "YXY"
+  florida_insecure:
+    profile: "Some profile"
+    auth:
+      auth_url: "https://fl.example.com:5000/v3"
+      username: "jdoe"
+      password: "password"
+      project_id: "12345"
+      user_domain_id: "abcde"
+    region_name: "MIA"
+    verify: False
+  florida_secure:
+    auth:
+      auth_url: "https://fl.example.com:5000/v3"
+      username: "jdoe"
+      password: "password"
+      project_id: "12345"
+      user_domain_id: "abcde"
+    region_name: "MIA"
+    key: /home/myhome/client-cert.key
+    cert: /home/myhome/client-cert.crt
+    cacert: /home/myhome/ca.crt

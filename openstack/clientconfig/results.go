@@ -17,9 +17,24 @@ type Cloud struct {
 	// API Version overrides.
 	IdentityAPIVersion string `yaml:"identity_api_version"`
 	VolumeAPIVersion   string `yaml:"volume_api_version"`
+
+	// Verify whether or not SSL API requests should be verified.
+	Verify *bool `yaml:"verify"`
+
+	// CACertFile a path to a CA Cert bundle that can be used as part of
+	// verifying SSL API requests.
+	CACertFile string `yaml:"cacert"`
+
+	// ClientCertFile a path to a client certificate to use as part of the SSL
+	// transaction.
+	ClientCertFile string `yaml:"cert"`
+
+	// ClientKeyFile a path to a client key to use as part of the SSL
+	// transaction.
+	ClientKeyFile string `yaml:"key"`
 }
 
-// Auth represents the auth section of a cloud entry or
+// AuthInfo represents the auth section of a cloud entry or
 // auth options entered explicitly in ClientOpts.
 type AuthInfo struct {
 	// AuthURL is the keystone/identity endpoint URL.
