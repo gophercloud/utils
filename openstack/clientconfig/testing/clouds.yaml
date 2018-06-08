@@ -1,6 +1,5 @@
 clouds:
   hawaii:
-    profile: "Some profile"
     auth:
       auth_url: "https://hi.example.com:5000/v3"
       username: "jdoe"
@@ -9,7 +8,6 @@ clouds:
       domain_name: "default"
     region_name: "HNL"
   florida:
-    profile: "Some profile"
     auth:
       auth_url: "https://fl.example.com:5000/v3"
       username: "jdoe"
@@ -18,7 +16,6 @@ clouds:
       user_domain_id: "abcde"
     region_name: "MIA"
   california:
-    profile: "Some profile"
     auth:
       auth_url: "https://ca.example.com:5000/v3"
       username: "jdoe"
@@ -30,7 +27,6 @@ clouds:
       - SAN
       - LAX
   arizona:
-    profile: "Some profile"
     auth_type: "token"
     auth:
       auth_url: "https://az.example.com:5000/v3"
@@ -39,7 +35,6 @@ clouds:
       domain_name: "default"
     region_name: "PHX"
   newmexico:
-    profile: "Some profile"
     auth_type: "password"
     auth:
       auth_url: "https://nm.example.com:5000/v3"
@@ -51,7 +46,6 @@ clouds:
       domain_name: "default"
     region_name: "SAF"
   nevada:
-    profile: "Some profile"
     auth_type: "password"
     auth:
       auth_url: "https://nv.example.com:5000/v3"
@@ -61,7 +55,6 @@ clouds:
       project_domain_name: "Some Domain"
     region_name: "LAS"
   texas:
-    profile: "Some profile"
     auth:
       auth_url: "https://tx.example.com:5000/v3"
       username: "jdoe"
@@ -71,7 +64,6 @@ clouds:
       default_domain: "default"
     region_name: "AUS"
   alberta:
-    profile: "Some profile"
     auth_type: "password"
     auth:
       auth_url: "https://ab.example.com:5000/v2.0"
@@ -80,7 +72,6 @@ clouds:
       project_name: "Some Project"
     region_name: "YYC"
   yukon:
-    profile: "Some profile"
     auth_type: "v2token"
     auth:
       auth_url: "https://yt.example.com:5000/v2.0"
@@ -88,7 +79,6 @@ clouds:
       project_name: "Some Project"
     region_name: "YXY"
   florida_insecure:
-    profile: "Some profile"
     auth:
       auth_url: "https://fl.example.com:5000/v3"
       username: "jdoe"
@@ -108,3 +98,28 @@ clouds:
     key: /home/myhome/client-cert.key
     cert: /home/myhome/client-cert.crt
     cacert: /home/myhome/ca.crt
+  chicago:
+    profile: rackspace
+    auth:
+      auth_url: "https://shall.be.overritten.by.public.cloud/"
+      username: "jdoe"
+      password: "password"
+      project_name: "Some Project"
+    region_name: "ORD"
+  chicago_legacy:
+    cloud: rackspace
+    auth:
+      auth_url: "https://shall.be.overritten.by.public.cloud/"
+      username: "jdoe"
+      password: "password"
+      project_name: "Some Project"
+    region_name: "ORD"
+  chicago_useprofile:
+    profile: rackspace
+    cloud: rackspace
+    auth:
+      auth_url: "https://shall.be.overritten.by.public.cloud/"
+      username: "jdoe"
+      password: "password"
+      project_name: "Some Project"
+    region_name: "ORD"

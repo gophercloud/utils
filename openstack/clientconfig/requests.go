@@ -49,9 +49,9 @@ type ClientOpts struct {
 	AuthInfo *AuthInfo
 }
 
-// LoadYAML will load a clouds.yaml file and return the full config.
-func LoadYAML() (map[string]Cloud, error) {
-	content, err := findAndReadYAML()
+// LoadCloudsYAML will load a clouds.yaml file and return the full config.
+func LoadCloudsYAML() (map[string]Cloud, error) {
+	content, err := findAndReadCloudsYAML()
 	if err != nil {
 		return nil, err
 	}
@@ -65,9 +65,26 @@ func LoadYAML() (map[string]Cloud, error) {
 	return clouds.Clouds, nil
 }
 
+// LoadCloudsPublicYAML will load a clouds.yaml file and return the full config.
+func LoadCloudsPublicYAML() (map[string]PublicCloud, error) {
+	content, err := findAndReadCloudsPublicYAML()
+	var clouds PublicClouds
+	if err != nil {
+		// clouds-public.yaml is optional so just ignore read error
+		err = nil
+	} else {
+		err = yaml.Unmarshal(content, &clouds)
+		if err != nil {
+			return nil, fmt.Errorf("failed to unmarshal yaml: %v", err)
+		}
+	}
+
+	return clouds.Clouds, nil
+}
+
 // GetCloudFromYAML will return a cloud entry from a clouds.yaml file.
 func GetCloudFromYAML(opts *ClientOpts) (*Cloud, error) {
-	clouds, err := LoadYAML()
+	clouds, err := LoadCloudsYAML()
 	if err != nil {
 		return nil, fmt.Errorf("unable to load clouds.yaml: %s", err)
 	}
@@ -116,6 +133,25 @@ func GetCloudFromYAML(opts *ClientOpts) (*Cloud, error) {
 		iTrue := true
 		cloud.Verify = &iTrue
 	}
+
+	publicClouds, err := LoadCloudsPublicYAML()
+	if err != nil {
+		return nil, fmt.Errorf("unable to load clouds-public.yaml: %s", err)
+	}
+
+	var profileName = defaultIfEmpty(cloud.Profile, cloud.Cloud)
+	if profileName != "" {
+		publicCloud, ok := publicClouds[profileName]
+		if !ok {
+			return nil, fmt.Errorf("cloud %s does not exist in clouds-public.yaml", profileName)
+		}
+
+		updateAuthInfo(cloud, &publicCloud)
+	}
+
+	// TODO: this is where reading vendor files should go be considered when not found in
+	// clouds-public.yml
+	// https://github.com/openstack/openstacksdk/tree/master/openstack/config/vendors
 
 	return cloud, nil
 }
