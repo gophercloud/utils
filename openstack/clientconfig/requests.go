@@ -65,21 +65,26 @@ func LoadCloudsYAML() (map[string]Cloud, error) {
 	return clouds.Clouds, nil
 }
 
-// LoadCloudsPublicYAML will load a clouds.yaml file and return the full config.
-func LoadCloudsPublicYAML() (map[string]PublicCloud, error) {
-	content, err := findAndReadCloudsPublicYAML()
-	var clouds PublicClouds
+// LoadPublicCloudsYAML will load a clouds.yaml file and return the full config.
+func LoadPublicCloudsYAML() (map[string]PublicCloud, error) {
+	var publicClouds PublicClouds
+
+	content, err := findAndReadPublicCloudsYAML()
 	if err != nil {
-		// clouds-public.yaml is optional so just ignore read error
-		err = nil
-	} else {
-		err = yaml.Unmarshal(content, &clouds)
-		if err != nil {
-			return nil, fmt.Errorf("failed to unmarshal yaml: %v", err)
+		if err.Error() == "no clouds-public.yaml found" {
+			// clouds-public.yaml is optional so just ignore read error
+			return publicClouds.Clouds, nil
 		}
+
+		return nil, err
 	}
 
-	return clouds.Clouds, nil
+	err = yaml.Unmarshal(content, &publicClouds)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal yaml: %v", err)
+	}
+
+	return publicClouds.Clouds, nil
 }
 
 // GetCloudFromYAML will return a cloud entry from a clouds.yaml file.
@@ -134,7 +139,7 @@ func GetCloudFromYAML(opts *ClientOpts) (*Cloud, error) {
 		cloud.Verify = &iTrue
 	}
 
-	publicClouds, err := LoadCloudsPublicYAML()
+	publicClouds, err := LoadPublicCloudsYAML()
 	if err != nil {
 		return nil, fmt.Errorf("unable to load clouds-public.yaml: %s", err)
 	}

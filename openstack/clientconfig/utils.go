@@ -49,7 +49,7 @@ func findAndReadCloudsYAML() ([]byte, error) {
 	return findAndReadYAML("clouds.yaml")
 }
 
-func findAndReadCloudsPublicYAML() ([]byte, error) {
+func findAndReadPublicCloudsYAML() ([]byte, error) {
 	return findAndReadYAML("clouds-public.yaml")
 }
 
