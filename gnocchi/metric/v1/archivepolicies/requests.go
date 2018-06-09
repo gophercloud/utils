@@ -18,12 +18,12 @@ func Get(c *gophercloud.ServiceClient, archivePolicyName string) (r GetResult) {
 	return
 }
 
-// CreateOptsBuilder allows to add additional parameters to the Create request.
+// CreateOptsBuilder allows extensions to add additional parameters to the Create request.
 type CreateOptsBuilder interface {
 	ToArchivePolicyCreateMap() (map[string]interface{}, error)
 }
 
-// CreateOpts specifies parameters of a new subnetpool.
+// CreateOpts specifies parameters of a new Archive Policy.
 type CreateOpts struct {
 	// AggregationMethods is a list of functions used to aggregate
 	// multiple measures into an aggregate.
