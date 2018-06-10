@@ -25,5 +25,31 @@ Example of Getting an archive policy
 	if err != nil {
 	  panic(err)
 	}
+
+Example of Creating an archive policy
+
+  createOpts := archivepolicies.CreateOpts{
+    BackWindow: 31,
+    AggregationMethods: []string{
+      "sum",
+      "mean",
+      "count",
+    },
+    Definition: []archivepolicies.ArchivePolicyDefinitionOpts{
+      {
+        Granularity: "1:00:00",
+        TimeSpan:    "90 days, 0:00:00",
+      },
+      {
+        Granularity: "1 day, 0:00:00",
+        TimeSpan:    "100 days, 0:00:00",
+      },
+    },
+    Name: "test_policy",
+  }
+  archivePolicy, err := archivepolicies.Create(gnocchiClient, createOpts).Extract()
+  if err != nil {
+    panic(err)
+  }
 */
 package archivepolicies

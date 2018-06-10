@@ -22,6 +22,12 @@ type GetResult struct {
 	commonResult
 }
 
+// CreateResult represents the result of a create operation. Call its Extract
+// method to interpret it as a Gnocchi archive policy.
+type CreateResult struct {
+	commonResult
+}
+
 // ArchivePolicy represents a Gnocchi archive policy.
 // Archive policy is an aggregate storage policy attached to a metric.
 // It determines how long aggregates will be kept in a metric and how they will be aggregated.
