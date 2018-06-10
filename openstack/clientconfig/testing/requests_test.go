@@ -21,19 +21,21 @@ func TestGetCloudFromYAML(t *testing.T) {
 			Cloud:     "california",
 			EnvPrefix: "FOO",
 		},
-		"florida_insecure": &clientconfig.ClientOpts{
-			Cloud: "florida_insecure",
-		},
-		"florida_secure": &clientconfig.ClientOpts{
-			Cloud: "florida_secure",
-		},
+		"florida_insecure":   &clientconfig.ClientOpts{Cloud: "florida_insecure"},
+		"florida_secure":     &clientconfig.ClientOpts{Cloud: "florida_secure"},
+		"chicago":            &clientconfig.ClientOpts{Cloud: "chicago"},
+		"chicago_legacy":     &clientconfig.ClientOpts{Cloud: "chicago_legacy"},
+		"chicago_useprofile": &clientconfig.ClientOpts{Cloud: "chicago_useprofile"},
 	}
 
 	expectedClouds := map[string]*clientconfig.Cloud{
-		"hawaii":           &HawaiiCloudYAML,
-		"california":       &CaliforniaCloudYAML,
-		"florida_insecure": &InsecureFloridaCloudYAML,
-		"florida_secure":   &SecureFloridaCloudYAML,
+		"hawaii":             &HawaiiCloudYAML,
+		"california":         &CaliforniaCloudYAML,
+		"florida_insecure":   &InsecureFloridaCloudYAML,
+		"florida_secure":     &SecureFloridaCloudYAML,
+		"chicago":            &ChicagoCloudYAML,
+		"chicago_legacy":     &ChicagoCloudLegacyYAML,
+		"chicago_useprofile": &ChicagoCloudUseProfileYAML,
 	}
 
 	for cloud, clientOpts := range allClientOpts {

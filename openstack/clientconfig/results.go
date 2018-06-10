@@ -1,5 +1,17 @@
 package clientconfig
 
+// PublicClouds represents a collection of PublicCloud entries in clouds-public.yml file.
+// The format of the clouds-public.yml is documented at
+// https://docs.openstack.org/python-openstackclient/latest/configuration/
+type PublicClouds struct {
+	Clouds map[string]PublicCloud `yaml:"public-clouds"`
+}
+
+// PublicCloud represents an entry in a clouds-public.yml file.
+type PublicCloud struct {
+	AuthInfo *AuthInfo `yaml:"auth"`
+}
+
 // Clouds represents a collection of Cloud entries in a clouds.yaml file.
 // The format of clouds.yaml is documented at
 // https://docs.openstack.org/os-client-config/latest/user/configuration.html.
@@ -9,6 +21,8 @@ type Clouds struct {
 
 // Cloud represents an entry in a clouds.yaml file.
 type Cloud struct {
+	Cloud      string        `yaml:"cloud"`
+	Profile    string        `yaml:"profile"`
 	AuthInfo   *AuthInfo     `yaml:"auth"`
 	AuthType   AuthType      `yaml:"auth_type"`
 	RegionName string        `yaml:"region_name"`

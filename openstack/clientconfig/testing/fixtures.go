@@ -8,6 +8,43 @@ import (
 var iTrue = true
 var iFalse = false
 
+var ChicagoCloudYAML = clientconfig.Cloud{
+	Profile:    "rackspace",
+	RegionName: "ORD",
+	AuthInfo: &clientconfig.AuthInfo{
+		AuthURL:     "https://identity.api.rackspacecloud.com/v2.0/",
+		Username:    "jdoe",
+		Password:    "password",
+		ProjectName: "Some Project",
+	},
+	Verify: &iTrue,
+}
+
+var ChicagoCloudLegacyYAML = clientconfig.Cloud{
+	Cloud:      "rackspace",
+	RegionName: "ORD",
+	AuthInfo: &clientconfig.AuthInfo{
+		AuthURL:     "https://identity.api.rackspacecloud.com/v2.0/",
+		Username:    "jdoe",
+		Password:    "password",
+		ProjectName: "Some Project",
+	},
+	Verify: &iTrue,
+}
+
+var ChicagoCloudUseProfileYAML = clientconfig.Cloud{
+	Cloud:      "rackspace",
+	Profile:    "rackspace",
+	RegionName: "ORD",
+	AuthInfo: &clientconfig.AuthInfo{
+		AuthURL:     "https://identity.api.rackspacecloud.com/v2.0/",
+		Username:    "jdoe",
+		Password:    "password",
+		ProjectName: "Some Project",
+	},
+	Verify: &iTrue,
+}
+
 var HawaiiCloudYAML = clientconfig.Cloud{
 	RegionName: "HNL",
 	AuthInfo: &clientconfig.AuthInfo{
