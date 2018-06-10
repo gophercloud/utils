@@ -76,7 +76,7 @@ func LoadPublicCloudsYAML() (map[string]PublicCloud, error) {
 
 	content, err := findAndReadPublicCloudsYAML()
 	if err != nil {
-		if err.Error() == "no clouds-public.yaml found" {
+		if err.Error() == "no clouds-public.yaml file found" {
 			// clouds-public.yaml is optional so just ignore read error
 			return publicClouds.Clouds, nil
 		}
