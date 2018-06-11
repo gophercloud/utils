@@ -161,3 +161,68 @@ func TestCreate(t *testing.T) {
 	})
 	th.AssertEquals(t, s.Name, "test_policy")
 }
+
+func TestUpdateArchivePolicy(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/v1/archive_policy/test_policy", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "PATCH")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "Content-Type", "application/json")
+		th.TestHeader(t, r, "Accept", "application/json")
+		th.TestJSONRequest(t, r, ArchivePolicyUpdateRequest)
+
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+
+		fmt.Fprintf(w, ArchivePolicyUpdateResponse)
+	})
+
+	updateOpts := archivepolicies.UpdateOpts{
+		Definition: []archivepolicies.ArchivePolicyDefinitionOpts{
+			{
+				Granularity: "12:00:00",
+				TimeSpan:    "30 days, 0:00:00",
+			},
+			{
+				Granularity: "1 day, 0:00:00",
+				TimeSpan:    "90 days, 0:00:00",
+			},
+		},
+	}
+	s, err := archivepolicies.Update(fake.ServiceClient(), "test_policy", updateOpts).Extract()
+	th.AssertNoErr(t, err)
+
+	th.AssertDeepEquals(t, s.AggregationMethods, []string{
+		"max",
+	})
+	th.AssertEquals(t, s.BackWindow, 0)
+	th.AssertDeepEquals(t, s.Definition, []archivepolicies.ArchivePolicyDefinition{
+		{
+			Granularity: "12:00:00",
+			Points:      60,
+			TimeSpan:    "30 days, 0:00:00",
+		},
+		{
+			Granularity: "1 day, 0:00:00",
+			Points:      90,
+			TimeSpan:    "90 days, 0:00:00",
+		},
+	})
+	th.AssertEquals(t, s.Name, "test_policy")
+}
+
+func TestDelete(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/v1/archive_policy/test_policy", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "DELETE")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		w.WriteHeader(http.StatusNoContent)
+	})
+
+	res := archivepolicies.Delete(fake.ServiceClient(), "test_policy")
+	th.AssertNoErr(t, res.Err)
+}

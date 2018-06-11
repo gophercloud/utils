@@ -23,3 +23,11 @@ func getURL(c *gophercloud.ServiceClient, archivePolicyName string) string {
 func createURL(c *gophercloud.ServiceClient) string {
 	return rootURL(c)
 }
+
+func updateURL(c *gophercloud.ServiceClient, archivePolicyName string) string {
+	return resourceURL(c, archivePolicyName)
+}
+
+func deleteURL(c *gophercloud.ServiceClient, archivePolicyName string) string {
+	return resourceURL(c, archivePolicyName)
+}

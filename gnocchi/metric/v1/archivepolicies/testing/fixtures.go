@@ -174,3 +174,42 @@ const ArchivePolicyCreateResponse = `
     "name": "test_policy"
 }
 `
+
+// ArchivePolicyUpdateRequest represents a raw update request.
+const ArchivePolicyUpdateRequest = `
+{
+    "definition": [
+        {
+            "timespan": "30 days, 0:00:00",
+            "granularity": "12:00:00"
+        },
+        {
+            "timespan": "90 days, 0:00:00",
+            "granularity": "1 day, 0:00:00"
+        }
+    ]
+}
+`
+
+// ArchivePolicyUpdateResponse represents a raw server response from a server to an update request.
+const ArchivePolicyUpdateResponse = `
+{
+    "definition": [
+        {
+            "points": 60,
+            "timespan": "30 days, 0:00:00",
+            "granularity": "12:00:00"
+        },
+        {
+            "points": 90,
+            "timespan": "90 days, 0:00:00",
+            "granularity": "1 day, 0:00:00"
+        }
+    ],
+    "back_window": 0,
+    "name": "test_policy",
+    "aggregation_methods": [
+        "max"
+    ]
+}
+`

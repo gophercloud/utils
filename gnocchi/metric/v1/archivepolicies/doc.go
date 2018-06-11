@@ -51,5 +51,31 @@ Example of Creating an archive policy
   if err != nil {
     panic(err)
   }
+
+Example of Updating an archive policy
+
+  updateOpts := archivepolicies.UpdateOpts{
+    Definition: []archivepolicies.ArchivePolicyDefinitionOpts{
+      {
+        Granularity: "12:00:00",
+        TimeSpan:    "30 days, 0:00:00",
+      },
+      {
+        Granularity: "1 day, 0:00:00",
+        TimeSpan:    "90 days, 0:00:00",
+      },
+    },
+  }
+  archivePolicy, err := archivepolicies.Update(gnocchiClient, "test_policy", updateOpts).Extract()
+  if err != nil {
+    panic(err)
+  }
+
+Example of Deleting a Gnocchi archive policy
+
+  err := archivepolicies.Delete(gnocchiClient, "test_policy").ExtractErr()
+  if err != nil {
+    panic(err)
+  }
 */
 package archivepolicies

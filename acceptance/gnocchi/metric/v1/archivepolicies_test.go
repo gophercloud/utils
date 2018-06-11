@@ -20,9 +20,29 @@ func TestArchivePoliciesCRUD(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Unable to create a Gnocchi archive policy: %v", err)
 	}
-	// defer DeleteArchivePolicy(t, client, archivePolicy.ID)
+	defer DeleteArchivePolicy(t, client, archivePolicy.Name)
 
 	tools.PrintResource(t, archivePolicy)
+
+	updateOpts := archivepolicies.UpdateOpts{
+		Definition: []archivepolicies.ArchivePolicyDefinitionOpts{
+			{
+				Granularity: "1:00:00",
+				TimeSpan:    "90 days, 0:00:00",
+			},
+			{
+				Granularity: "24:00:00",
+				TimeSpan:    "365 days, 0:00:00",
+			},
+		},
+	}
+	t.Logf("Attempting to update an archive policy %s", archivePolicy.Name)
+	newArchivePolicy, err := archivepolicies.Update(client, archivePolicy.Name, updateOpts).Extract()
+	if err != nil {
+		t.Fatalf("Unable to update a Gnocchi archive policy: %v", err)
+	}
+
+	tools.PrintResource(t, newArchivePolicy)
 }
 
 func TestArchivePoliciesList(t *testing.T) {

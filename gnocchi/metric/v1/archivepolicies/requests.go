@@ -76,3 +76,45 @@ func Create(client *gophercloud.ServiceClient, opts CreateOptsBuilder) (r Create
 
 	return
 }
+
+// UpdateOptsBuilder allows extensions to add additional parameters to the Update request.
+type UpdateOptsBuilder interface {
+	ToArchivePolicyUpdateMap() (map[string]interface{}, error)
+}
+
+// UpdateOpts represents options used to update an archive policy.
+type UpdateOpts struct {
+	// Definition is a list of parameters that configures
+	// archive policy precision and timespan.
+	Definition []ArchivePolicyDefinitionOpts `json:"definition"`
+}
+
+// ToArchivePolicyUpdateMap constructs a request body from UpdateOpts.
+func (opts UpdateOpts) ToArchivePolicyUpdateMap() (map[string]interface{}, error) {
+	return gophercloud.BuildRequestBody(opts, "")
+}
+
+// Update accepts a UpdateOpts and updates an existing Gnocchi archive policy using the values provided.
+func Update(client *gophercloud.ServiceClient, archivePolicyName string, opts UpdateOptsBuilder) (r UpdateResult) {
+	b, err := opts.ToArchivePolicyUpdateMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+	_, r.Err = client.Patch(updateURL(client, archivePolicyName), b, &r.Body, &gophercloud.RequestOpts{
+		OkCodes: []int{200},
+	})
+
+	return
+}
+
+// Delete accepts a Gnocchi archive policy by its name.
+func Delete(c *gophercloud.ServiceClient, archivePolicyName string) (r DeleteResult) {
+	requestOpts := &gophercloud.RequestOpts{
+		MoreHeaders: map[string]string{
+			"Accept": "application/json, */*",
+		},
+	}
+	_, r.Err = c.Delete(deleteURL(c, archivePolicyName), requestOpts)
+	return
+}

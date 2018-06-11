@@ -39,3 +39,16 @@ func CreateArchivePolicy(t *testing.T, client *gophercloud.ServiceClient) (*arch
 	t.Logf("Successfully created the Gnocchi archive policy.")
 	return archivePolicy, nil
 }
+
+// DeleteArchivePolicy will delete a Gnocchi archive policy.
+// A fatal error will occur if the delete was not successful.
+func DeleteArchivePolicy(t *testing.T, client *gophercloud.ServiceClient, archivePolicyName string) {
+	t.Logf("Attempting to delete the Gnocchi archive policy: %s", archivePolicyName)
+
+	err := archivepolicies.Delete(client, archivePolicyName).ExtractErr()
+	if err != nil {
+		t.Fatalf("Unable to delete the Gnocchi archive policy %s: %v", archivePolicyName, err)
+	}
+
+	t.Logf("Deleted the Gnocchi archive policy: %s", archivePolicyName)
+}
