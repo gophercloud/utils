@@ -27,7 +27,7 @@ type GetResult struct {
 // ResourceType represents custom Gnocchi resource type.
 type ResourceType struct {
 	// Attributes is a collection of keys and values of different resource types.
-	Attributes []ResourceTypeAttribute `json:"-"`
+	Attributes []Attribute `json:"-"`
 
 	// Name is a human-readable resource type identifier.
 	Name string `json:"name"`
@@ -36,22 +36,16 @@ type ResourceType struct {
 	State string `json:"state"`
 }
 
-// ResourceTypeAttribute represents single attribute of a Gnocchi resource type.
-type ResourceTypeAttribute struct {
+// Attribute represents single attribute of a Gnocchi resource type.
+type Attribute struct {
 	// Name a human-readable attribute identifier.
 	Name string `json:"-"`
 
-	// MaxLength contains maximum length of an attribute value.
-	MaxLength int `json:"max_length"`
-
-	// MinLength contains minimum length of an attribute value.
-	MinLength int `json:"min_length"`
-
-	// Required shows if that attribute is required.
-	Required bool `json:"required"`
-
 	// Type is an attribute type.
 	Type string `json:"type"`
+
+	// Extra represents different attribute fields.
+	Extra map[string]interface{}
 }
 
 // UnmarshalJSON helps to unmarshal ResourceType fields into needed values.
@@ -72,10 +66,10 @@ func (r *ResourceType) UnmarshalJSON(b []byte) error {
 	}
 
 	// Populate attributes from the JSON map structure.
-	attributes := make([]ResourceTypeAttribute, len(s.Attributes))
+	attributes := make([]Attribute, len(s.Attributes))
 	idx := 0
 	for attributeName, attributeValues := range s.Attributes {
-		attributes[idx] = ResourceTypeAttribute{
+		attributes[idx] = Attribute{
 			Name: attributeName,
 		}
 
@@ -87,25 +81,15 @@ func (r *ResourceType) UnmarshalJSON(b []byte) error {
 			continue
 		}
 
-		// Populate attribute values, check types and skip invalid ones.
+		// Populate extra and type attribute values.
+		attributes[idx].Extra = make(map[string]interface{})
 		for k, v := range attributeValuesMap {
-			switch {
-			case k == "max_length":
-				if maxLength, ok := v.(float64); ok {
-					attributes[idx].MaxLength = int(maxLength)
-				}
-			case k == "min_length":
-				if minLength, ok := v.(float64); ok {
-					attributes[idx].MinLength = int(minLength)
-				}
-			case k == "required":
-				if required, ok := v.(bool); ok {
-					attributes[idx].Required = required
-				}
-			case k == "type":
+			if k == "type" {
 				if attributeType, ok := v.(string); ok {
 					attributes[idx].Type = attributeType
 				}
+			} else {
+				attributes[idx].Extra[k] = v
 			}
 		}
 		idx++

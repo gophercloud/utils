@@ -37,18 +37,20 @@ const ResourceTypeListResult = `[
 var ResourceType1 = resourcetypes.ResourceType{
 	Name:       "generic",
 	State:      "active",
-	Attributes: []resourcetypes.ResourceTypeAttribute{},
+	Attributes: []resourcetypes.Attribute{},
 }
 
 // ResourceType2 is an expected representation of a first resource from the ResourceTypeListResult.
 var ResourceType2 = resourcetypes.ResourceType{
 	Name:  "identity_project",
 	State: "active",
-	Attributes: []resourcetypes.ResourceTypeAttribute{
+	Attributes: []resourcetypes.Attribute{
 		{
-			Name:     "parent_id",
-			Required: false,
-			Type:     "uuid",
+			Name: "parent_id",
+			Type: "uuid",
+			Extra: map[string]interface{}{
+				"required": false,
+			},
 		},
 	},
 }
@@ -57,13 +59,15 @@ var ResourceType2 = resourcetypes.ResourceType{
 var ResourceType3 = resourcetypes.ResourceType{
 	Name:  "compute_instance",
 	State: "active",
-	Attributes: []resourcetypes.ResourceTypeAttribute{
+	Attributes: []resourcetypes.Attribute{
 		{
-			Name:      "host",
-			MaxLength: 128,
-			MinLength: 0,
-			Required:  true,
-			Type:      "string",
+			Name: "host",
+			Type: "string",
+			Extra: map[string]interface{}{
+				"max_length": float64(128),
+				"min_length": float64(0),
+				"required":   true,
+			},
 		},
 	},
 }
