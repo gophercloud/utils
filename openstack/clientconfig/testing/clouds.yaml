@@ -101,7 +101,6 @@ clouds:
   chicago:
     profile: rackspace
     auth:
-      auth_url: "https://shall.be.overritten.by.public.cloud/"
       username: "jdoe"
       password: "password"
       project_name: "Some Project"
@@ -109,7 +108,6 @@ clouds:
   chicago_legacy:
     cloud: rackspace
     auth:
-      auth_url: "https://shall.be.overritten.by.public.cloud/"
       username: "jdoe"
       password: "password"
       project_name: "Some Project"
@@ -118,8 +116,15 @@ clouds:
     profile: rackspace
     cloud: rackspace
     auth:
-      auth_url: "https://shall.be.overritten.by.public.cloud/"
       username: "jdoe"
       password: "password"
       project_name: "Some Project"
     region_name: "ORD"
+  philadelphia:
+    auth:
+      auth_url: "https://phl.example.com:5000/v3"
+      username: "jdoe"
+      password: "this should be overwritten by secure.yaml"
+      project_name: "Some Project"
+    region_name: "PHL"
+

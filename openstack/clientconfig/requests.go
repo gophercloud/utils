@@ -9,6 +9,7 @@ import (
 	"github.com/gophercloud/gophercloud/openstack"
 
 	"gopkg.in/yaml.v2"
+	"reflect"
 )
 
 // AuthType respresents a valid method of authentication.
@@ -70,8 +71,28 @@ func LoadCloudsYAML() (map[string]Cloud, error) {
 	return clouds.Clouds, nil
 }
 
-// LoadPublicCloudsYAML will load a clouds.yaml file and return the full config.
-func LoadPublicCloudsYAML() (map[string]PublicCloud, error) {
+// LoadSecureCloudsYAML will load a secure.yaml file and return the full config.
+func LoadSecureCloudsYAML() (map[string]Cloud, error) {
+	content, err := findAndReadSecureCloudsYAML()
+	if err != nil {
+		return nil, err
+	}
+
+	var secureClouds Clouds
+	err = yaml.Unmarshal(content, &secureClouds)
+	if err != nil {
+		if err.Error() == "no secure.yaml file found" {
+			// secure.yaml is optional so just ignore read error
+			return secureClouds.Clouds, nil
+		}
+		return nil, err
+	}
+
+	return secureClouds.Clouds, nil
+}
+
+// LoadPublicCloudsYAML will load a public-clouds.yaml file and return the full config.
+func LoadPublicCloudsYAML() (map[string]Cloud, error) {
 	var publicClouds PublicClouds
 
 	content, err := findAndReadPublicCloudsYAML()
@@ -134,14 +155,17 @@ func GetCloudFromYAML(opts *ClientOpts) (*Cloud, error) {
 		}
 	}
 
+	var cloudIsInCloudsYaml bool
 	if cloud == nil {
-		return nil, fmt.Errorf("Unable to determine a valid entry in clouds.yaml")
-	}
-
-	// Default is to verify SSL API requests
-	if cloud.Verify == nil {
-		iTrue := true
-		cloud.Verify = &iTrue
+		// not an immediate error as it might still be defined in secure.yaml
+		cloudIsInCloudsYaml = false
+	} else {
+		cloudIsInCloudsYaml = true
+		// Default is to verify SSL API requests
+		if cloud.Verify == nil {
+			iTrue := true
+			cloud.Verify = &iTrue
+		}
 	}
 
 	publicClouds, err := LoadPublicCloudsYAML()
@@ -155,8 +179,33 @@ func GetCloudFromYAML(opts *ClientOpts) (*Cloud, error) {
 		if !ok {
 			return nil, fmt.Errorf("cloud %s does not exist in clouds-public.yaml", profileName)
 		}
+		cloud, err = mergeClouds(cloud, publicCloud)
+		if err != nil {
+			return nil, fmt.Errorf("Could not merge information from clouds.yaml and clouds-public.yaml for cloud %s", profileName)
+		}
+	}
 
-		updateAuthInfo(cloud, &publicCloud)
+	secureClouds, err := LoadSecureCloudsYAML()
+	if err != nil {
+		return nil, fmt.Errorf("unable to load secure.yaml: %s", err)
+	}
+
+	if secureClouds != nil {
+		secureCloud, ok := secureClouds[cloudName]
+		if !ok && !cloudIsInCloudsYaml {
+			return nil, fmt.Errorf("Could not find cloud %s", cloudName)
+		}
+		if cloudName == "" && len(secureClouds) == 1 {
+			for _, v := range clouds {
+				cloud = &v
+			}
+		}
+		if !reflect.DeepEqual((Cloud{}), secureCloud) {
+			cloud, err = mergeClouds(secureCloud, cloud)
+			if err != nil {
+				return nil, fmt.Errorf("unable to merge information from clouds.yaml and secure.yaml")
+			}
+		}
 	}
 
 	// TODO: this is where reading vendor files should go be considered when not found in

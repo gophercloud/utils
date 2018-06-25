@@ -26,6 +26,7 @@ func TestGetCloudFromYAML(t *testing.T) {
 		"chicago":            &clientconfig.ClientOpts{Cloud: "chicago"},
 		"chicago_legacy":     &clientconfig.ClientOpts{Cloud: "chicago_legacy"},
 		"chicago_useprofile": &clientconfig.ClientOpts{Cloud: "chicago_useprofile"},
+		"philadelphia":       &clientconfig.ClientOpts{Cloud: "philadelphia"},
 	}
 
 	expectedClouds := map[string]*clientconfig.Cloud{
@@ -36,6 +37,7 @@ func TestGetCloudFromYAML(t *testing.T) {
 		"chicago":            &ChicagoCloudYAML,
 		"chicago_legacy":     &ChicagoCloudLegacyYAML,
 		"chicago_useprofile": &ChicagoCloudUseProfileYAML,
+		"philadelphia":       &PhiladelphiaCloudYAML,
 	}
 
 	for cloud, clientOpts := range allClientOpts {

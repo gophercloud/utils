@@ -8,6 +8,18 @@ import (
 var iTrue = true
 var iFalse = false
 
+var PhiladelphiaCloudYAML = clientconfig.Cloud{
+	RegionName: "PHL",
+	AuthInfo: &clientconfig.AuthInfo{
+		AuthURL:     "https://phl.example.com:5000/v3",
+		Username:    "admin",
+		Password:    "password",
+		ProjectName: "Some Project",
+	},
+	Verify:   &iTrue,
+	AuthType: "password",
+}
+
 var ChicagoCloudYAML = clientconfig.Cloud{
 	Profile:    "rackspace",
 	RegionName: "ORD",
@@ -39,7 +51,7 @@ var ChicagoCloudUseProfileYAML = clientconfig.Cloud{
 	AuthInfo: &clientconfig.AuthInfo{
 		AuthURL:     "https://identity.api.rackspacecloud.com/v2.0/",
 		Username:    "jdoe",
-		Password:    "password",
+		Password:    "securepassword",
 		ProjectName: "Some Project",
 	},
 	Verify: &iTrue,
