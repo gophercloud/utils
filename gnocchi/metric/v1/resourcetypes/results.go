@@ -27,7 +27,7 @@ type GetResult struct {
 // ResourceType represents custom Gnocchi resource type.
 type ResourceType struct {
 	// Attributes is a collection of keys and values of different resource types.
-	Attributes []Attribute `json:"-"`
+	Attributes map[string]Attribute `json:"-"`
 
 	// Name is a human-readable resource type identifier.
 	Name string `json:"name"`
@@ -38,14 +38,11 @@ type ResourceType struct {
 
 // Attribute represents single attribute of a Gnocchi resource type.
 type Attribute struct {
-	// Name a human-readable attribute identifier.
-	Name string `json:"-"`
-
 	// Type is an attribute type.
 	Type string `json:"type"`
 
-	// Extra represents different attribute fields.
-	Extra map[string]interface{}
+	// Details represents different attribute fields.
+	Details map[string]interface{}
 }
 
 // UnmarshalJSON helps to unmarshal ResourceType fields into needed values.
@@ -66,33 +63,28 @@ func (r *ResourceType) UnmarshalJSON(b []byte) error {
 	}
 
 	// Populate attributes from the JSON map structure.
-	attributes := make([]Attribute, len(s.Attributes))
-	idx := 0
+	attributes := make(map[string]Attribute)
 	for attributeName, attributeValues := range s.Attributes {
-		attributes[idx] = Attribute{
-			Name: attributeName,
-		}
+		attribute := new(Attribute)
+		attribute.Details = make(map[string]interface{})
 
-		var attributeValuesMap map[string]interface{}
-		var ok bool
-
-		if attributeValuesMap, ok = attributeValues.(map[string]interface{}); !ok {
+		attributeValuesMap, ok := attributeValues.(map[string]interface{})
+		if !ok {
 			// Got some strange resource type attribute representation, skip it.
 			continue
 		}
 
 		// Populate extra and type attribute values.
-		attributes[idx].Extra = make(map[string]interface{})
 		for k, v := range attributeValuesMap {
 			if k == "type" {
 				if attributeType, ok := v.(string); ok {
-					attributes[idx].Type = attributeType
+					attribute.Type = attributeType
 				}
 			} else {
-				attributes[idx].Extra[k] = v
+				attribute.Details[k] = v
 			}
 		}
-		idx++
+		attributes[attributeName] = *attribute
 	}
 
 	r.Attributes = attributes
