@@ -3,13 +3,13 @@ package clientconfig
 import (
 	"fmt"
 	"os"
+	"reflect"
 	"strings"
 
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack"
 
 	"gopkg.in/yaml.v2"
-	"reflect"
 )
 
 // AuthType respresents a valid method of authentication.
@@ -161,11 +161,6 @@ func GetCloudFromYAML(opts *ClientOpts) (*Cloud, error) {
 		cloudIsInCloudsYaml = false
 	} else {
 		cloudIsInCloudsYaml = true
-		// Default is to verify SSL API requests
-		if cloud.Verify == nil {
-			iTrue := true
-			cloud.Verify = &iTrue
-		}
 	}
 
 	publicClouds, err := LoadPublicCloudsYAML()
@@ -206,6 +201,12 @@ func GetCloudFromYAML(opts *ClientOpts) (*Cloud, error) {
 				return nil, fmt.Errorf("unable to merge information from clouds.yaml and secure.yaml")
 			}
 		}
+	}
+
+	// Default is to verify SSL API requests
+	if cloud.Verify == nil {
+		iTrue := true
+		cloud.Verify = &iTrue
 	}
 
 	// TODO: this is where reading vendor files should go be considered when not found in
