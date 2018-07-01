@@ -24,5 +24,30 @@ Example of Getting a resource type
   if err != nil {
     panic(err)
   }
+
+Example of Creating a resource type
+
+  resourceTypeOpts := resourcetypes.CreateOpts{
+    Name: "compute_instance_network",
+    Attributes: map[string]resourcetypes.AttributeOpts{
+      "port_name": resourcetypes.AttributeOpts{
+        Type: "string",
+        Details: map[string]interface{}{
+          "max_length": 128,
+          "required":   false,
+        },
+      },
+      "port_id": resourcetypes.AttributeOpts{
+        Type: "uuid",
+        Details: map[string]interface{}{
+          "required": true,
+        },
+      },
+    },
+  }
+  resourceType, err := resourcetypes.Create(gnocchiClient, resourceTypeOpts).Extract()
+  if err != nil {
+    panic(err)
+  }
 */
 package resourcetypes

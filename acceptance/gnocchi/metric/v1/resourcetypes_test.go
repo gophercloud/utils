@@ -30,3 +30,18 @@ func TestResourceTypesList(t *testing.T) {
 		tools.PrintResource(t, resourceType)
 	}
 }
+
+func TestResourceTypesCRUD(t *testing.T) {
+	client, err := clients.NewGnocchiV1Client()
+	if err != nil {
+		t.Fatalf("Unable to create a Gnocchi client: %v", err)
+	}
+
+	resourceType, err := CreateResourceType(t, client)
+	if err != nil {
+		t.Fatalf("Unable to create a Gnocchi resource type: %v", err)
+	}
+	// defer DeleteResourceType(t, client, resourceType.Name)
+
+	tools.PrintResource(t, resourceType)
+}

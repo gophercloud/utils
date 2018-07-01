@@ -89,3 +89,57 @@ const ResourceTypeGetResult = `
     "name": "compute_instance"
 }
 `
+
+// ResourceTypeCreateWithoutAttributesRequest represents a request to create a resource type without attributes.
+const ResourceTypeCreateWithoutAttributesRequest = `
+{
+    "name":"identity_project"
+}
+`
+
+// ResourceTypeCreateWithoutAttributesResult represents a raw server response to the ResourceTypeCreateWithoutAttributesRequest.
+const ResourceTypeCreateWithoutAttributesResult = `
+{
+    "attributes": {},
+    "state": "active",
+    "name": "identity_project"
+}
+`
+
+// ResourceTypeCreateWithAttributesRequest represents a request to create a resource type with attributes.
+const ResourceTypeCreateWithAttributesRequest = `
+{
+    "attributes": {
+        "port_name": {
+            "max_length": 128,
+            "required": false,
+            "type": "string"
+        },
+        "port_id": {
+            "required": true,
+            "type": "uuid"
+        }
+    },
+    "name": "compute_instance_network"
+}
+`
+
+// ResourceTypeCreateWithAttributesResult represents a raw server response to the ResourceTypeCreateWithAttributesRequest.
+const ResourceTypeCreateWithAttributesResult = `
+{
+    "attributes": {
+        "port_id": {
+            "required": true,
+            "type": "uuid"
+        },
+        "port_name": {
+            "min_length": 0,
+            "max_length": 128,
+            "type": "string",
+            "required": false
+        }
+    },
+    "state": "active",
+    "name": "compute_instance_network"
+}
+`
