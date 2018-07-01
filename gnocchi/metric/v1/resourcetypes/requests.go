@@ -11,3 +11,9 @@ func List(client *gophercloud.ServiceClient) pagination.Pager {
 		return ResourceTypePage{pagination.SinglePageBase(r)}
 	})
 }
+
+// Get retrieves a specific Gnocchi resource type based on its name.
+func Get(c *gophercloud.ServiceClient, resourceTypeName string) (r GetResult) {
+	_, r.Err = c.Get(getURL(c, resourceTypeName), &r.Body, nil)
+	return
+}

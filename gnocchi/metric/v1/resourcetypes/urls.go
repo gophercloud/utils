@@ -8,6 +8,14 @@ func rootURL(c *gophercloud.ServiceClient) string {
 	return c.ServiceURL(resourcePath)
 }
 
+func resourceURL(c *gophercloud.ServiceClient, resourceTypeName string) string {
+	return c.ServiceURL(resourcePath, resourceTypeName)
+}
+
 func listURL(c *gophercloud.ServiceClient) string {
 	return rootURL(c)
+}
+
+func getURL(c *gophercloud.ServiceClient, resourceTypeName string) string {
+	return resourceURL(c, resourceTypeName)
 }

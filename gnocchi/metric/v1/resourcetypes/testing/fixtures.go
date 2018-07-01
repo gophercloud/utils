@@ -69,3 +69,23 @@ var ResourceType3 = resourcetypes.ResourceType{
 		},
 	},
 }
+
+// ResourceTypeGetResult represents raw server response from a server to a get requrest.
+const ResourceTypeGetResult = `
+{
+    "attributes": {
+        "host": {
+            "min_length": 0,
+            "max_length": 255,
+            "type": "string",
+            "required": true
+        },
+        "image_ref": {
+            "type": "uuid",
+            "required": false
+        }
+    },
+    "state": "active",
+    "name": "compute_instance"
+}
+`

@@ -16,5 +16,13 @@ Example of Listing resource types
   for _, resourceType := range allResourceTypes {
     fmt.Printf("%+v\n", resourceType)
   }
+
+Example of Getting a resource type
+
+  resourceTypeName := "compute_instance"
+  resourceType, err := resourcetypes.Get(gnocchiClient, resourceTypeName).Extract()
+  if err != nil {
+    panic(err)
+  }
 */
 package resourcetypes
