@@ -186,16 +186,26 @@ func GetCloudFromYAML(opts *ClientOpts) (*Cloud, error) {
 	}
 
 	if secureClouds != nil {
-		secureCloud, ok := secureClouds[cloudName]
-		if !ok && !cloudIsInCloudsYaml {
-			return nil, fmt.Errorf("Could not find cloud %s", cloudName)
-		}
-		if cloudName == "" && len(secureClouds) == 1 {
-			for _, v := range clouds {
+		// If no entry was found in clouds.yaml, no cloud name was specified,
+		// and only one secureCloud entry exists, use that as the cloud entry.
+		if !cloudIsInCloudsYaml && cloudName == "" && len(secureClouds) == 1 {
+			for _, v := range secureClouds {
 				cloud = &v
 			}
 		}
-		if !reflect.DeepEqual((Cloud{}), secureCloud) {
+
+		secureCloud, ok := secureClouds[cloudName]
+		if !ok && cloud == nil {
+			// cloud == nil serves two purposes here:
+			// if no entry in clouds.yaml was found and
+			// if a single-entry secureCloud wasn't used.
+			// At this point, no entry could be determined at all.
+			return nil, fmt.Errorf("Could not find cloud %s", cloudName)
+		}
+
+		// If secureCloud has content and it differs from the cloud entry,
+		// merge the two together.
+		if !reflect.DeepEqual((Cloud{}), secureCloud) && !reflect.DeepEqual(cloud, secureCloud) {
 			cloud, err = mergeClouds(secureCloud, cloud)
 			if err != nil {
 				return nil, fmt.Errorf("unable to merge information from clouds.yaml and secure.yaml")
