@@ -30,6 +30,12 @@ type CreateResult struct {
 	commonResult
 }
 
+// UpdateResult represents the result of an update operation. Call its Extract
+// method to interpret it as a Gnocchi resource type.
+type UpdateResult struct {
+	commonResult
+}
+
 // ResourceType represents custom Gnocchi resource type.
 type ResourceType struct {
 	// Attributes is a collection of keys and values of different resource types.

@@ -70,7 +70,7 @@ var ResourceType3 = resourcetypes.ResourceType{
 	},
 }
 
-// ResourceTypeGetResult represents raw server response from a server to a get requrest.
+// ResourceTypeGetResult represents raw server response from a server to a get request.
 const ResourceTypeGetResult = `
 {
     "attributes": {
@@ -141,5 +141,58 @@ const ResourceTypeCreateWithAttributesResult = `
     },
     "state": "active",
     "name": "compute_instance_network"
+}
+`
+
+// ResourceTypeUpdateRequest represents a request to update a resource type.
+const ResourceTypeUpdateRequest = `
+[
+    {
+        "op": "add",
+        "path": "/attributes/enabled",
+        "value": {
+            "options": {
+                "fill": true
+            },
+            "required": true,
+            "type": "bool"
+        }
+    },
+    {
+        "op": "add",
+        "path": "/attributes/parent_id",
+        "value": {
+            "required": false,
+            "type": "uuid"
+        }
+    },
+    {
+        "op": "remove",
+        "path": "/attributes/domain_id"
+    }
+]
+`
+
+// ResourceTypeUpdateResult represents a raw server response to the ResourceTypeUpdateRequest.
+const ResourceTypeUpdateResult = `
+{
+    "attributes": {
+        "enabled": {
+            "required": true,
+            "type": "bool"
+        },
+        "parent_id": {
+            "type": "uuid",
+            "required": false
+        },
+        "name": {
+            "required": true,
+            "type": "string",
+            "min_length": 0,
+            "max_length": 128
+        }
+    },
+    "state": "active",
+    "name": "identity_project"
 }
 `
