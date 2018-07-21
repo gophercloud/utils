@@ -89,5 +89,12 @@ Example of Updating a resource type
   if err != nil {
     panic(err)
   }
+
+Example of Deleting a resource type
+
+  err := resourcetypes.Delete(gnocchiClient, resourceType).ExtractErr()
+  if err != nil {
+    panic(err)
+  }
 */
 package resourcetypes

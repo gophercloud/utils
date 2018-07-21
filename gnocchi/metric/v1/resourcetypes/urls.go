@@ -27,3 +27,7 @@ func createURL(c *gophercloud.ServiceClient) string {
 func updateURL(c *gophercloud.ServiceClient, resourceTypeName string) string {
 	return resourceURL(c, resourceTypeName)
 }
+
+func deleteURL(c *gophercloud.ServiceClient, resourceTypeName string) string {
+	return resourceURL(c, resourceTypeName)
+}

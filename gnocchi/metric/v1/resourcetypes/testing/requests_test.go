@@ -253,3 +253,17 @@ func TestUpdate(t *testing.T) {
 		},
 	})
 }
+
+func TestDelete(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/v1/resource_type/compute_instance_network", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "DELETE")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		w.WriteHeader(http.StatusNoContent)
+	})
+
+	res := resourcetypes.Delete(fake.ServiceClient(), "compute_instance_network")
+	th.AssertNoErr(t, res.Err)
+}

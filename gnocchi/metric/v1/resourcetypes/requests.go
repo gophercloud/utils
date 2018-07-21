@@ -189,3 +189,14 @@ func Update(client *gophercloud.ServiceClient, resourceTypeName string, opts Upd
 	})
 	return
 }
+
+// Delete accepts a human-readable name and deletes the Gnocchi resource type associated with it.
+func Delete(c *gophercloud.ServiceClient, resourceTypeName string) (r DeleteResult) {
+	requestOpts := &gophercloud.RequestOpts{
+		MoreHeaders: map[string]string{
+			"Accept": "application/json, */*",
+		},
+	}
+	_, r.Err = c.Delete(deleteURL(c, resourceTypeName), requestOpts)
+	return
+}
