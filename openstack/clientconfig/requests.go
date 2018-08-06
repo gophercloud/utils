@@ -73,19 +73,20 @@ func LoadCloudsYAML() (map[string]Cloud, error) {
 
 // LoadSecureCloudsYAML will load a secure.yaml file and return the full config.
 func LoadSecureCloudsYAML() (map[string]Cloud, error) {
-	content, err := findAndReadSecureCloudsYAML()
-	if err != nil {
-		return nil, err
-	}
-
 	var secureClouds Clouds
-	err = yaml.Unmarshal(content, &secureClouds)
+
+	content, err := findAndReadSecureCloudsYAML()
 	if err != nil {
 		if err.Error() == "no secure.yaml file found" {
 			// secure.yaml is optional so just ignore read error
 			return secureClouds.Clouds, nil
 		}
 		return nil, err
+	}
+
+	err = yaml.Unmarshal(content, &secureClouds)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal yaml: %v", err)
 	}
 
 	return secureClouds.Clouds, nil
