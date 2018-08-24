@@ -43,3 +43,16 @@ func CreateResourceType(t *testing.T, client *gophercloud.ServiceClient) (*resou
 	t.Logf("Successfully created the Gnocchi resource type.")
 	return resourceType, nil
 }
+
+// DeleteResourceType deletes a Gnocchi resource type with the specified name.
+// A fatal error will occur if the delete was not successful.
+func DeleteResourceType(t *testing.T, client *gophercloud.ServiceClient, resourceTypeName string) {
+	t.Logf("Attempting to delete the Gnocchi resource type: %s", resourceTypeName)
+
+	err := resourcetypes.Delete(client, resourceTypeName).ExtractErr()
+	if err != nil {
+		t.Fatalf("Unable to delete the Gnocchi resource type %s: %v", resourceTypeName, err)
+	}
+
+	t.Logf("Deleted the Gnocchi resource type: %s", resourceTypeName)
+}

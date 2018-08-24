@@ -30,6 +30,18 @@ type CreateResult struct {
 	commonResult
 }
 
+// UpdateResult represents the result of an update operation. Call its Extract
+// method to interpret it as a Gnocchi resource type.
+type UpdateResult struct {
+	commonResult
+}
+
+// DeleteResult represents the result of a delete operation. Call its
+// ExtractErr method to determine if the request succeeded or failed.
+type DeleteResult struct {
+	gophercloud.ErrResult
+}
+
 // ResourceType represents custom Gnocchi resource type.
 type ResourceType struct {
 	// Attributes is a collection of keys and values of different resource types.

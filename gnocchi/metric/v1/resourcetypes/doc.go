@@ -49,5 +49,52 @@ Example of Creating a resource type
   if err != nil {
     panic(err)
   }
+
+Example of Updating a resource type
+
+  enabledAttributeOptions := resourcetypes.AttributeOpts{
+    Details: map[string]interface{}{
+      "required": true,
+      "options": map[string]interface{}{
+        "fill": true,
+      },
+    },
+    Type: "bool",
+  }
+  parendIDAttributeOptions := resourcetypes.AttributeOpts{
+    Details: map[string]interface{}{
+      "required": false,
+    },
+    Type: "uuid",
+  }
+  resourceTypeOpts := resourcetypes.UpdateOpts{
+    Attributes: []resourcetypes.AttributeUpdateOpts{
+      {
+        Name:      "enabled",
+        Operation: resourcetypes.AttributeAdd,
+        Value:     &enabledAttributeOptions,
+      },
+      {
+        Name:      "parent_id",
+        Operation: resourcetypes.AttributeAdd,
+        Value:     &parendIDAttributeOptions,
+      },
+      {
+        Name:      "domain_id",
+        Operation: resourcetypes.AttributeRemove,
+      },
+    },
+  }
+  resourceType, err := resourcetypes.Update(gnocchiClient, resourceTypeOpts).Extract()
+  if err != nil {
+    panic(err)
+  }
+
+Example of Deleting a resource type
+
+  err := resourcetypes.Delete(gnocchiClient, resourceType).ExtractErr()
+  if err != nil {
+    panic(err)
+  }
 */
 package resourcetypes

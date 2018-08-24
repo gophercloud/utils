@@ -173,3 +173,97 @@ func TestCreateWithAttributes(t *testing.T) {
 		},
 	})
 }
+
+func TestUpdate(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/v1/resource_type/identity_project", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "PATCH")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "Content-Type", "application/json-patch+json")
+		th.TestHeader(t, r, "Accept", "application/json")
+		th.TestJSONRequest(t, r, ResourceTypeUpdateRequest)
+
+		w.Header().Add("Content-Type", "application/json-patch+json")
+		w.WriteHeader(http.StatusOK)
+
+		fmt.Fprintf(w, ResourceTypeUpdateResult)
+	})
+
+	enabledAttributeOptions := resourcetypes.AttributeOpts{
+		Details: map[string]interface{}{
+			"required": true,
+			"options": map[string]interface{}{
+				"fill": true,
+			},
+		},
+		Type: "bool",
+	}
+	parendIDAttributeOptions := resourcetypes.AttributeOpts{
+		Details: map[string]interface{}{
+			"required": false,
+		},
+		Type: "uuid",
+	}
+	opts := resourcetypes.UpdateOpts{
+		Attributes: []resourcetypes.AttributeUpdateOpts{
+			{
+				Name:      "enabled",
+				Operation: resourcetypes.AttributeAdd,
+				Value:     &enabledAttributeOptions,
+			},
+			{
+				Name:      "parent_id",
+				Operation: resourcetypes.AttributeAdd,
+				Value:     &parendIDAttributeOptions,
+			},
+			{
+				Name:      "domain_id",
+				Operation: resourcetypes.AttributeRemove,
+			},
+		},
+	}
+
+	s, err := resourcetypes.Update(fake.ServiceClient(), "identity_project", opts).Extract()
+	th.AssertNoErr(t, err)
+
+	th.AssertEquals(t, s.Name, "identity_project")
+	th.AssertEquals(t, s.State, "active")
+	th.AssertDeepEquals(t, s.Attributes, map[string]resourcetypes.Attribute{
+		"enabled": resourcetypes.Attribute{
+			Type: "bool",
+			Details: map[string]interface{}{
+				"required": true,
+			},
+		},
+		"parent_id": resourcetypes.Attribute{
+			Type: "uuid",
+			Details: map[string]interface{}{
+				"required": false,
+			},
+		},
+		"name": resourcetypes.Attribute{
+			Type: "string",
+			Details: map[string]interface{}{
+				"required":   true,
+				"min_length": float64(0),
+				"max_length": float64(128),
+			},
+		},
+	})
+}
+
+func TestDelete(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/v1/resource_type/compute_instance_network", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "DELETE")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		w.WriteHeader(http.StatusNoContent)
+	})
+
+	res := resourcetypes.Delete(fake.ServiceClient(), "compute_instance_network")
+	th.AssertNoErr(t, res.Err)
+}

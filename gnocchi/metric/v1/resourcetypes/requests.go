@@ -1,6 +1,9 @@
 package resourcetypes
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/pagination"
 )
@@ -91,5 +94,109 @@ func Create(client *gophercloud.ServiceClient, opts CreateOptsBuilder) (r Create
 	_, r.Err = client.Post(createURL(client), b, &r.Body, &gophercloud.RequestOpts{
 		OkCodes: []int{201},
 	})
+	return
+}
+
+// AttributeOperation represents a type of operation that can be performed over
+// Gnocchi resource type attribute.
+type AttributeOperation string
+
+const (
+	// AttributeAdd represents Gnocchi resource type attribute add operation.
+	AttributeAdd AttributeOperation = "add"
+
+	// AttributeRemove represents Gnocchi resource type attribute remove operation.
+	AttributeRemove AttributeOperation = "remove"
+
+	// AttributeCommonPath represents a prefix for every attribute in the Gnocchi
+	// resource type.
+	AttributeCommonPath = "/attributes"
+)
+
+// UpdateOptsBuilder allows to add additional parameters to the Update request.
+type UpdateOptsBuilder interface {
+	ToResourceTypeUpdateMap() ([]map[string]interface{}, error)
+}
+
+// UpdateOpts specifies parameters for a Gnocchi resource type update request.
+type UpdateOpts struct {
+	// AttributesOperations is a collection of operations that need to be performed
+	// over Gnocchi resource type attributes.
+	Attributes []AttributeUpdateOpts `json:"-"`
+}
+
+// AttributeUpdateOpts represents update options over a single Gnocchi resource
+// type attribute.
+type AttributeUpdateOpts struct {
+	// Name is a human-readable name of an attribute that needs to be added or removed.
+	Name string `json:"-" required:"true"`
+
+	// Operation represent action that needs to be performed over the attribute.
+	Operation AttributeOperation `json:"-" required:"true"`
+
+	// Value is an attribute options.
+	Value *AttributeOpts `json:"-"`
+}
+
+// ToResourceTypeUpdateMap constructs a request body from UpdateOpts.
+func (opts UpdateOpts) ToResourceTypeUpdateMap() ([]map[string]interface{}, error) {
+	if len(opts.Attributes) == 0 {
+		return nil, fmt.Errorf("provided Gnocchi resource type UpdateOpts is empty")
+	}
+
+	updateOptsMaps := make([]map[string]interface{}, len(opts.Attributes))
+
+	// Populate a map for every attribute.
+	for i, attributeUpdateOpts := range opts.Attributes {
+		attributeUpdateOptsMap := make(map[string]interface{})
+
+		// Populate attribute value map if provided.
+		if attributeUpdateOpts.Value != nil {
+			attributeValue, err := attributeUpdateOpts.Value.ToMap()
+			if err != nil {
+				return nil, err
+			}
+			attributeUpdateOptsMap["value"] = attributeValue
+		}
+
+		// Populate attribute update operation.
+		attributeUpdateOptsMap["op"] = attributeUpdateOpts.Operation
+
+		// Populate attribute path from its name.
+		attributeUpdateOptsMap["path"] = strings.Join([]string{
+			AttributeCommonPath,
+			attributeUpdateOpts.Name,
+		}, "/")
+
+		updateOptsMaps[i] = attributeUpdateOptsMap
+	}
+
+	return updateOptsMaps, nil
+}
+
+// Update requests the update operation over existsing Gnocchi resource type.
+func Update(client *gophercloud.ServiceClient, resourceTypeName string, opts UpdateOptsBuilder) (r UpdateResult) {
+	b, err := opts.ToResourceTypeUpdateMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+	_, r.Err = client.Patch(updateURL(client, resourceTypeName), b, &r.Body, &gophercloud.RequestOpts{
+		OkCodes: []int{200},
+		MoreHeaders: map[string]string{
+			"Content-Type": "application/json-patch+json",
+		},
+	})
+	return
+}
+
+// Delete accepts a human-readable name and deletes the Gnocchi resource type associated with it.
+func Delete(c *gophercloud.ServiceClient, resourceTypeName string) (r DeleteResult) {
+	requestOpts := &gophercloud.RequestOpts{
+		MoreHeaders: map[string]string{
+			"Accept": "application/json, */*",
+		},
+	}
+	_, r.Err = c.Delete(deleteURL(c, resourceTypeName), requestOpts)
 	return
 }
