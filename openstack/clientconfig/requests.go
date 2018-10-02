@@ -631,21 +631,20 @@ func NewServiceClient(service string, opts *ClientOpts) (*gophercloud.ServiceCli
 	}
 
 	// Determine the region to use.
-	// First, see if the cloud entry has one.
+	// First, check if the REGION_NAME environment variable is set.
 	var region string
+	if v := os.Getenv(envPrefix + "REGION_NAME"); v != "" {
+		region = v
+	}
+
+	// Next, check if the cloud entry sets a region.
 	if v := cloud.RegionName; v != "" {
 		region = v
 	}
 
-	// Next, see if one was specified in the ClientOpts.
+	// Finally, see if one was specified in the ClientOpts.
 	// If so, this takes precedence.
 	if v := opts.RegionName; v != "" {
-		region = v
-	}
-
-	// Finally, see if there's an environment variable.
-	// This should always override prior settings.
-	if v := os.Getenv(envPrefix + "REGION_NAME"); v != "" {
 		region = v
 	}
 
