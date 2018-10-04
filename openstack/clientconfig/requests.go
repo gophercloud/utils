@@ -353,40 +353,52 @@ func v2auth(cloud *Cloud, opts *ClientOpts) (*gophercloud.AuthOptions, error) {
 		envPrefix = opts.EnvPrefix
 	}
 
-	if v := os.Getenv(envPrefix + "AUTH_URL"); v != "" {
-		cloud.AuthInfo.AuthURL = v
+	if cloud.AuthInfo.AuthURL == "" {
+		if v := os.Getenv(envPrefix + "AUTH_URL"); v != "" {
+			cloud.AuthInfo.AuthURL = v
+		}
 	}
 
-	if v := os.Getenv(envPrefix + "TOKEN"); v != "" {
-		cloud.AuthInfo.Token = v
+	if cloud.AuthInfo.Token == "" {
+		if v := os.Getenv(envPrefix + "TOKEN"); v != "" {
+			cloud.AuthInfo.Token = v
+		}
+
+		if v := os.Getenv(envPrefix + "AUTH_TOKEN"); v != "" {
+			cloud.AuthInfo.Token = v
+		}
 	}
 
-	if v := os.Getenv(envPrefix + "AUTH_TOKEN"); v != "" {
-		cloud.AuthInfo.Token = v
+	if cloud.AuthInfo.Username == "" {
+		if v := os.Getenv(envPrefix + "USERNAME"); v != "" {
+			cloud.AuthInfo.Username = v
+		}
 	}
 
-	if v := os.Getenv(envPrefix + "USERNAME"); v != "" {
-		cloud.AuthInfo.Username = v
+	if cloud.AuthInfo.Password == "" {
+		if v := os.Getenv(envPrefix + "PASSWORD"); v != "" {
+			cloud.AuthInfo.Password = v
+		}
 	}
 
-	if v := os.Getenv(envPrefix + "PASSWORD"); v != "" {
-		cloud.AuthInfo.Password = v
+	if cloud.AuthInfo.ProjectID == "" {
+		if v := os.Getenv(envPrefix + "TENANT_ID"); v != "" {
+			cloud.AuthInfo.ProjectID = v
+		}
+
+		if v := os.Getenv(envPrefix + "PROJECT_ID"); v != "" {
+			cloud.AuthInfo.ProjectID = v
+		}
 	}
 
-	if v := os.Getenv(envPrefix + "TENANT_ID"); v != "" {
-		cloud.AuthInfo.ProjectID = v
-	}
+	if cloud.AuthInfo.ProjectName == "" {
+		if v := os.Getenv(envPrefix + "TENANT_NAME"); v != "" {
+			cloud.AuthInfo.ProjectName = v
+		}
 
-	if v := os.Getenv(envPrefix + "PROJECT_ID"); v != "" {
-		cloud.AuthInfo.ProjectID = v
-	}
-
-	if v := os.Getenv(envPrefix + "TENANT_NAME"); v != "" {
-		cloud.AuthInfo.ProjectName = v
-	}
-
-	if v := os.Getenv(envPrefix + "PROJECT_NAME"); v != "" {
-		cloud.AuthInfo.ProjectName = v
+		if v := os.Getenv(envPrefix + "PROJECT_NAME"); v != "" {
+			cloud.AuthInfo.ProjectName = v
+		}
 	}
 
 	ao := &gophercloud.AuthOptions{
@@ -409,72 +421,100 @@ func v3auth(cloud *Cloud, opts *ClientOpts) (*gophercloud.AuthOptions, error) {
 		envPrefix = opts.EnvPrefix
 	}
 
-	if v := os.Getenv(envPrefix + "AUTH_URL"); v != "" {
-		cloud.AuthInfo.AuthURL = v
+	if cloud.AuthInfo.AuthURL == "" {
+		if v := os.Getenv(envPrefix + "AUTH_URL"); v != "" {
+			cloud.AuthInfo.AuthURL = v
+		}
 	}
 
-	if v := os.Getenv(envPrefix + "TOKEN"); v != "" {
-		cloud.AuthInfo.Token = v
+	if cloud.AuthInfo.Token == "" {
+		if v := os.Getenv(envPrefix + "TOKEN"); v != "" {
+			cloud.AuthInfo.Token = v
+		}
+
+		if v := os.Getenv(envPrefix + "AUTH_TOKEN"); v != "" {
+			cloud.AuthInfo.Token = v
+		}
 	}
 
-	if v := os.Getenv(envPrefix + "AUTH_TOKEN"); v != "" {
-		cloud.AuthInfo.Token = v
+	if cloud.AuthInfo.Username == "" {
+		if v := os.Getenv(envPrefix + "USERNAME"); v != "" {
+			cloud.AuthInfo.Username = v
+		}
 	}
 
-	if v := os.Getenv(envPrefix + "USERNAME"); v != "" {
-		cloud.AuthInfo.Username = v
+	if cloud.AuthInfo.UserID == "" {
+		if v := os.Getenv(envPrefix + "USER_ID"); v != "" {
+			cloud.AuthInfo.UserID = v
+		}
 	}
 
-	if v := os.Getenv(envPrefix + "USER_ID"); v != "" {
-		cloud.AuthInfo.UserID = v
+	if cloud.AuthInfo.Password == "" {
+		if v := os.Getenv(envPrefix + "PASSWORD"); v != "" {
+			cloud.AuthInfo.Password = v
+		}
 	}
 
-	if v := os.Getenv(envPrefix + "PASSWORD"); v != "" {
-		cloud.AuthInfo.Password = v
+	if cloud.AuthInfo.ProjectID == "" {
+		if v := os.Getenv(envPrefix + "TENANT_ID"); v != "" {
+			cloud.AuthInfo.ProjectID = v
+		}
+
+		if v := os.Getenv(envPrefix + "PROJECT_ID"); v != "" {
+			cloud.AuthInfo.ProjectID = v
+		}
 	}
 
-	if v := os.Getenv(envPrefix + "TENANT_ID"); v != "" {
-		cloud.AuthInfo.ProjectID = v
+	if cloud.AuthInfo.ProjectName == "" {
+		if v := os.Getenv(envPrefix + "TENANT_NAME"); v != "" {
+			cloud.AuthInfo.ProjectName = v
+		}
+
+		if v := os.Getenv(envPrefix + "PROJECT_NAME"); v != "" {
+			cloud.AuthInfo.ProjectName = v
+		}
 	}
 
-	if v := os.Getenv(envPrefix + "PROJECT_ID"); v != "" {
-		cloud.AuthInfo.ProjectID = v
+	if cloud.AuthInfo.DomainID == "" {
+		if v := os.Getenv(envPrefix + "DOMAIN_ID"); v != "" {
+			cloud.AuthInfo.DomainID = v
+		}
 	}
 
-	if v := os.Getenv(envPrefix + "TENANT_NAME"); v != "" {
-		cloud.AuthInfo.ProjectName = v
+	if cloud.AuthInfo.DomainName == "" {
+		if v := os.Getenv(envPrefix + "DOMAIN_NAME"); v != "" {
+			cloud.AuthInfo.DomainName = v
+		}
 	}
 
-	if v := os.Getenv(envPrefix + "PROJECT_NAME"); v != "" {
-		cloud.AuthInfo.ProjectName = v
+	if cloud.AuthInfo.DefaultDomain == "" {
+		if v := os.Getenv(envPrefix + "DEFAULT_DOMAIN"); v != "" {
+			cloud.AuthInfo.DefaultDomain = v
+		}
 	}
 
-	if v := os.Getenv(envPrefix + "DOMAIN_ID"); v != "" {
-		cloud.AuthInfo.DomainID = v
+	if cloud.AuthInfo.ProjectDomainID == "" {
+		if v := os.Getenv(envPrefix + "PROJECT_DOMAIN_ID"); v != "" {
+			cloud.AuthInfo.ProjectDomainID = v
+		}
 	}
 
-	if v := os.Getenv(envPrefix + "DOMAIN_NAME"); v != "" {
-		cloud.AuthInfo.DomainName = v
+	if cloud.AuthInfo.ProjectDomainName == "" {
+		if v := os.Getenv(envPrefix + "PROJECT_DOMAIN_NAME"); v != "" {
+			cloud.AuthInfo.ProjectDomainName = v
+		}
 	}
 
-	if v := os.Getenv(envPrefix + "DEFAULT_DOMAIN"); v != "" {
-		cloud.AuthInfo.DefaultDomain = v
+	if cloud.AuthInfo.UserDomainID == "" {
+		if v := os.Getenv(envPrefix + "USER_DOMAIN_ID"); v != "" {
+			cloud.AuthInfo.UserDomainID = v
+		}
 	}
 
-	if v := os.Getenv(envPrefix + "PROJECT_DOMAIN_ID"); v != "" {
-		cloud.AuthInfo.ProjectDomainID = v
-	}
-
-	if v := os.Getenv(envPrefix + "PROJECT_DOMAIN_NAME"); v != "" {
-		cloud.AuthInfo.ProjectDomainName = v
-	}
-
-	if v := os.Getenv(envPrefix + "USER_DOMAIN_ID"); v != "" {
-		cloud.AuthInfo.UserDomainID = v
-	}
-
-	if v := os.Getenv(envPrefix + "USER_DOMAIN_NAME"); v != "" {
-		cloud.AuthInfo.UserDomainName = v
+	if cloud.AuthInfo.UserDomainName == "" {
+		if v := os.Getenv(envPrefix + "USER_DOMAIN_NAME"); v != "" {
+			cloud.AuthInfo.UserDomainName = v
+		}
 	}
 
 	// Build a scope and try to do it correctly.
@@ -591,21 +631,20 @@ func NewServiceClient(service string, opts *ClientOpts) (*gophercloud.ServiceCli
 	}
 
 	// Determine the region to use.
-	// First, see if the cloud entry has one.
+	// First, check if the REGION_NAME environment variable is set.
 	var region string
+	if v := os.Getenv(envPrefix + "REGION_NAME"); v != "" {
+		region = v
+	}
+
+	// Next, check if the cloud entry sets a region.
 	if v := cloud.RegionName; v != "" {
 		region = v
 	}
 
-	// Next, see if one was specified in the ClientOpts.
+	// Finally, see if one was specified in the ClientOpts.
 	// If so, this takes precedence.
 	if v := opts.RegionName; v != "" {
-		region = v
-	}
-
-	// Finally, see if there's an environment variable.
-	// This should always override prior settings.
-	if v := os.Getenv(envPrefix + "REGION_NAME"); v != "" {
 		region = v
 	}
 
