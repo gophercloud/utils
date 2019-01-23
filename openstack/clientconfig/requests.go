@@ -30,6 +30,9 @@ const (
 	AuthV3Password AuthType = "v3password"
 	// AuthV3Token defines version 3 of the token
 	AuthV3Token AuthType = "v3token"
+
+	// AuthV3ApplicationCredential defines version 3 of the application credential
+	AuthV3ApplicationCredential AuthType = "v3applicationcredential"
 )
 
 // ClientOpts represents options to customize the way a client is
@@ -332,6 +335,8 @@ func determineIdentityAPI(cloud *Cloud, opts *ClientOpts) string {
 		case AuthV3Password:
 			identityAPI = "3"
 		case AuthV3Token:
+			identityAPI = "3"
+		case AuthV3ApplicationCredential:
 			identityAPI = "3"
 		}
 	}

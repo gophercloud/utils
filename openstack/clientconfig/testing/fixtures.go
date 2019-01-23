@@ -8,6 +8,30 @@ import (
 var iTrue = true
 var iFalse = false
 
+var VirginiaEnvAuth = map[string]string{
+	"OS_AUTH_URL":                      "https://va.example.com:5000/v3",
+	"OS_APPLICATION_CREDENTIAL_ID":     "app-cred-id",
+	"OS_APPLICATION_CREDENTIAL_SECRET": "secret",
+}
+
+var VirginiaAuthOpts = &gophercloud.AuthOptions{
+	Scope:                       &gophercloud.AuthScope{},
+	IdentityEndpoint:            "https://va.example.com:5000/v3",
+	ApplicationCredentialID:     "app-cred-id",
+	ApplicationCredentialSecret: "secret",
+}
+
+var VirginiaCloudYAML = clientconfig.Cloud{
+	RegionName: "VA",
+	AuthInfo: &clientconfig.AuthInfo{
+		AuthURL:                     "https://va.example.com:5000/v3",
+		ApplicationCredentialID:     "app-cred-id",
+		ApplicationCredentialSecret: "secret",
+	},
+	Verify:   &iTrue,
+	AuthType: "v3applicationcredential",
+}
+
 var PhiladelphiaCloudYAML = clientconfig.Cloud{
 	RegionName: "PHL",
 	AuthInfo: &clientconfig.AuthInfo{
