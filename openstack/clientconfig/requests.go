@@ -517,41 +517,65 @@ func v3auth(cloud *Cloud, opts *ClientOpts) (*gophercloud.AuthOptions, error) {
 		}
 	}
 
+	if cloud.AuthInfo.ApplicationCredentialID == "" {
+		if v := os.Getenv(envPrefix + "APPLICATION_CREDENTIAL_ID"); v != "" {
+			cloud.AuthInfo.ApplicationCredentialID = v
+		}
+	}
+
+	if cloud.AuthInfo.ApplicationCredentialName == "" {
+		if v := os.Getenv(envPrefix + "APPLICATION_CREDENTIAL_NAME"); v != "" {
+			cloud.AuthInfo.ApplicationCredentialName = v
+		}
+	}
+
+	if cloud.AuthInfo.ApplicationCredentialSecret == "" {
+		if v := os.Getenv(envPrefix + "APPLICATION_CREDENTIAL_SECRET"); v != "" {
+			cloud.AuthInfo.ApplicationCredentialSecret = v
+		}
+	}
+
 	// Build a scope and try to do it correctly.
 	// https://github.com/openstack/os-client-config/blob/master/os_client_config/config.py#L595
 	scope := new(gophercloud.AuthScope)
 
-	if !isProjectScoped(cloud.AuthInfo) {
-		if cloud.AuthInfo.DomainID != "" {
-			scope.DomainID = cloud.AuthInfo.DomainID
-		} else if cloud.AuthInfo.DomainName != "" {
-			scope.DomainName = cloud.AuthInfo.DomainName
-		}
-	} else {
-		// If Domain* is set, but UserDomain* or ProjectDomain* aren't,
-		// then use Domain* as the default setting.
-		cloud = setDomainIfNeeded(cloud)
-
-		if cloud.AuthInfo.ProjectID != "" {
-			scope.ProjectID = cloud.AuthInfo.ProjectID
+	// Application credentials don't support scope
+	if !isApplicationCredential(cloud.AuthInfo) {
+		if !isProjectScoped(cloud.AuthInfo) {
+			if cloud.AuthInfo.DomainID != "" {
+				scope.DomainID = cloud.AuthInfo.DomainID
+			} else if cloud.AuthInfo.DomainName != "" {
+				scope.DomainName = cloud.AuthInfo.DomainName
+			}
 		} else {
-			scope.ProjectName = cloud.AuthInfo.ProjectName
-			scope.DomainID = cloud.AuthInfo.ProjectDomainID
-			scope.DomainName = cloud.AuthInfo.ProjectDomainName
+			// If Domain* is set, but UserDomain* or ProjectDomain* aren't,
+			// then use Domain* as the default setting.
+			cloud = setDomainIfNeeded(cloud)
+
+			if cloud.AuthInfo.ProjectID != "" {
+				scope.ProjectID = cloud.AuthInfo.ProjectID
+			} else {
+				scope.ProjectName = cloud.AuthInfo.ProjectName
+				scope.DomainID = cloud.AuthInfo.ProjectDomainID
+				scope.DomainName = cloud.AuthInfo.ProjectDomainName
+			}
 		}
 	}
 
 	ao := &gophercloud.AuthOptions{
-		Scope:            scope,
-		IdentityEndpoint: cloud.AuthInfo.AuthURL,
-		TokenID:          cloud.AuthInfo.Token,
-		Username:         cloud.AuthInfo.Username,
-		UserID:           cloud.AuthInfo.UserID,
-		Password:         cloud.AuthInfo.Password,
-		TenantID:         cloud.AuthInfo.ProjectID,
-		TenantName:       cloud.AuthInfo.ProjectName,
-		DomainID:         cloud.AuthInfo.UserDomainID,
-		DomainName:       cloud.AuthInfo.UserDomainName,
+		Scope:                       scope,
+		IdentityEndpoint:            cloud.AuthInfo.AuthURL,
+		TokenID:                     cloud.AuthInfo.Token,
+		Username:                    cloud.AuthInfo.Username,
+		UserID:                      cloud.AuthInfo.UserID,
+		Password:                    cloud.AuthInfo.Password,
+		TenantID:                    cloud.AuthInfo.ProjectID,
+		TenantName:                  cloud.AuthInfo.ProjectName,
+		DomainID:                    cloud.AuthInfo.UserDomainID,
+		DomainName:                  cloud.AuthInfo.UserDomainName,
+		ApplicationCredentialID:     cloud.AuthInfo.ApplicationCredentialID,
+		ApplicationCredentialName:   cloud.AuthInfo.ApplicationCredentialName,
+		ApplicationCredentialSecret: cloud.AuthInfo.ApplicationCredentialSecret,
 	}
 
 	// If an auth_type of "token" was specified, then make sure
@@ -760,4 +784,12 @@ func setDomainIfNeeded(cloud *Cloud) *Cloud {
 	}
 
 	return cloud
+}
+
+// isApplicationCredential determines if an application credential is used to auth.
+func isApplicationCredential(authInfo *AuthInfo) bool {
+	if authInfo.ApplicationCredentialID == "" && authInfo.ApplicationCredentialName == "" && authInfo.ApplicationCredentialSecret == "" {
+		return false
+	}
+	return true
 }
