@@ -27,6 +27,7 @@ func TestGetCloudFromYAML(t *testing.T) {
 		"chicago_legacy":     &clientconfig.ClientOpts{Cloud: "chicago_legacy"},
 		"chicago_useprofile": &clientconfig.ClientOpts{Cloud: "chicago_useprofile"},
 		"philadelphia":       &clientconfig.ClientOpts{Cloud: "philadelphia"},
+		"virginia":           &clientconfig.ClientOpts{Cloud: "virginia"},
 	}
 
 	expectedClouds := map[string]*clientconfig.Cloud{
@@ -38,6 +39,7 @@ func TestGetCloudFromYAML(t *testing.T) {
 		"chicago_legacy":     &ChicagoCloudLegacyYAML,
 		"chicago_useprofile": &ChicagoCloudUseProfileYAML,
 		"philadelphia":       &PhiladelphiaCloudYAML,
+		"virginia":           &VirginiaCloudYAML,
 	}
 
 	for cloud, clientOpts := range allClientOpts {
@@ -192,6 +194,7 @@ func TestAuthOptionsCreationFromEnv(t *testing.T) {
 		"newmexico":  NewMexicoEnvAuth,
 		"nevada":     NevadaEnvAuth,
 		"texas":      TexasEnvAuth,
+		"virginia":   VirginiaEnvAuth,
 	}
 
 	expectedAuthOpts := map[string]*gophercloud.AuthOptions{
@@ -202,6 +205,7 @@ func TestAuthOptionsCreationFromEnv(t *testing.T) {
 		"newmexico":  NewMexicoAuthOpts,
 		"nevada":     NevadaAuthOpts,
 		"texas":      TexasAuthOpts,
+		"virginia":   VirginiaAuthOpts,
 	}
 
 	for cloud, envVars := range allEnvVars {
