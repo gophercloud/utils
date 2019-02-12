@@ -7,13 +7,13 @@ import (
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/acceptance/tools"
 	"github.com/gophercloud/utils/gnocchi/metric/v1/resources"
-	uuid "github.com/satori/go.uuid"
+	"github.com/hashicorp/go-uuid"
 )
 
 // CreateGenericResource will create a Gnocchi resource with a generic type.
 // An error will be returned if the resource could not be created.
 func CreateGenericResource(t *testing.T, client *gophercloud.ServiceClient) (*resources.Resource, error) {
-	id, err := uuid.NewV4()
+	id, err := uuid.GenerateUUID()
 	if err != nil {
 		return nil, err
 	}
@@ -22,7 +22,7 @@ func CreateGenericResource(t *testing.T, client *gophercloud.ServiceClient) (*re
 	now := time.Now().UTC().AddDate(0, 0, -randomDay)
 	metricName := tools.RandomString("TESTACCT-", 8)
 	createOpts := resources.CreateOpts{
-		ID:        id.String(),
+		ID:        id,
 		StartedAt: &now,
 		Metrics: map[string]interface{}{
 			metricName: map[string]string{
@@ -65,14 +65,14 @@ func CreateResourcesToBatchMeasures(t *testing.T, client *gophercloud.ServiceCli
 	thirdMetricName := tools.RandomString("TESTACCT-", 8)
 
 	// Prepare the first resource.
-	firstResourceID, err := uuid.NewV4()
+	firstResourceID, err := uuid.GenerateUUID()
 	if err != nil {
 		return nil, err
 	}
 	firstRandomDay := tools.RandomInt(1, 100)
 	firstStartTimestamp := time.Now().UTC().AddDate(0, 0, -firstRandomDay)
 	firstResourceCreateOpts := resources.CreateOpts{
-		ID:        firstResourceID.String(),
+		ID:        firstResourceID,
 		StartedAt: &firstStartTimestamp,
 		Metrics: map[string]interface{}{
 			firstMetricName: map[string]string{
@@ -95,14 +95,14 @@ func CreateResourcesToBatchMeasures(t *testing.T, client *gophercloud.ServiceCli
 	tools.PrintResource(t, firstResource)
 
 	// Prepare the second resource.
-	secondResourceID, err := uuid.NewV4()
+	secondResourceID, err := uuid.GenerateUUID()
 	if err != nil {
 		return nil, err
 	}
 	secondRandomDay := tools.RandomInt(1, 100)
 	secondStartTimestamp := time.Now().UTC().AddDate(0, 0, -secondRandomDay)
 	secondResourceCreateOpts := resources.CreateOpts{
-		ID:        secondResourceID.String(),
+		ID:        secondResourceID,
 		StartedAt: &secondStartTimestamp,
 		Metrics: map[string]interface{}{
 			thirdMetricName: map[string]string{
