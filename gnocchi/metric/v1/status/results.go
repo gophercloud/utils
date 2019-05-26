@@ -21,15 +21,15 @@ type GetResult struct {
 
 // Status represents a Gnocchi status of measurements processing.
 type Status struct {
-	// MetricD represents all running Gnocchi metricd daemons.
-	MetricD MetricD `json:"metricd"`
+	// Metricd represents all running Gnocchi metricd daemons.
+	Metricd Metricd `json:"metricd"`
 
 	// Storage contains Gnocchi storage data of measures backlog.
 	Storage Storage `json:"storage"`
 }
 
-// MetricD represents all running Gnocchi metricd daemons.
-type MetricD struct {
+// Metricd represents all running Gnocchi metricd daemons.
+type Metricd struct {
 	// Processors represents a list of running Gnocchi metricd processors.
 	Processors []string `json:"processors"`
 }
