@@ -53,7 +53,7 @@ const StatusGetWithoutDetailsResult = `
 // GetStatusWithDetailsExpected represents an expected response with all status
 // attributes from a get request.
 var GetStatusWithDetailsExpected = status.Status{
-	MetricD: status.MetricD{
+	Metricd: status.Metricd{
 		Processors: []string{
 			"node-stat1.27.ce1da3c9-6c8c-490d-b256-3ba1e2bceb7b",
 			"node-stat1.10.9d9a99b2-f0ac-496b-36f3-115b84304a84",
@@ -79,7 +79,7 @@ var GetStatusWithDetailsExpected = status.Status{
 // GetStatusWithoutDetailsExpected represents an expected response without details
 // from a get request.
 var GetStatusWithoutDetailsExpected = status.Status{
-	MetricD: status.MetricD{
+	Metricd: status.Metricd{
 		Processors: []string{
 			"node-stat1.27.ce1da3c9-6c8c-490d-b256-3ba1e2bceb7b",
 			"node-stat1.10.9d9a99b2-f0ac-496b-36f3-115b84304a84",

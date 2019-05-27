@@ -32,7 +32,7 @@ func TestGetWithDetails(t *testing.T) {
 
 	s, err := status.Get(fake.ServiceClient(), getOpts).Extract()
 	th.AssertNoErr(t, err)
-	th.AssertDeepEquals(t, s.MetricD, GetStatusWithDetailsExpected.MetricD)
+	th.AssertDeepEquals(t, s.Metricd, GetStatusWithDetailsExpected.Metricd)
 	th.AssertDeepEquals(t, s.Storage, GetStatusWithDetailsExpected.Storage)
 }
 
@@ -58,6 +58,6 @@ func TestGetWithoutDetails(t *testing.T) {
 
 	s, err := status.Get(fake.ServiceClient(), getOpts).Extract()
 	th.AssertNoErr(t, err)
-	th.AssertDeepEquals(t, s.MetricD, GetStatusWithoutDetailsExpected.MetricD)
+	th.AssertDeepEquals(t, s.Metricd, GetStatusWithoutDetailsExpected.Metricd)
 	th.AssertDeepEquals(t, s.Storage, GetStatusWithoutDetailsExpected.Storage)
 }
