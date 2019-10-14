@@ -15,8 +15,14 @@ This is partially inspired on the following projects:
 
 Example to Purge all the resources and Delete a Project
 
+	purgeOpts := ProjectPurgeOpts {
+		StoragePurgeOpts: &StoragePurgeOpts{storageClient},
+		ComputePurgeOpts: &ComputePurgeOpts{computeClient},
+		NetworkPurgeOpts: &NetworkPurgeOpts{networkClient},
+	}
 	projectID := "966b3c7d36a24facaf20b7e458bf2192"
-	err := helpers.ProjectPurgeAll(computeClient, storageClient, networkClient, projectID)
+
+	err := helpers.ProjectPurgeAll(projectID, opts)
 	if err != nil {
 		panic(err)
 	} else {
@@ -24,6 +30,19 @@ Example to Purge all the resources and Delete a Project
 		if err != nil {
 			panic(err)
 		}
+	}
+
+Example to Purge storage and networking resources on a Project but keep the Project itself
+
+	purgeOpts := ProjectPurgeOpts {
+		StoragePurgeOpts: &StoragePurgeOpts{storageClient},
+		NetworkPurgeOpts: &NetworkPurgeOpts{networkClient},
+	}
+	projectID := "966b3c7d36a24facaf20b7e458bf2192"
+
+	err := helpers.ProjectPurgeAll(projectID, opts)
+	if err != nil {
+		panic(err)
 	}
 */
 package helpers
