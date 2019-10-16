@@ -4,10 +4,9 @@
 package clients
 
 import (
-	"os"
-
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack"
+	"github.com/gophercloud/utils/env"
 	"github.com/gophercloud/utils/gnocchi"
 )
 
@@ -27,6 +26,6 @@ func NewGnocchiV1Client() (*gophercloud.ServiceClient, error) {
 	}
 
 	return gnocchi.NewGnocchiV1(client, gophercloud.EndpointOpts{
-		Region: os.Getenv("OS_REGION_NAME"),
+		Region: env.Getenv("OS_REGION_NAME"),
 	})
 }
