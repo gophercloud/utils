@@ -30,9 +30,9 @@ func (DefaultLogger) Printf(format string, args ...interface{}) {
 type RoundTripper struct {
 	// Default http.RoundTripper
 	Rt http.RoundTripper
-	// If set to true, the HTTP "Cache-Control: no-cache" header will not be added
-	// by default to all API requests
-	DisableNoCacheHeader bool
+	// If set to true, the HTTP "Cache-Control: no-cache" header will be added by
+	// default to all API requests
+	NoCacheHeader bool
 	// How many times HTTP connection should be retried until giving up
 	MaxRetries int
 	// If Logger is not nil, then RoundTrip method will debug the JSON requests
@@ -89,7 +89,7 @@ func (lrt *RoundTripper) RoundTrip(request *http.Request) (*http.Response, error
 	// for future reference, this is how to access the Transport struct:
 	//tlsconfig := lrt.Rt.(*http.Transport).TLSClientConfig
 
-	if !lrt.DisableNoCacheHeader {
+	if lrt.NoCacheHeader {
 		// set Cache-Control header to no-cache on request to force HTTP caches (if any) to go upstream.
 		// This is a work-around until all Openstack APIs implement proper Cache-Control headers by their own.
 		// The guidelines for this were added to http://specs.openstack.org/openstack/api-sig/guidelines/http/caching.html in 03/2018.
