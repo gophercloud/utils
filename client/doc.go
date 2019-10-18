@@ -32,7 +32,7 @@ Example usage with the default logger:
 			provider.HTTPClient = http.Client{
 				Transport: &client.RoundTripper{
 					Rt:     &http.Transport{},
-					Logger: &client.DefaultLogger{},
+					Logger: client.DefaultLogger,
 				},
 			}
 		}
@@ -62,9 +62,7 @@ Example usage with the custom logger:
 		log "github.com/sirupsen/logrus"
 	)
 
-	type logger struct{}
-
-	func (logger) Printf(format string, args ...interface{}) {
+	func myLog(format string, args ...interface{}) {
 		log.Debugf(format, args...)
 	}
 
@@ -83,7 +81,7 @@ Example usage with the custom logger:
 			provider.HTTPClient = http.Client{
 				Transport: &client.RoundTripper{
 					Rt:     &http.Transport{},
-					Logger: &logger{},
+					Logger: myLog,
 				},
 			}
 		}
@@ -126,11 +124,10 @@ Example usage with additinal headers:
 		provider.HTTPClient = http.Client{
 			Transport: &client.RoundTripper{
 				Rt:     &http.Transport{},
-				Headers: map[string][]string{
-					"Cache-Control": {"no-cache"},
-				},
 			},
 		}
+
+		provider.HTTPClient.Transport.(*client.RoundTripper).SetHeaders(map[string][]string{"Cache-Control": {"no-cache"}}})
 
 		err = openstack.Authenticate(provider, *ao)
 		if err != nil {
