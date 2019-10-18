@@ -98,5 +98,49 @@ Example usage with the custom logger:
 		})
 	}
 
+Example usage with additinal headers:
+
+	package example
+
+	import (
+		"net/http"
+		"os"
+
+		"github.com/gophercloud/gophercloud"
+		"github.com/gophercloud/gophercloud/openstack"
+		"github.com/gophercloud/utils/client"
+		"github.com/gophercloud/utils/openstack/clientconfig"
+	)
+
+	func NewComputeV2Client() (*gophercloud.ServiceClient, error) {
+		ao, err := clientconfig.AuthOptions(nil)
+		if err != nil {
+			return nil, err
+		}
+
+		provider, err := openstack.NewClient(ao.IdentityEndpoint)
+		if err != nil {
+			return nil, err
+		}
+
+		provider.HTTPClient = http.Client{
+			Transport: &client.RoundTripper{
+				Rt:     &http.Transport{},
+				Headers: map[string][]string{
+					"Cache-Control": {"no-cache"},
+				},
+			},
+		}
+
+		err = openstack.Authenticate(provider, *ao)
+		if err != nil {
+			return nil, err
+		}
+
+		return openstack.NewComputeV2(provider, gophercloud.EndpointOpts{
+			Region: os.Getenv("OS_REGION_NAME"),
+		})
+	}
+
 */
 package client

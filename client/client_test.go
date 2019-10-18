@@ -14,7 +14,8 @@ func TestFormatHeaders(t *testing.T) {
 	}
 
 	expected := "User-Agent: Terraform/x.x.x Gophercloud/y.y.y\nX-Auth-Token: ***"
-	actual := formatHeaders(headers, "\n")
+	rt := RoundTripper{}
+	actual := rt.formatHeaders(headers, "\n")
 
 	th.AssertEquals(t, expected, actual)
 }

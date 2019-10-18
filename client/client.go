@@ -30,9 +30,15 @@ func (DefaultLogger) Printf(format string, args ...interface{}) {
 type RoundTripper struct {
 	// Default http.RoundTripper
 	Rt http.RoundTripper
-	// If set to true, the HTTP "Cache-Control: no-cache" header will be added by
-	// default to all API requests
-	NoCacheHeader bool
+	// Additional request headers to be set (not appended) in all client
+	// requests
+	Headers http.Header
+	// Overwrite standard map of headers to be masked in logger
+	// Headers won't be masked if set to an empty map
+	// Map keys are case insensitive
+	MaskHeaders map[string]struct{}
+	// Custom function to format and mask JSON requests and responses
+	FormatJSON func([]byte) (string, error)
 	// How many times HTTP connection should be retried until giving up
 	MaxRetries int
 	// If Logger is not nil, then RoundTrip method will debug the JSON requests
@@ -41,7 +47,7 @@ type RoundTripper struct {
 }
 
 // List of headers that contain sensitive data.
-var sensitiveHeaders = map[string]struct{}{
+var defaultSensitiveHeaders = map[string]struct{}{
 	"x-auth-token":                    {},
 	"x-auth-key":                      {},
 	"x-service-token":                 {},
@@ -54,11 +60,17 @@ var sensitiveHeaders = map[string]struct{}{
 	"x-subject-token":                 {},
 }
 
-func hideSensitiveHeadersData(headers http.Header) []string {
+func (lrt *RoundTripper) hideSensitiveHeadersData(headers http.Header) []string {
 	result := make([]string, len(headers))
 	headerIdx := 0
+	var sensitiveHeaders *map[string]struct{}
+	if lrt.MaskHeaders != nil {
+		sensitiveHeaders = &lrt.MaskHeaders
+	} else {
+		sensitiveHeaders = &defaultSensitiveHeaders
+	}
 	for header, data := range headers {
-		if _, ok := sensitiveHeaders[strings.ToLower(header)]; ok {
+		if _, ok := (*sensitiveHeaders)[strings.ToLower(header)]; ok {
 			result[headerIdx] = fmt.Sprintf("%s: %s", header, "***")
 		} else {
 			result[headerIdx] = fmt.Sprintf("%s: %s", header, strings.Join(data, " "))
@@ -71,8 +83,8 @@ func hideSensitiveHeadersData(headers http.Header) []string {
 
 // formatHeaders converts standard http.Header type to a string with separated headers.
 // It will hide data of sensitive headers.
-func formatHeaders(headers http.Header, separator string) string {
-	redactedHeaders := hideSensitiveHeadersData(headers)
+func (lrt *RoundTripper) formatHeaders(headers http.Header, separator string) string {
+	redactedHeaders := lrt.hideSensitiveHeadersData(headers)
 	sort.Strings(redactedHeaders)
 
 	return strings.Join(redactedHeaders, separator)
@@ -89,18 +101,16 @@ func (lrt *RoundTripper) RoundTrip(request *http.Request) (*http.Response, error
 	// for future reference, this is how to access the Transport struct:
 	//tlsconfig := lrt.Rt.(*http.Transport).TLSClientConfig
 
-	if lrt.NoCacheHeader {
-		// set Cache-Control header to no-cache on request to force HTTP caches (if any) to go upstream.
-		// This is a work-around until all Openstack APIs implement proper Cache-Control headers by their own.
-		// The guidelines for this were added to http://specs.openstack.org/openstack/api-sig/guidelines/http/caching.html in 03/2018.
-		request.Header.Set("Cache-Control", "no-cache")
+	for k, v := range lrt.Headers {
+		// Set additional request headers
+		request.Header[k] = v
 	}
 
 	var err error
 
 	if lrt.Logger != nil {
 		lrt.Logger.Printf("OpenStack Request URL: %s %s", request.Method, request.URL)
-		lrt.Logger.Printf("OpenStack Request Headers:\n%s", formatHeaders(request.Header, "\n"))
+		lrt.Logger.Printf("OpenStack Request Headers:\n%s", lrt.formatHeaders(request.Header, "\n"))
 
 		if request.Body != nil {
 			request.Body, err = lrt.logRequest(request.Body, request.Header.Get("Content-Type"))
@@ -132,7 +142,7 @@ func (lrt *RoundTripper) RoundTrip(request *http.Request) (*http.Response, error
 
 	if lrt.Logger != nil {
 		lrt.Logger.Printf("OpenStack Response Code: %d", response.StatusCode)
-		lrt.Logger.Printf("OpenStack Response Headers:\n%s", formatHeaders(response.Header, "\n"))
+		lrt.Logger.Printf("OpenStack Response Headers:\n%s", lrt.formatHeaders(response.Header, "\n"))
 
 		response.Body, err = lrt.logResponse(response.Body, response.Header.Get("Content-Type"))
 	}
@@ -153,7 +163,7 @@ func (lrt *RoundTripper) logRequest(original io.ReadCloser, contentType string) 
 			return nil, err
 		}
 
-		debugInfo, err := FormatJSON(bs.Bytes())
+		debugInfo, err := lrt.formatJSON()(bs.Bytes())
 		if err != nil {
 			lrt.Logger.Printf("%s", err)
 		}
@@ -178,7 +188,7 @@ func (lrt *RoundTripper) logResponse(original io.ReadCloser, contentType string)
 			return nil, err
 		}
 
-		debugInfo, err := FormatJSON(bs.Bytes())
+		debugInfo, err := lrt.formatJSON()(bs.Bytes())
 		if err != nil {
 			lrt.Logger.Printf("%s", err)
 		}
@@ -191,6 +201,13 @@ func (lrt *RoundTripper) logResponse(original io.ReadCloser, contentType string)
 
 	lrt.Logger.Printf("Not logging because OpenStack response body isn't JSON")
 	return original, nil
+}
+
+func (lrt *RoundTripper) formatJSON() func([]byte) (string, error) {
+	if lrt.FormatJSON == nil {
+		return FormatJSON
+	}
+	return lrt.FormatJSON
 }
 
 // FormatJSON will try to pretty-format a JSON body.
