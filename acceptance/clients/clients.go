@@ -34,7 +34,7 @@ func NewGnocchiV1Client() (*gophercloud.ServiceClient, error) {
 		provider.HTTPClient = http.Client{
 			Transport: &client.RoundTripper{
 				Rt:     &http.Transport{},
-				Logger: client.DefaultLogger,
+				Logger: &client.DefaultLogger{},
 			},
 		}
 	}

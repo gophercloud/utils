@@ -12,10 +12,24 @@ import (
 	"strings"
 )
 
-// DefaultLogger is a default func to print logs
-func DefaultLogger(format string, args ...interface{}) {
+// Logger is an interface representing the Logger struct
+type Logger interface {
+	Printf(format string, args ...interface{})
+}
+
+// DefaultLogger is a default struct, which satisfies the Logger interface
+type DefaultLogger struct{}
+
+// Printf is a default Printf method
+func (DefaultLogger) Printf(format string, args ...interface{}) {
 	log.Printf("[DEBUG] "+format, args...)
 }
+
+// noopLogger is a default noop logger satisfies the Logger interface
+type noopLogger struct{}
+
+// Printf is a default noop method
+func (noopLogger) Printf(format string, args ...interface{}) {}
 
 // RoundTripper satisfies the http.RoundTripper interface and is used to
 // customize the default http client RoundTripper
@@ -33,7 +47,7 @@ type RoundTripper struct {
 	MaxRetries int
 	// If Logger is not nil, then RoundTrip method will debug the JSON
 	// requests and responses
-	Logger func(string, ...interface{})
+	Logger Logger
 }
 
 // List of headers that contain sensitive data.
@@ -94,13 +108,17 @@ func (rt *RoundTripper) SetHeaders(headers http.Header) {
 func (rt *RoundTripper) hideSensitiveHeadersData(headers http.Header) []string {
 	result := make([]string, len(headers))
 	headerIdx := 0
+
 	// this is concurrency safe
-	maskHeaders := rt.maskHeaders
-	if maskHeaders == nil {
-		maskHeaders = &defaultSensitiveHeaders
+	v := rt.maskHeaders
+	if v == nil {
+		v = &defaultSensitiveHeaders
 	}
+	maskHeaders := *v
+
 	for header, data := range headers {
-		if _, ok := (*maskHeaders)[strings.ToLower(header)]; ok {
+		v := strings.ToLower(header)
+		if _, ok := maskHeaders[v]; ok {
 			result[headerIdx] = fmt.Sprintf("%s: %s", header, "***")
 		} else {
 			result[headerIdx] = fmt.Sprintf("%s: %s", header, strings.Join(data, " "))
@@ -143,8 +161,8 @@ func (rt *RoundTripper) RoundTrip(request *http.Request) (*http.Response, error)
 	var err error
 
 	if rt.Logger != nil {
-		rt.log()("OpenStack Request URL: %s %s", request.Method, request.URL)
-		rt.log()("OpenStack Request Headers:\n%s", rt.formatHeaders(request.Header, "\n"))
+		rt.log().Printf("OpenStack Request URL: %s %s", request.Method, request.URL)
+		rt.log().Printf("OpenStack Request Headers:\n%s", rt.formatHeaders(request.Header, "\n"))
 
 		if request.Body != nil {
 			request.Body, err = rt.logRequest(request.Body, request.Header.Get("Content-Type"))
@@ -166,22 +184,22 @@ func (rt *RoundTripper) RoundTrip(request *http.Request) (*http.Response, error)
 	for response == nil {
 		if retry > rt.MaxRetries {
 			if rt.Logger != nil {
-				rt.log()("OpenStack connection error, retries exhausted. Aborting")
+				rt.log().Printf("OpenStack connection error, retries exhausted. Aborting")
 			}
 			err = fmt.Errorf("OpenStack connection error, retries exhausted. Aborting. Last error was: %s", err)
 			return nil, err
 		}
 
 		if rt.Logger != nil {
-			rt.log()("OpenStack connection error, retry number %d: %s", retry, err)
+			rt.log().Printf("OpenStack connection error, retry number %d: %s", retry, err)
 		}
 		response, err = ort.RoundTrip(request)
 		retry += 1
 	}
 
 	if rt.Logger != nil {
-		rt.log()("OpenStack Response Code: %d", response.StatusCode)
-		rt.log()("OpenStack Response Headers:\n%s", rt.formatHeaders(response.Header, "\n"))
+		rt.log().Printf("OpenStack Response Code: %d", response.StatusCode)
+		rt.log().Printf("OpenStack Response Headers:\n%s", rt.formatHeaders(response.Header, "\n"))
 
 		response.Body, err = rt.logResponse(response.Body, response.Header.Get("Content-Type"))
 	}
@@ -204,14 +222,14 @@ func (rt *RoundTripper) logRequest(original io.ReadCloser, contentType string) (
 
 		debugInfo, err := rt.formatJSON()(bs.Bytes())
 		if err != nil {
-			rt.log()("%s", err)
+			rt.log().Printf("%s", err)
 		}
-		rt.log()("OpenStack Request Body: %s", debugInfo)
+		rt.log().Printf("OpenStack Request Body: %s", debugInfo)
 
 		return ioutil.NopCloser(strings.NewReader(bs.String())), nil
 	}
 
-	rt.log()("Not logging because OpenStack request body isn't JSON")
+	rt.log().Printf("Not logging because OpenStack request body isn't JSON")
 	return original, nil
 }
 
@@ -229,16 +247,16 @@ func (rt *RoundTripper) logResponse(original io.ReadCloser, contentType string) 
 
 		debugInfo, err := rt.formatJSON()(bs.Bytes())
 		if err != nil {
-			rt.log()("%s", err)
+			rt.log().Printf("%s", err)
 		}
 		if debugInfo != "" {
-			rt.log()("OpenStack Response Body: %s", debugInfo)
+			rt.log().Printf("OpenStack Response Body: %s", debugInfo)
 		}
 
 		return ioutil.NopCloser(strings.NewReader(bs.String())), nil
 	}
 
-	rt.log()("Not logging because OpenStack response body isn't JSON")
+	rt.log().Printf("Not logging because OpenStack response body isn't JSON")
 	return original, nil
 }
 
@@ -251,12 +269,12 @@ func (rt *RoundTripper) formatJSON() func([]byte) (string, error) {
 	return f
 }
 
-func (rt *RoundTripper) log() func(string, ...interface{}) {
+func (rt *RoundTripper) log() Logger {
 	// this is concurrency safe
 	l := rt.Logger
 	if l == nil {
-		// noop
-		return func(string, ...interface{}) {}
+		// noop is used, when logger pointer has been set to nil
+		return &noopLogger{}
 	}
 	return l
 }

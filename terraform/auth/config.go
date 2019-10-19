@@ -178,10 +178,10 @@ func (c *Config) LoadAndValidate() error {
 		config.BuildNameToCertificate()
 	}
 
-	var logger func(string, ...interface{})
+	var logger osClient.Logger
 	// if OS_DEBUG is set, log the requests and responses
 	if os.Getenv("OS_DEBUG") != "" {
-		logger = osClient.DefaultLogger
+		logger = &osClient.DefaultLogger{}
 	}
 
 	transport := &http.Transport{Proxy: http.ProxyFromEnvironment, TLSClientConfig: config}
