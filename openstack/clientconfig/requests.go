@@ -58,9 +58,17 @@ type ClientOpts struct {
 	RegionName string
 }
 
+type YAMLLoadCallback func(string)
+
 // LoadCloudsYAML will load a clouds.yaml file and return the full config.
 func LoadCloudsYAML() (map[string]Cloud, error) {
-	content, err := findAndReadCloudsYAML()
+	return LoadCloudsYAMLWithCallback(func(string) {})
+}
+
+// LoadCloudsYAMLWithCallback will load a clouds.yaml file, call a callback
+// function with the full path to the file loaded, and return the full config.
+func LoadCloudsYAMLWithCallback(callback YAMLLoadCallback) (map[string]Cloud, error) {
+	content, err := findAndReadCloudsYAML(callback)
 	if err != nil {
 		return nil, err
 	}
@@ -76,9 +84,15 @@ func LoadCloudsYAML() (map[string]Cloud, error) {
 
 // LoadSecureCloudsYAML will load a secure.yaml file and return the full config.
 func LoadSecureCloudsYAML() (map[string]Cloud, error) {
+	return LoadSecureCloudsYAMLWithCallback(func(string) {})
+}
+
+// LoadSecureCloudsYAMLWithCallback will load a secure.yaml file, call a callback
+// function with the full path to the file loaded, and return the full config.
+func LoadSecureCloudsYAMLWithCallback(callback YAMLLoadCallback) (map[string]Cloud, error) {
 	var secureClouds Clouds
 
-	content, err := findAndReadSecureCloudsYAML()
+	content, err := findAndReadSecureCloudsYAML(callback)
 	if err != nil {
 		if err.Error() == "no secure.yaml file found" {
 			// secure.yaml is optional so just ignore read error
@@ -97,9 +111,15 @@ func LoadSecureCloudsYAML() (map[string]Cloud, error) {
 
 // LoadPublicCloudsYAML will load a public-clouds.yaml file and return the full config.
 func LoadPublicCloudsYAML() (map[string]Cloud, error) {
+	return LoadPublicCloudsYAMLWithCallback(func(string) {})
+}
+
+// LoadPublicCloudsYAMLWithCallback will load a public-clouds.yaml file, call a
+// callback function with the full path to the file loaded, and return the full config.
+func LoadPublicCloudsYAMLWithCallback(callback YAMLLoadCallback) (map[string]Cloud, error) {
 	var publicClouds PublicClouds
 
-	content, err := findAndReadPublicCloudsYAML()
+	content, err := findAndReadPublicCloudsYAML(callback)
 	if err != nil {
 		if err.Error() == "no clouds-public.yaml file found" {
 			// clouds-public.yaml is optional so just ignore read error
@@ -119,7 +139,13 @@ func LoadPublicCloudsYAML() (map[string]Cloud, error) {
 
 // GetCloudFromYAML will return a cloud entry from a clouds.yaml file.
 func GetCloudFromYAML(opts *ClientOpts) (*Cloud, error) {
-	clouds, err := LoadCloudsYAML()
+	return GetCloudFromYAMLWithCallback(opts, func(string) {})
+}
+
+// GetCloudFromYAMLWithCallback will return a cloud entry from a clouds.yaml file
+// and call a callback function with the full path to the file loaded.
+func GetCloudFromYAMLWithCallback(opts *ClientOpts, callback YAMLLoadCallback) (*Cloud, error) {
+	clouds, err := LoadCloudsYAMLWithCallback(callback)
 	if err != nil {
 		return nil, fmt.Errorf("unable to load clouds.yaml: %s", err)
 	}
@@ -167,7 +193,7 @@ func GetCloudFromYAML(opts *ClientOpts) (*Cloud, error) {
 		cloudIsInCloudsYaml = true
 	}
 
-	publicClouds, err := LoadPublicCloudsYAML()
+	publicClouds, err := LoadPublicCloudsYAMLWithCallback(callback)
 	if err != nil {
 		return nil, fmt.Errorf("unable to load clouds-public.yaml: %s", err)
 	}
@@ -184,7 +210,7 @@ func GetCloudFromYAML(opts *ClientOpts) (*Cloud, error) {
 		}
 	}
 
-	secureClouds, err := LoadSecureCloudsYAML()
+	secureClouds, err := LoadSecureCloudsYAMLWithCallback(callback)
 	if err != nil {
 		return nil, fmt.Errorf("unable to load secure.yaml: %s", err)
 	}

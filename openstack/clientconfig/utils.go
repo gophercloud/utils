@@ -97,27 +97,32 @@ func mergeInterfaces(overridingInterface, inferiorInterface interface{}) interfa
 // 3. unix-specific user_config_dir (~/.config/openstack/clouds.yaml)
 // 4. unix-specific site_config_dir (/etc/openstack/clouds.yaml)
 //
-// If found, the contents of the file is returned.
-func findAndReadCloudsYAML() ([]byte, error) {
+// If found, the contents and full path of the file is returned.
+func findAndReadCloudsYAML(callback YAMLLoadCallback) ([]byte, error) {
 	// OS_CLIENT_CONFIG_FILE
 	if v := env.Getenv("OS_CLIENT_CONFIG_FILE"); v != "" {
 		if ok := fileExists(v); ok {
-			return ioutil.ReadFile(v)
+			content, err := ioutil.ReadFile(v)
+			if err != nil {
+				return nil, err
+			}
+			callback(v)
+			return content, nil
 		}
 	}
 
-	return findAndReadYAML("clouds.yaml")
+	return findAndReadYAML("clouds.yaml", callback)
 }
 
-func findAndReadPublicCloudsYAML() ([]byte, error) {
-	return findAndReadYAML("clouds-public.yaml")
+func findAndReadPublicCloudsYAML(callback YAMLLoadCallback) ([]byte, error) {
+	return findAndReadYAML("clouds-public.yaml", callback)
 }
 
-func findAndReadSecureCloudsYAML() ([]byte, error) {
-	return findAndReadYAML("secure.yaml")
+func findAndReadSecureCloudsYAML(callback YAMLLoadCallback) ([]byte, error) {
+	return findAndReadYAML("secure.yaml", callback)
 }
 
-func findAndReadYAML(yamlFile string) ([]byte, error) {
+func findAndReadYAML(yamlFile string, callback YAMLLoadCallback) ([]byte, error) {
 	// current directory
 	cwd, err := os.Getwd()
 	if err != nil {
@@ -126,7 +131,12 @@ func findAndReadYAML(yamlFile string) ([]byte, error) {
 
 	filename := filepath.Join(cwd, yamlFile)
 	if ok := fileExists(filename); ok {
-		return ioutil.ReadFile(filename)
+		content, err := ioutil.ReadFile(filename)
+		if err != nil {
+			return nil, err
+		}
+		callback(filename)
+		return content, nil
 	}
 
 	// unix user config directory: ~/.config/openstack.
@@ -135,14 +145,25 @@ func findAndReadYAML(yamlFile string) ([]byte, error) {
 		if homeDir != "" {
 			filename := filepath.Join(homeDir, ".config/openstack/"+yamlFile)
 			if ok := fileExists(filename); ok {
-				return ioutil.ReadFile(filename)
+				content, err := ioutil.ReadFile(filename)
+				if err != nil {
+					return nil, err
+				}
+				callback(filename)
+				return content, nil
 			}
 		}
 	}
 
 	// unix-specific site config directory: /etc/openstack.
-	if ok := fileExists("/etc/openstack/" + yamlFile); ok {
-		return ioutil.ReadFile("/etc/openstack/" + yamlFile)
+	filename = "/etc/openstack/" + yamlFile
+	if ok := fileExists(filename); ok {
+		content, err := ioutil.ReadFile(filename)
+		if err != nil {
+			return nil, err
+		}
+		callback(filename)
+		return content, nil
 	}
 
 	return nil, fmt.Errorf("no " + yamlFile + " file found")
