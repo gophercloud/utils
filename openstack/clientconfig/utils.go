@@ -89,7 +89,7 @@ func mergeInterfaces(overridingInterface, inferiorInterface interface{}) interfa
 	}
 }
 
-// findAndReadCloudsYAML attempts to locate a clouds.yaml file in the following
+// FindAndReadCloudsYAML attempts to locate a clouds.yaml file in the following
 // locations:
 //
 // 1. OS_CLIENT_CONFIG_FILE
@@ -98,7 +98,7 @@ func mergeInterfaces(overridingInterface, inferiorInterface interface{}) interfa
 // 4. unix-specific site_config_dir (/etc/openstack/clouds.yaml)
 //
 // If found, the contents of the file is returned.
-func findAndReadCloudsYAML() (string, []byte, error) {
+func FindAndReadCloudsYAML() (string, []byte, error) {
 	// OS_CLIENT_CONFIG_FILE
 	if v := env.Getenv("OS_CLIENT_CONFIG_FILE"); v != "" {
 		if ok := fileExists(v); ok {
@@ -107,18 +107,18 @@ func findAndReadCloudsYAML() (string, []byte, error) {
 		}
 	}
 
-	return findAndReadYAML("clouds.yaml")
+	return FindAndReadYAML("clouds.yaml")
 }
 
-func findAndReadPublicCloudsYAML() (string, []byte, error) {
-	return findAndReadYAML("clouds-public.yaml")
+func FindAndReadPublicCloudsYAML() (string, []byte, error) {
+	return FindAndReadYAML("clouds-public.yaml")
 }
 
-func findAndReadSecureCloudsYAML() (string, []byte, error) {
-	return findAndReadYAML("secure.yaml")
+func FindAndReadSecureCloudsYAML() (string, []byte, error) {
+	return FindAndReadYAML("secure.yaml")
 }
 
-func findAndReadYAML(yamlFile string) (string, []byte, error) {
+func FindAndReadYAML(yamlFile string) (string, []byte, error) {
 	// current directory
 	cwd, err := os.Getwd()
 	if err != nil {
