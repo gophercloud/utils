@@ -60,7 +60,7 @@ type ClientOpts struct {
 
 // LoadCloudsYAML will load a clouds.yaml file and return the full config.
 func LoadCloudsYAML() (map[string]Cloud, error) {
-	content, err := findAndReadCloudsYAML()
+	_, content, err := findAndReadCloudsYAML()
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +78,7 @@ func LoadCloudsYAML() (map[string]Cloud, error) {
 func LoadSecureCloudsYAML() (map[string]Cloud, error) {
 	var secureClouds Clouds
 
-	content, err := findAndReadSecureCloudsYAML()
+	_, content, err := findAndReadSecureCloudsYAML()
 	if err != nil {
 		if err.Error() == "no secure.yaml file found" {
 			// secure.yaml is optional so just ignore read error
@@ -99,7 +99,7 @@ func LoadSecureCloudsYAML() (map[string]Cloud, error) {
 func LoadPublicCloudsYAML() (map[string]Cloud, error) {
 	var publicClouds PublicClouds
 
-	content, err := findAndReadPublicCloudsYAML()
+	_, content, err := findAndReadPublicCloudsYAML()
 	if err != nil {
 		if err.Error() == "no clouds-public.yaml file found" {
 			// clouds-public.yaml is optional so just ignore read error
