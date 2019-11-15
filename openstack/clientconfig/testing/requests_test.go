@@ -1,6 +1,8 @@
 package testing
 
 import (
+	"fmt"
+	"log"
 	"os"
 	"testing"
 
@@ -8,10 +10,10 @@ import (
 	"github.com/gophercloud/utils/openstack/clientconfig"
 
 	th "github.com/gophercloud/gophercloud/testhelper"
+	yaml "gopkg.in/yaml.v2"
 )
 
 func TestGetCloudFromYAML(t *testing.T) {
-
 	allClientOpts := map[string]*clientconfig.ClientOpts{
 		"hawaii": &clientconfig.ClientOpts{
 			Cloud:     "hawaii",
@@ -248,5 +250,65 @@ func TestAuthOptionsCreationFromLegacyEnv(t *testing.T) {
 		for k := range envVars {
 			os.Unsetenv(k)
 		}
+	}
+}
+
+type CustomYAMLOpts struct {
+	Logger *log.Logger
+}
+
+func (opts CustomYAMLOpts) LoadCloudsYAML() (map[string]clientconfig.Cloud, error) {
+	filename, content, err := clientconfig.FindAndReadCloudsYAML()
+	if err != nil {
+		return nil, err
+	}
+
+	var clouds clientconfig.Clouds
+	err = yaml.Unmarshal(content, &clouds)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal yaml: %v", err)
+	}
+
+	opts.Logger.Printf("Filename: %s", filename)
+
+	return clouds.Clouds, nil
+}
+
+func (opts CustomYAMLOpts) LoadSecureCloudsYAML() (map[string]clientconfig.Cloud, error) {
+	return nil, nil
+}
+
+func (opts CustomYAMLOpts) LoadPublicCloudsYAML() (map[string]clientconfig.Cloud, error) {
+	return nil, nil
+}
+
+func TestGetCloudFromYAMLWithCustomYAMLOpts(t *testing.T) {
+	logger := log.New(os.Stderr, "", log.Lshortfile)
+	yamlOpts := CustomYAMLOpts{
+		Logger: logger,
+	}
+
+	allClientOpts := map[string]*clientconfig.ClientOpts{
+		"hawaii": &clientconfig.ClientOpts{
+			Cloud:     "hawaii",
+			EnvPrefix: "FOO",
+			YAMLOpts:  yamlOpts,
+		},
+		"california": &clientconfig.ClientOpts{
+			Cloud:     "california",
+			EnvPrefix: "FOO",
+			YAMLOpts:  yamlOpts,
+		},
+	}
+
+	expectedClouds := map[string]*clientconfig.Cloud{
+		"hawaii":     &HawaiiCloudYAML,
+		"california": &CaliforniaCloudYAML,
+	}
+
+	for cloud, clientOpts := range allClientOpts {
+		actual, err := clientconfig.GetCloudFromYAML(clientOpts)
+		th.AssertNoErr(t, err)
+		th.AssertDeepEquals(t, expectedClouds[cloud], actual)
 	}
 }
