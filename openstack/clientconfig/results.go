@@ -16,13 +16,13 @@ type Clouds struct {
 
 // Cloud represents an entry in a clouds.yaml/public-clouds.yaml/secure.yaml file.
 type Cloud struct {
-	Cloud      string        `yaml:"cloud" json:"cloud"`
-	Profile    string        `yaml:"profile" json:"profile"`
-	AuthInfo   *AuthInfo     `yaml:"auth" json:"auth"`
-	AuthType   AuthType      `yaml:"auth_type" json:"auth_type"`
-	RegionName string        `yaml:"region_name" json:"region_name"`
-	Regions    []interface{} `yaml:"regions" json:"regions"`
-	IdentityType string      `yaml:"identity_interface" json:"identity_interface"`
+	Cloud        string        `yaml:"cloud" json:"cloud"`
+	Profile      string        `yaml:"profile" json:"profile"`
+	AuthInfo     *AuthInfo     `yaml:"auth" json:"auth"`
+	AuthType     AuthType      `yaml:"auth_type" json:"auth_type"`
+	RegionName   string        `yaml:"region_name" json:"region_name"`
+	Regions      []interface{} `yaml:"regions" json:"regions"`
+	IdentityType string        `yaml:"identity_interface" json:"identity_interface"`
 
 	// API Version overrides.
 	IdentityAPIVersion string `yaml:"identity_api_version" json:"identity_api_version"`
