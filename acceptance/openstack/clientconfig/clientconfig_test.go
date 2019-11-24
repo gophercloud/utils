@@ -3,6 +3,7 @@
 package clientconfig
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/gophercloud/gophercloud/openstack/compute/v2/servers"
@@ -34,4 +35,18 @@ func TestServerCreateDestroy(t *testing.T) {
 	}
 
 	acc_tools.PrintResource(t, newServer)
+}
+
+func TestEndpointType(t *testing.T) {
+	clientOpts := &cc.ClientOpts{
+		EndpointType: "admin",
+	}
+	client, err := cc.NewServiceClient("identity", clientOpts)
+	if err != nil {
+		t.Fatalf("Unable to create client: %v", err)
+	}
+
+	if !strings.Contains(client.Endpoint, "35357") {
+		t.Fatalf("Endpoint was not correctly set to admin interface")
+	}
 }

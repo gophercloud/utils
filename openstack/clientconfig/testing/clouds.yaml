@@ -8,6 +8,7 @@ clouds:
       domain_name: "default"
     region_name: "HNL"
   florida:
+    interface: "admin"
     auth:
       auth_url: "https://fl.example.com:5000/v3"
       username: "jdoe"
@@ -16,6 +17,7 @@ clouds:
       user_domain_id: "abcde"
     region_name: "MIA"
   california:
+    interface: "internal"
     auth:
       auth_url: "https://ca.example.com:5000/v3"
       username: "jdoe"
@@ -28,6 +30,7 @@ clouds:
       - LAX
   arizona:
     auth_type: "token"
+    endpoint_type: "public"
     auth:
       auth_url: "https://az.example.com:5000/v3"
       token: "12345"
@@ -36,6 +39,7 @@ clouds:
     region_name: "PHX"
   newmexico:
     auth_type: "password"
+    endpoint_type: "admin"
     auth:
       auth_url: "https://nm.example.com:5000/v3"
       username: "jdoe"
@@ -47,6 +51,8 @@ clouds:
     region_name: "SAF"
   nevada:
     auth_type: "password"
+    interface: "admin"
+    endpoint_type: "internal"
     auth:
       auth_url: "https://nv.example.com:5000/v3"
       user_id: "12345"
