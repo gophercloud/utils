@@ -125,6 +125,7 @@ var HawaiiAuthOpts = &gophercloud.AuthOptions{
 
 var FloridaCloudYAML = clientconfig.Cloud{
 	RegionName: "MIA",
+	Interface:  "admin",
 	AuthInfo: &clientconfig.AuthInfo{
 		AuthURL:      "https://fl.example.com:5000/v3",
 		Username:     "jdoe",
@@ -195,6 +196,7 @@ var FloridaAuthOpts = &gophercloud.AuthOptions{
 }
 
 var CaliforniaCloudYAML = clientconfig.Cloud{
+	EndpointType: "internal",
 	Regions: []interface{}{
 		"SAN",
 		"LAX",
@@ -243,8 +245,9 @@ var CaliforniaAuthOpts = &gophercloud.AuthOptions{
 }
 
 var ArizonaCloudYAML = clientconfig.Cloud{
-	RegionName: "PHX",
-	AuthType:   clientconfig.AuthToken,
+	RegionName:   "PHX",
+	EndpointType: "public",
+	AuthType:     clientconfig.AuthToken,
 	AuthInfo: &clientconfig.AuthInfo{
 		AuthURL:     "https://az.example.com:5000/v3",
 		Token:       "12345",
@@ -281,8 +284,9 @@ var ArizonaAuthOpts = &gophercloud.AuthOptions{
 }
 
 var NewMexicoCloudYAML = clientconfig.Cloud{
-	RegionName: "SAF",
-	AuthType:   clientconfig.AuthPassword,
+	RegionName:   "SAF",
+	EndpointType: "admin",
+	AuthType:     clientconfig.AuthPassword,
 	AuthInfo: &clientconfig.AuthInfo{
 		AuthURL:           "https://nm.example.com:5000/v3",
 		Username:          "jdoe",
@@ -330,7 +334,9 @@ var NewMexicoAuthOpts = &gophercloud.AuthOptions{
 }
 
 var NevadaCloudYAML = clientconfig.Cloud{
-	RegionName: "LAS",
+	RegionName:   "LAS",
+	AuthType:     "password",
+	EndpointType: "internal",
 	AuthInfo: &clientconfig.AuthInfo{
 		AuthURL:           "https://nv.example.com:5000/v3",
 		UserID:            "12345",
