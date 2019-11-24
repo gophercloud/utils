@@ -241,25 +241,13 @@ func (c *Config) determineRegion(region string) string {
 	return region
 }
 
-// getEndpointType is a helper method to determine the endpoint type
-// requested by the user.
-func (c *Config) getEndpointType() gophercloud.Availability {
-	if c.EndpointType == "internal" || c.EndpointType == "internalURL" {
-		return gophercloud.AvailabilityInternal
-	}
-	if c.EndpointType == "admin" || c.EndpointType == "adminURL" {
-		return gophercloud.AvailabilityAdmin
-	}
-	return gophercloud.AvailabilityPublic
-}
-
 // The following methods assist with the creation of individual Service Clients
 // which interact with the various OpenStack services.
 
 func (c *Config) BlockStorageV1Client(region string) (*gophercloud.ServiceClient, error) {
 	client, err := openstack.NewBlockStorageV1(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
-		Availability: c.getEndpointType(),
+		Availability: clientconfig.GetEndpointType(c.EndpointType),
 	})
 
 	if err != nil {
@@ -275,7 +263,7 @@ func (c *Config) BlockStorageV1Client(region string) (*gophercloud.ServiceClient
 func (c *Config) BlockStorageV2Client(region string) (*gophercloud.ServiceClient, error) {
 	client, err := openstack.NewBlockStorageV2(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
-		Availability: c.getEndpointType(),
+		Availability: clientconfig.GetEndpointType(c.EndpointType),
 	})
 
 	if err != nil {
@@ -291,7 +279,7 @@ func (c *Config) BlockStorageV2Client(region string) (*gophercloud.ServiceClient
 func (c *Config) BlockStorageV3Client(region string) (*gophercloud.ServiceClient, error) {
 	client, err := openstack.NewBlockStorageV3(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
-		Availability: c.getEndpointType(),
+		Availability: clientconfig.GetEndpointType(c.EndpointType),
 	})
 
 	if err != nil {
@@ -307,7 +295,7 @@ func (c *Config) BlockStorageV3Client(region string) (*gophercloud.ServiceClient
 func (c *Config) ComputeV2Client(region string) (*gophercloud.ServiceClient, error) {
 	client, err := openstack.NewComputeV2(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
-		Availability: c.getEndpointType(),
+		Availability: clientconfig.GetEndpointType(c.EndpointType),
 	})
 
 	if err != nil {
@@ -323,7 +311,7 @@ func (c *Config) ComputeV2Client(region string) (*gophercloud.ServiceClient, err
 func (c *Config) DNSV2Client(region string) (*gophercloud.ServiceClient, error) {
 	client, err := openstack.NewDNSV2(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
-		Availability: c.getEndpointType(),
+		Availability: clientconfig.GetEndpointType(c.EndpointType),
 	})
 
 	if err != nil {
@@ -339,7 +327,7 @@ func (c *Config) DNSV2Client(region string) (*gophercloud.ServiceClient, error) 
 func (c *Config) IdentityV3Client(region string) (*gophercloud.ServiceClient, error) {
 	client, err := openstack.NewIdentityV3(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
-		Availability: c.getEndpointType(),
+		Availability: clientconfig.GetEndpointType(c.EndpointType),
 	})
 
 	if err != nil {
@@ -355,7 +343,7 @@ func (c *Config) IdentityV3Client(region string) (*gophercloud.ServiceClient, er
 func (c *Config) ImageV2Client(region string) (*gophercloud.ServiceClient, error) {
 	client, err := openstack.NewImageServiceV2(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
-		Availability: c.getEndpointType(),
+		Availability: clientconfig.GetEndpointType(c.EndpointType),
 	})
 
 	if err != nil {
@@ -371,7 +359,7 @@ func (c *Config) ImageV2Client(region string) (*gophercloud.ServiceClient, error
 func (c *Config) NetworkingV2Client(region string) (*gophercloud.ServiceClient, error) {
 	client, err := openstack.NewNetworkV2(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
-		Availability: c.getEndpointType(),
+		Availability: clientconfig.GetEndpointType(c.EndpointType),
 	})
 
 	if err != nil {
@@ -398,7 +386,7 @@ func (c *Config) ObjectStorageV1Client(region string) (*gophercloud.ServiceClien
 	} else {
 		client, err = openstack.NewObjectStorageV1(c.OsClient, gophercloud.EndpointOpts{
 			Region:       c.determineRegion(region),
-			Availability: c.getEndpointType(),
+			Availability: clientconfig.GetEndpointType(c.EndpointType),
 		})
 	}
 
@@ -415,7 +403,7 @@ func (c *Config) ObjectStorageV1Client(region string) (*gophercloud.ServiceClien
 func (c *Config) LoadBalancerV2Client(region string) (*gophercloud.ServiceClient, error) {
 	client, err := openstack.NewLoadBalancerV2(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
-		Availability: c.getEndpointType(),
+		Availability: clientconfig.GetEndpointType(c.EndpointType),
 	})
 
 	if err != nil {
@@ -431,7 +419,7 @@ func (c *Config) LoadBalancerV2Client(region string) (*gophercloud.ServiceClient
 func (c *Config) DatabaseV1Client(region string) (*gophercloud.ServiceClient, error) {
 	client, err := openstack.NewDBV1(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
-		Availability: c.getEndpointType(),
+		Availability: clientconfig.GetEndpointType(c.EndpointType),
 	})
 
 	if err != nil {
@@ -447,7 +435,7 @@ func (c *Config) DatabaseV1Client(region string) (*gophercloud.ServiceClient, er
 func (c *Config) ContainerInfraV1Client(region string) (*gophercloud.ServiceClient, error) {
 	client, err := openstack.NewContainerInfraV1(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
-		Availability: c.getEndpointType(),
+		Availability: clientconfig.GetEndpointType(c.EndpointType),
 	})
 
 	if err != nil {
@@ -463,7 +451,7 @@ func (c *Config) ContainerInfraV1Client(region string) (*gophercloud.ServiceClie
 func (c *Config) SharedfilesystemV2Client(region string) (*gophercloud.ServiceClient, error) {
 	client, err := openstack.NewSharedFileSystemV2(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
-		Availability: c.getEndpointType(),
+		Availability: clientconfig.GetEndpointType(c.EndpointType),
 	})
 
 	if err != nil {
