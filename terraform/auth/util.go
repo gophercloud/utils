@@ -87,7 +87,10 @@ func newMutexKV() *mutexKV {
 const uaEnvVar = "TF_APPEND_USER_AGENT"
 
 func terraformUserAgent(version, sdkVersion string) string {
-	ua := fmt.Sprintf("HashiCorp Terraform/%s (+https://www.terraform.io) Terraform Plugin SDK/%s", version, sdkVersion)
+	ua := fmt.Sprintf("HashiCorp Terraform/%s (+https://www.terraform.io)", version)
+	if sdkVersion != "" {
+		ua += " " + fmt.Sprintf("Terraform Plugin SDK/%s", sdkVersion)
+	}
 
 	if add := os.Getenv(uaEnvVar); add != "" {
 		add = strings.TrimSpace(add)
