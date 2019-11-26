@@ -15,6 +15,9 @@ import (
 	"github.com/gophercloud/utils/openstack/clientconfig"
 )
 
+// This is a global MutexKV for use within this package.
+var osMutexKV = newMutexKV()
+
 type Config struct {
 	CACertFile                  string
 	ClientCertFile              string
@@ -44,8 +47,19 @@ type Config struct {
 	ApplicationCredentialSecret string
 	UseOctavia                  bool
 	MaxRetries                  int
+	DisableNoCacheHeader        bool
 
-	OsClient *gophercloud.ProviderClient
+	DelayedAuth   bool
+	AllowReauth   bool
+	OsClient      *gophercloud.ProviderClient
+	authOpts      *gophercloud.AuthOptions
+	authenticated bool
+	authFailed    error
+	swClient      *gophercloud.ServiceClient
+	swAuthFailed  error
+
+	TerraformVersion string
+	SDKVersion       string
 }
 
 // LoadAndValidate performs the authentication and initial configuration
@@ -136,10 +150,16 @@ func (c *Config) LoadAndValidate() error {
 		return err
 	}
 
+	log.Printf("[DEBUG] OpenStack allowReauth: %t", c.AllowReauth)
+	ao.AllowReauth = c.AllowReauth
+
 	client, err := openstack.NewClient(ao.IdentityEndpoint)
 	if err != nil {
 		return err
 	}
+
+	// Set UserAgent
+	client.UserAgent.Prepend(terraformUserAgent(c.TerraformVersion, c.SDKVersion))
 
 	config := &tls.Config{}
 	if c.CACertFile != "" {
@@ -193,8 +213,14 @@ func (c *Config) LoadAndValidate() error {
 		},
 	}
 
-	// If using Swift Authentication, there's no need to validate authentication normally.
-	if !c.Swauth {
+	if !c.DisableNoCacheHeader {
+		extraHeaders := map[string][]string{
+			"Cache-Control": {"no-cache"},
+		}
+		client.HTTPClient.Transport.(*osClient.RoundTripper).SetHeaders(extraHeaders)
+	}
+
+	if !c.DelayedAuth && !c.Swauth {
 		err = openstack.Authenticate(client, *ao)
 		if err != nil {
 			return err
@@ -205,7 +231,31 @@ func (c *Config) LoadAndValidate() error {
 		return fmt.Errorf("max_retries should be a positive value")
 	}
 
+	c.authOpts = ao
 	c.OsClient = client
+
+	return nil
+}
+
+func (c *Config) authenticate() error {
+	if !c.DelayedAuth {
+		return nil
+	}
+
+	osMutexKV.Lock("auth")
+	defer osMutexKV.Unlock("auth")
+
+	if c.authFailed != nil {
+		return c.authFailed
+	}
+
+	if !c.authenticated {
+		if err := openstack.Authenticate(c.OsClient, *c.authOpts); err != nil {
+			c.authFailed = err
+			return err
+		}
+		c.authenticated = true
+	}
 
 	return nil
 }
@@ -245,6 +295,10 @@ func (c *Config) determineRegion(region string) string {
 // which interact with the various OpenStack services.
 
 func (c *Config) BlockStorageV1Client(region string) (*gophercloud.ServiceClient, error) {
+	if err := c.authenticate(); err != nil {
+		return nil, err
+	}
+
 	client, err := openstack.NewBlockStorageV1(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
 		Availability: clientconfig.GetEndpointType(c.EndpointType),
@@ -261,6 +315,10 @@ func (c *Config) BlockStorageV1Client(region string) (*gophercloud.ServiceClient
 }
 
 func (c *Config) BlockStorageV2Client(region string) (*gophercloud.ServiceClient, error) {
+	if err := c.authenticate(); err != nil {
+		return nil, err
+	}
+
 	client, err := openstack.NewBlockStorageV2(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
 		Availability: clientconfig.GetEndpointType(c.EndpointType),
@@ -277,6 +335,10 @@ func (c *Config) BlockStorageV2Client(region string) (*gophercloud.ServiceClient
 }
 
 func (c *Config) BlockStorageV3Client(region string) (*gophercloud.ServiceClient, error) {
+	if err := c.authenticate(); err != nil {
+		return nil, err
+	}
+
 	client, err := openstack.NewBlockStorageV3(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
 		Availability: clientconfig.GetEndpointType(c.EndpointType),
@@ -293,6 +355,10 @@ func (c *Config) BlockStorageV3Client(region string) (*gophercloud.ServiceClient
 }
 
 func (c *Config) ComputeV2Client(region string) (*gophercloud.ServiceClient, error) {
+	if err := c.authenticate(); err != nil {
+		return nil, err
+	}
+
 	client, err := openstack.NewComputeV2(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
 		Availability: clientconfig.GetEndpointType(c.EndpointType),
@@ -309,6 +375,10 @@ func (c *Config) ComputeV2Client(region string) (*gophercloud.ServiceClient, err
 }
 
 func (c *Config) DNSV2Client(region string) (*gophercloud.ServiceClient, error) {
+	if err := c.authenticate(); err != nil {
+		return nil, err
+	}
+
 	client, err := openstack.NewDNSV2(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
 		Availability: clientconfig.GetEndpointType(c.EndpointType),
@@ -325,6 +395,10 @@ func (c *Config) DNSV2Client(region string) (*gophercloud.ServiceClient, error) 
 }
 
 func (c *Config) IdentityV3Client(region string) (*gophercloud.ServiceClient, error) {
+	if err := c.authenticate(); err != nil {
+		return nil, err
+	}
+
 	client, err := openstack.NewIdentityV3(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
 		Availability: clientconfig.GetEndpointType(c.EndpointType),
@@ -341,6 +415,10 @@ func (c *Config) IdentityV3Client(region string) (*gophercloud.ServiceClient, er
 }
 
 func (c *Config) ImageV2Client(region string) (*gophercloud.ServiceClient, error) {
+	if err := c.authenticate(); err != nil {
+		return nil, err
+	}
+
 	client, err := openstack.NewImageServiceV2(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
 		Availability: clientconfig.GetEndpointType(c.EndpointType),
@@ -357,6 +435,10 @@ func (c *Config) ImageV2Client(region string) (*gophercloud.ServiceClient, error
 }
 
 func (c *Config) NetworkingV2Client(region string) (*gophercloud.ServiceClient, error) {
+	if err := c.authenticate(); err != nil {
+		return nil, err
+	}
+
 	client, err := openstack.NewNetworkV2(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
 		Availability: clientconfig.GetEndpointType(c.EndpointType),
@@ -379,19 +461,46 @@ func (c *Config) ObjectStorageV1Client(region string) (*gophercloud.ServiceClien
 	// If Swift Authentication is being used, return a swauth client.
 	// Otherwise, use a Keystone-based client.
 	if c.Swauth {
-		client, err = swauth.NewObjectStorageV1(c.OsClient, swauth.AuthOpts{
-			User: c.Username,
-			Key:  c.Password,
-		})
+		if !c.DelayedAuth {
+			client, err = swauth.NewObjectStorageV1(c.OsClient, swauth.AuthOpts{
+				User: c.Username,
+				Key:  c.Password,
+			})
+		} else {
+			osMutexKV.Lock("SwAuth")
+			defer osMutexKV.Unlock("SwAuth")
+
+			if c.swAuthFailed != nil {
+				return nil, c.swAuthFailed
+			}
+
+			if c.swClient == nil {
+				c.swClient, err = swauth.NewObjectStorageV1(c.OsClient, swauth.AuthOpts{
+					User: c.Username,
+					Key:  c.Password,
+				})
+
+				if err != nil {
+					c.swAuthFailed = err
+					return nil, err
+				}
+			}
+
+			client = c.swClient
+		}
 	} else {
+		if err := c.authenticate(); err != nil {
+			return nil, err
+		}
+
 		client, err = openstack.NewObjectStorageV1(c.OsClient, gophercloud.EndpointOpts{
 			Region:       c.determineRegion(region),
 			Availability: clientconfig.GetEndpointType(c.EndpointType),
 		})
-	}
 
-	if err != nil {
-		return client, err
+		if err != nil {
+			return client, err
+		}
 	}
 
 	// Check if an endpoint override was specified for the object-store service.
@@ -401,6 +510,10 @@ func (c *Config) ObjectStorageV1Client(region string) (*gophercloud.ServiceClien
 }
 
 func (c *Config) LoadBalancerV2Client(region string) (*gophercloud.ServiceClient, error) {
+	if err := c.authenticate(); err != nil {
+		return nil, err
+	}
+
 	client, err := openstack.NewLoadBalancerV2(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
 		Availability: clientconfig.GetEndpointType(c.EndpointType),
@@ -417,6 +530,10 @@ func (c *Config) LoadBalancerV2Client(region string) (*gophercloud.ServiceClient
 }
 
 func (c *Config) DatabaseV1Client(region string) (*gophercloud.ServiceClient, error) {
+	if err := c.authenticate(); err != nil {
+		return nil, err
+	}
+
 	client, err := openstack.NewDBV1(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
 		Availability: clientconfig.GetEndpointType(c.EndpointType),
@@ -433,6 +550,10 @@ func (c *Config) DatabaseV1Client(region string) (*gophercloud.ServiceClient, er
 }
 
 func (c *Config) ContainerInfraV1Client(region string) (*gophercloud.ServiceClient, error) {
+	if err := c.authenticate(); err != nil {
+		return nil, err
+	}
+
 	client, err := openstack.NewContainerInfraV1(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
 		Availability: clientconfig.GetEndpointType(c.EndpointType),
@@ -449,6 +570,10 @@ func (c *Config) ContainerInfraV1Client(region string) (*gophercloud.ServiceClie
 }
 
 func (c *Config) SharedfilesystemV2Client(region string) (*gophercloud.ServiceClient, error) {
+	if err := c.authenticate(); err != nil {
+		return nil, err
+	}
+
 	client, err := openstack.NewSharedFileSystemV2(c.OsClient, gophercloud.EndpointOpts{
 		Region:       c.determineRegion(region),
 		Availability: clientconfig.GetEndpointType(c.EndpointType),
@@ -460,6 +585,26 @@ func (c *Config) SharedfilesystemV2Client(region string) (*gophercloud.ServiceCl
 
 	// Check if an endpoint override was specified for the sharev2 service.
 	client = c.determineEndpoint(client, "sharev2")
+
+	return client, nil
+}
+
+func (c *Config) KeyManagerV1Client(region string) (*gophercloud.ServiceClient, error) {
+	if err := c.authenticate(); err != nil {
+		return nil, err
+	}
+
+	client, err := openstack.NewKeyManagerV1(c.OsClient, gophercloud.EndpointOpts{
+		Region:       c.determineRegion(region),
+		Availability: clientconfig.GetEndpointType(c.EndpointType),
+	})
+
+	if err != nil {
+		return client, err
+	}
+
+	// Check if an endpoint override was specified for the keymanager service.
+	client = c.determineEndpoint(client, "key-manager")
 
 	return client, nil
 }
