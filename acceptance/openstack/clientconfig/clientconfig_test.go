@@ -3,6 +3,8 @@
 package clientconfig
 
 import (
+	"net/http"
+	"os"
 	"strings"
 	"testing"
 
@@ -11,6 +13,7 @@ import (
 	acc_compute "github.com/gophercloud/gophercloud/acceptance/openstack/compute/v2"
 	acc_tools "github.com/gophercloud/gophercloud/acceptance/tools"
 
+	osClient "github.com/gophercloud/utils/client"
 	cc "github.com/gophercloud/utils/openstack/clientconfig"
 )
 
@@ -48,5 +51,43 @@ func TestEndpointType(t *testing.T) {
 
 	if !strings.Contains(client.Endpoint, "35357") {
 		t.Fatalf("Endpoint was not correctly set to admin interface")
+	}
+}
+
+func TestCustomHTTPClient(t *testing.T) {
+	var logger osClient.Logger
+
+	if os.Getenv("OS_DEBUG") != "" {
+		logger = &osClient.DefaultLogger{}
+	}
+
+	httpClient := http.Client{
+		Transport: &osClient.RoundTripper{
+			Rt:     &http.Transport{},
+			Logger: logger,
+		},
+	}
+
+	clientOpts := &cc.ClientOpts{
+		HTTPClient: &httpClient,
+	}
+
+	client, err := cc.NewServiceClient("compute", clientOpts)
+	if err != nil {
+		t.Fatalf("Unable to create client: %v", err)
+	}
+
+	allPages, err := servers.List(client, nil).AllPages()
+	if err != nil {
+		t.Fatalf("Unable to list servers: %v", err)
+	}
+
+	allServers, err := servers.ExtractServers(allPages)
+	if err != nil {
+		t.Fatalf("Unable to extract servers: %v", err)
+	}
+
+	for _, v := range allServers {
+		t.Logf("%#v", v)
 	}
 }
