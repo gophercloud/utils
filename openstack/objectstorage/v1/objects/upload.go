@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/url"
 	"os"
 	"strings"
@@ -561,6 +562,9 @@ func uploadObject(
 	} else {
 		var reader io.Reader
 		var contentLength int64
+		var eTag string
+		var noETag bool
+
 		uploadResult.LargeObject = false
 
 		if opts.Path != "" {
@@ -572,24 +576,66 @@ func uploadObject(
 
 			reader = f
 			contentLength = sourceFileInfo.Size()
+
+			// Wrap f in a SectionReader to prevent the Transport
+			// from closing the file early.
+			if seeker, ok := reader.(io.Seeker); ok {
+				offset, err := seeker.Seek(0, io.SeekCurrent)
+				if err != nil {
+					return nil, err
+				}
+
+				if readerAt, ok := reader.(io.ReaderAt); ok {
+					reader = io.NewSectionReader(readerAt, offset, contentLength)
+				}
+			}
 		} else {
-			reader = opts.Content
+			// If the content stream can be seeked, then it's probably
+			// an open file that was passed in. The calling code is
+			// then expecting to close the file itself rather than have
+			// the Transport do it.
+			//
+			// Wrap it in a NewReader to prevent the Transport
+			// from doing this.
+			if readSeeker, ok := opts.Content.(io.ReadSeeker); ok {
+				data, err := ioutil.ReadAll(readSeeker)
+				if err != nil {
+					return nil, err
+				}
+
+				contentLength = int64(len(data))
+				readSeeker = bytes.NewReader(data)
+				readSeeker.Seek(0, io.SeekStart)
+				reader = readSeeker
+			} else {
+				reader = opts.Content
+			}
 		}
 
-		var eTag string
 		if opts.Checksum {
+			// If Checksum was specified and the reader isn't yet an io.Seeker,
+			// we need to copy all of the contents into a new buffer. There's a
+			// chance that this can exhaust memory on very large streams.
+			readSeeker, isReadSeeker := reader.(io.ReadSeeker)
+			if !isReadSeeker {
+				data, err := ioutil.ReadAll(reader)
+				if err != nil {
+					return nil, err
+				}
+				readSeeker = bytes.NewReader(data)
+			}
+
 			hash := md5.New()
-			buf := bytes.NewBuffer([]byte{})
-			_, err := io.Copy(io.MultiWriter(hash, buf), reader)
-			if err != nil && err != io.EOF {
+			if _, err := io.Copy(hash, readSeeker); err != nil {
 				return nil, err
 			}
 
+			readSeeker.Seek(0, io.SeekStart)
+			reader = readSeeker
+
 			eTag = fmt.Sprintf("%x", hash.Sum(nil))
-			reader = bytes.NewReader(buf.Bytes())
 		}
 
-		var noETag bool
 		if !opts.Checksum {
 			noETag = true
 		}

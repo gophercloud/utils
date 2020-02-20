@@ -5,6 +5,7 @@ package v1
 import (
 	"bytes"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"path"
 	"testing"
@@ -502,4 +503,109 @@ func TestObjectPseudoDirFileStructure(t *testing.T) {
 	}
 
 	tools.PrintResource(t, downloadResults)
+}
+
+func TestObjectFileHandleUploadDownload(t *testing.T) {
+	client, err := clientconfig.NewServiceClient("object-store", nil)
+	th.AssertNoErr(t, err)
+
+	// Create a file with random content
+	source, err := CreateRandomFile(t, "/tmp")
+	th.AssertNoErr(t, err)
+	defer DeleteTempFile(t, source)
+
+	// Create a destination file.
+	dest := tools.RandomString("/tmp/test-dest-", 8)
+
+	// Create a random object name.
+	oName := tools.RandomString("test-object-", 8)
+
+	// Create a test container to store the object.
+	cName, err := CreateContainer(t, client)
+	th.AssertNoErr(t, err)
+	defer DeleteContainer(t, client, cName)
+
+	f, err := os.Open(source)
+	th.AssertNoErr(t, err)
+
+	// Upload the object
+	uploadOpts := &objects.UploadOpts{
+		Checksum: true,
+		Content:  f,
+	}
+
+	uploadResult, err := objects.Upload(client, cName, oName, uploadOpts)
+	defer DeleteObject(t, client, cName, oName)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, uploadResult.Success, true)
+
+	tools.PrintResource(t, uploadResult)
+
+	err = f.Close()
+	th.AssertNoErr(t, err)
+
+	// Download the object
+	downloadOpts := &objects.DownloadOpts{
+		OutFile: dest,
+	}
+	downloadResults, err := objects.Download(client, cName, []string{oName}, downloadOpts)
+	th.AssertNoErr(t, err)
+	defer DeleteTempFile(t, dest)
+
+	th.AssertEquals(t, len(downloadResults), 1)
+	th.AssertEquals(t, downloadResults[0].Success, true)
+
+	tools.PrintResource(t, downloadResults[0])
+
+	equals, err := CompareFiles(t, source, dest)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, equals, true)
+}
+
+func TestObjectStreamReaderUploadDownload(t *testing.T) {
+	client, err := clientconfig.NewServiceClient("object-store", nil)
+	th.AssertNoErr(t, err)
+
+	// Create a stream with content
+	r, err := http.Get("https://google.com")
+	th.AssertNoErr(t, err)
+
+	// Create a destination file.
+	dest := tools.RandomString("/tmp/test-dest-", 8)
+
+	// Create a random object name.
+	oName := tools.RandomString("test-object-", 8)
+
+	// Create a test container to store the object.
+	cName, err := CreateContainer(t, client)
+	th.AssertNoErr(t, err)
+	defer DeleteContainer(t, client, cName)
+
+	// Upload the object
+	uploadOpts := &objects.UploadOpts{
+		Checksum: true,
+		Content:  r.Body,
+	}
+
+	uploadResult, err := objects.Upload(client, cName, oName, uploadOpts)
+	defer DeleteObject(t, client, cName, oName)
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, uploadResult.Success, true)
+
+	tools.PrintResource(t, uploadResult)
+
+	th.AssertNoErr(t, err)
+
+	// Download the object
+	downloadOpts := &objects.DownloadOpts{
+		OutFile: dest,
+	}
+	downloadResults, err := objects.Download(client, cName, []string{oName}, downloadOpts)
+	th.AssertNoErr(t, err)
+	defer DeleteTempFile(t, dest)
+
+	th.AssertEquals(t, len(downloadResults), 1)
+	th.AssertEquals(t, downloadResults[0].Success, true)
+
+	tools.PrintResource(t, downloadResults[0])
 }
