@@ -324,6 +324,25 @@ func FormatJSON(raw []byte) (string, error) {
 		}
 	}
 
+	// Mask EC2 access id and body hash
+	if v, ok := data["credentials"].(map[string]interface{}); ok {
+		var access string
+		if s, ok := v["access"]; ok {
+			access, _ = s.(string)
+			v["access"] = "***"
+		}
+		if _, ok := v["body_hash"]; ok {
+			v["body_hash"] = "***"
+		}
+		if v, ok := v["params"].(map[string]interface{}); ok {
+			if _, ok := v["X-Amz-Credential"]; ok {
+				if s, ok := v["X-Amz-Credential"].(string); ok {
+					v["X-Amz-Credential"] = strings.Replace(s, access, "***", -1)
+				}
+			}
+		}
+	}
+
 	// Ignore the huge catalog output
 	if v, ok := data["token"].(map[string]interface{}); ok {
 		if _, ok := v["catalog"]; ok {
