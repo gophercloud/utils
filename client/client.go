@@ -62,6 +62,7 @@ var defaultSensitiveHeaders = map[string]struct{}{
 	"x-container-meta-temp-url-key-2": {},
 	"set-cookie":                      {},
 	"x-subject-token":                 {},
+	"authorization":                   {},
 }
 
 // GetDefaultSensitiveHeaders returns the default list of headers to be masked
@@ -334,10 +335,10 @@ func FormatJSON(raw []byte) (string, error) {
 		if _, ok := v["body_hash"]; ok {
 			v["body_hash"] = "***"
 		}
-		if v, ok := v["params"].(map[string]interface{}); ok {
-			if _, ok := v["X-Amz-Credential"]; ok {
-				if s, ok := v["X-Amz-Credential"].(string); ok {
-					v["X-Amz-Credential"] = strings.Replace(s, access, "***", -1)
+		if v, ok := v["headers"].(map[string]interface{}); ok {
+			if _, ok := v["Authorization"]; ok {
+				if s, ok := v["Authorization"].(string); ok {
+					v["Authorization"] = strings.Replace(s, access, "***", -1)
 				}
 			}
 		}
