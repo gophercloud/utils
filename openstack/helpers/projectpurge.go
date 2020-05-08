@@ -259,7 +259,6 @@ func clearNetworkingPorts(projectID string, networkClient *gophercloud.ServiceCl
 	if len(allPorts) > 0 {
 		for _, port := range allPorts {
 			if port.DeviceOwner == "network:ha_router_replicated_interface" {
-				fmt.Printf("Skipping port: %s with owner: %s\n", port.ID, port.DeviceOwner)
 				continue
 			}
 
