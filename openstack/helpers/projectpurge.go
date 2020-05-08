@@ -8,6 +8,7 @@ import (
 	"github.com/gophercloud/gophercloud/openstack/blockstorage/v3/volumes"
 	"github.com/gophercloud/gophercloud/openstack/compute/v2/servers"
 	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/layer3/floatingips"
+	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/layer3/portforwarding"
 	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/layer3/routers"
 	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/security/groups"
 	"github.com/gophercloud/gophercloud/openstack/networking/v2/networks"
@@ -191,6 +192,27 @@ func clearBlockStorageSnaphosts(projectID string, storageClient *gophercloud.Ser
 	return nil
 }
 
+func clearPortforwarding(networkClient *gophercloud.ServiceClient, fipID string, projectID string) error {
+	allPages, err := portforwarding.List(networkClient, portforwarding.ListOpts{}, fipID).AllPages()
+	if err != nil {
+		return err
+	}
+
+	allPFs, err := portforwarding.ExtractPortForwardings(allPages)
+	if err != nil {
+		return err
+	}
+
+	for _, pf := range allPFs {
+		err := portforwarding.Delete(networkClient, fipID, pf.ID).ExtractErr()
+		if err != nil {
+			return fmt.Errorf("Error deleting floating IP port forwarding: " + pf.ID + " from project: " + projectID)
+		}
+	}
+
+	return nil
+}
+
 func clearNetworkingFloatingIPs(projectID string, networkClient *gophercloud.ServiceClient) error {
 	listOpts := floatingips.ListOpts{
 		TenantID: projectID,
@@ -205,6 +227,12 @@ func clearNetworkingFloatingIPs(projectID string, networkClient *gophercloud.Ser
 	}
 	if len(allFloatings) > 0 {
 		for _, floating := range allFloatings {
+			// Clear all portforwarding settings otherwise the floating IP can't be deleted
+			err = clearPortforwarding(networkClient, floating.ID, projectID)
+			if err != nil {
+				return err
+			}
+
 			err = floatingips.Delete(networkClient, floating.ID).ExtractErr()
 			if err != nil {
 				return fmt.Errorf("Error deleting floating IP: " + floating.ID + " from project: " + projectID)
@@ -219,6 +247,7 @@ func clearNetworkingPorts(projectID string, networkClient *gophercloud.ServiceCl
 	listOpts := ports.ListOpts{
 		TenantID: projectID,
 	}
+
 	allPages, err := ports.List(networkClient, listOpts).AllPages()
 	if err != nil {
 		return fmt.Errorf("Error finding ports for project: " + projectID)
@@ -229,10 +258,54 @@ func clearNetworkingPorts(projectID string, networkClient *gophercloud.ServiceCl
 	}
 	if len(allPorts) > 0 {
 		for _, port := range allPorts {
+			if port.DeviceOwner == "network:ha_router_replicated_interface" {
+				fmt.Printf("Skipping port: %s with owner: %s\n", port.ID, port.DeviceOwner)
+				continue
+			}
+
 			err = ports.Delete(networkClient, port.ID).ExtractErr()
 			if err != nil {
 				return fmt.Errorf("Error deleting port: " + port.ID + " from project: " + projectID)
 			}
+		}
+	}
+
+	return nil
+}
+
+// We need all subnets to disassociate the router from the subnet
+func getAllSubnets(projectID string, networkClient *gophercloud.ServiceClient) ([]string, error) {
+	subnets := make([]string, 0)
+	listOpts := networks.ListOpts{
+		TenantID: projectID,
+	}
+
+	allPages, err := networks.List(networkClient, listOpts).AllPages()
+	if err != nil {
+		return subnets, fmt.Errorf("Error finding networks for project: " + projectID)
+	}
+	allNetworks, err := networks.ExtractNetworks(allPages)
+	if err != nil {
+		return subnets, fmt.Errorf("Error extracting networks for project: " + projectID)
+	}
+	if len(allNetworks) > 0 {
+		for _, network := range allNetworks {
+			subnets = append(subnets, network.Subnets...)
+		}
+	}
+
+	return subnets, nil
+}
+
+func clearAllRouterInterfaces(projectID string, routerID string, subnets []string, networkClient *gophercloud.ServiceClient) error {
+	for _, subnet := range subnets {
+		intOpts := routers.RemoveInterfaceOpts{
+			SubnetID: subnet,
+		}
+
+		_, err := routers.RemoveInterface(networkClient, routerID, intOpts).Extract()
+		if err != nil {
+			return err
 		}
 	}
 
@@ -251,8 +324,29 @@ func clearNetworkingRouters(projectID string, networkClient *gophercloud.Service
 	if err != nil {
 		return fmt.Errorf("Error extracting routers for project: " + projectID)
 	}
+
+	subnets, err := getAllSubnets(projectID, networkClient)
+	if err != nil {
+		return fmt.Errorf("Error fetching subnets project: " + projectID)
+	}
+
 	if len(allRouters) > 0 {
 		for _, router := range allRouters {
+			err = clearAllRouterInterfaces(projectID, router.ID, subnets, networkClient)
+			if err != nil {
+				return err
+			}
+
+			// Clear all routes
+			updateOpts := routers.UpdateOpts{
+				Routes: []routers.Route{},
+			}
+
+			_, err := routers.Update(networkClient, router.ID, updateOpts).Extract()
+			if err != nil {
+				return fmt.Errorf("Error deleting router: " + router.Name + " from project: " + projectID)
+			}
+
 			err = routers.Delete(networkClient, router.ID).ExtractErr()
 			if err != nil {
 				return fmt.Errorf("Error deleting router: " + router.Name + " from project: " + projectID)
@@ -267,6 +361,7 @@ func clearNetworkingNetworks(projectID string, networkClient *gophercloud.Servic
 	listOpts := networks.ListOpts{
 		TenantID: projectID,
 	}
+
 	allPages, err := networks.List(networkClient, listOpts).AllPages()
 	if err != nil {
 		return fmt.Errorf("Error finding networks for project: " + projectID)
