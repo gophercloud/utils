@@ -1,6 +1,8 @@
 package servers
 
 import (
+	"fmt"
+
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack/compute/v2/servers"
 )
@@ -12,7 +14,8 @@ func IDFromName(client *gophercloud.ServiceClient, name string) (string, error) 
 	id := ""
 
 	listOpts := servers.ListOpts{
-		Name: name,
+		// nova list uses a name field as an regexp
+		Name: fmt.Sprintf("^%s$", name),
 	}
 
 	allPages, err := servers.List(client, listOpts).AllPages()
