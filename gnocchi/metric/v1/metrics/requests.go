@@ -57,9 +57,14 @@ func List(c *gophercloud.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 		}
 		url += query
 	}
-	return pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
-		return MetricPage{pagination.SinglePageBase(r)}
+
+	pager := pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
+		p := MetricPage{pagination.MarkerPageBase{PageResult: r}}
+		p.MarkerPageBase.Owner = p
+		return p
 	})
+
+	return pager
 }
 
 // Get retrieves a specific Gnocchi metric based on its id.
