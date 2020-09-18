@@ -83,13 +83,25 @@ type Metric struct {
 // MetricPage is the page returned by a pager when traversing over a collection
 // of metrics.
 type MetricPage struct {
-	pagination.SinglePageBase
+	pagination.MarkerPageBase
 }
 
 // IsEmpty checks whether a MetricPage struct is empty.
 func (r MetricPage) IsEmpty() (bool, error) {
 	is, err := ExtractMetrics(r)
 	return len(is) == 0, err
+}
+
+// LastMarker returns the last metric ID in a ListResult.
+func (r MetricPage) LastMarker() (string, error) {
+	metrics, err := ExtractMetrics(r)
+	if err != nil {
+		return "", err
+	}
+	if len(metrics) == 0 {
+		return "", nil
+	}
+	return metrics[len(metrics)-1].ID, nil
 }
 
 // ExtractMetrics interprets the results of a single page from a List() call,

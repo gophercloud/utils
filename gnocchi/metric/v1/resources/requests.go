@@ -52,9 +52,13 @@ func List(c *gophercloud.ServiceClient, opts ListOptsBuilder, resourceType strin
 		}
 		url += query
 	}
-	return pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
-		return ResourcePage{pagination.SinglePageBase(r)}
+	pager := pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
+		p := ResourcePage{pagination.MarkerPageBase{PageResult: r}}
+		p.MarkerPageBase.Owner = p
+		return p
 	})
+
+	return pager
 }
 
 // Get retrieves a specific Gnocchi resource based on its type and ID.
