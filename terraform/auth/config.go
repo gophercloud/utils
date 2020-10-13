@@ -13,10 +13,11 @@ import (
 	"github.com/gophercloud/gophercloud/openstack/objectstorage/v1/swauth"
 	osClient "github.com/gophercloud/utils/client"
 	"github.com/gophercloud/utils/openstack/clientconfig"
+	"github.com/gophercloud/utils/terraform/mutexkv"
 )
 
 // This is a global MutexKV for use within this package.
-var osMutexKV = newMutexKV()
+var osMutexKV = mutexkv.NewMutexKV()
 
 type Config struct {
 	CACertFile                  string
