@@ -22,8 +22,16 @@ func TestList(t *testing.T) {
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-
-		fmt.Fprintf(w, ResourceListResult)
+		r.ParseForm()
+		marker := r.Form.Get("marker")
+		switch marker {
+		case "":
+			fmt.Fprintf(w, ResourceListResult)
+		case "789a7f65-977d-40f4-beed-f717100125f5":
+			fmt.Fprintf(w, `[]`)
+		default:
+			t.Fatalf("/v1/resources invoked with unexpected marker=[%s]", marker)
+		}
 	})
 
 	count := 0

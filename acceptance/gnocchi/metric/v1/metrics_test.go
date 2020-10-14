@@ -31,6 +31,24 @@ func TestMetricsList(t *testing.T) {
 		t.Fatalf("Unable to create a Gnocchi client: %v", err)
 	}
 
+	metric1, err := CreateMetric(t, client)
+	if err != nil {
+		t.Fatalf("Unable to create a Gnocchi metric: %v", err)
+	}
+	defer DeleteMetric(t, client, metric1.ID)
+
+	metric2, err := CreateMetric(t, client)
+	if err != nil {
+		t.Fatalf("Unable to create a Gnocchi metric: %v", err)
+	}
+	defer DeleteMetric(t, client, metric2.ID)
+
+	metric3, err := CreateMetric(t, client)
+	if err != nil {
+		t.Fatalf("Unable to create a Gnocchi metric: %v", err)
+	}
+	defer DeleteMetric(t, client, metric3.ID)
+
 	listOpts := metrics.ListOpts{}
 	allPages, err := metrics.List(client, listOpts).AllPages()
 	if err != nil {
