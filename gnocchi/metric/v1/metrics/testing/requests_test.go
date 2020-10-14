@@ -24,8 +24,16 @@ func TestList(t *testing.T) {
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-
-		fmt.Fprintf(w, MetricsListResult)
+		r.ParseForm()
+		marker := r.Form.Get("marker")
+		switch marker {
+		case "":
+			fmt.Fprintf(w, MetricsListResult)
+		case "6dbc97c5-bfdf-47a2-b184-02e7fa348d21":
+			fmt.Fprintf(w, `[]`)
+		default:
+			t.Fatalf("/v1/metric invoked with unexpected marker=[%s]", marker)
+		}
 	})
 
 	count := 0
