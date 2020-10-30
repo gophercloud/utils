@@ -16,9 +16,6 @@ import (
 	"github.com/gophercloud/utils/terraform/mutexkv"
 )
 
-// This is a global MutexKV for use within this package.
-var osMutexKV = mutexkv.NewMutexKV()
-
 type Config struct {
 	CACertFile                  string
 	ClientCertFile              string
@@ -61,6 +58,8 @@ type Config struct {
 
 	TerraformVersion string
 	SDKVersion       string
+
+	mutexkv.MutexKV
 }
 
 // LoadAndValidate performs the authentication and initial configuration
@@ -243,8 +242,8 @@ func (c *Config) Authenticate() error {
 		return nil
 	}
 
-	osMutexKV.Lock("auth")
-	defer osMutexKV.Unlock("auth")
+	c.MutexKV.Lock("auth")
+	defer c.MutexKV.Unlock("auth")
 
 	if c.authFailed != nil {
 		return c.authFailed
@@ -261,7 +260,7 @@ func (c *Config) Authenticate() error {
 	return nil
 }
 
-// determineEndpoint is a helper method to determine if the user wants to
+// DetermineEndpoint is a helper method to determine if the user wants to
 // override an endpoint returned from the catalog.
 func (c *Config) DetermineEndpoint(client *gophercloud.ServiceClient, service string) *gophercloud.ServiceClient {
 	finalEndpoint := client.ResourceBaseURL()
@@ -279,7 +278,7 @@ func (c *Config) DetermineEndpoint(client *gophercloud.ServiceClient, service st
 	return client
 }
 
-// determineRegion is a helper method to determine the region based on
+// DetermineRegion is a helper method to determine the region based on
 // the user's settings.
 func (c *Config) DetermineRegion(region string) string {
 	// If a resource-level region was not specified, and a provider-level region was set,
@@ -382,8 +381,8 @@ func (c *Config) ObjectStorageV1Client(region string) (*gophercloud.ServiceClien
 				Key:  c.Password,
 			})
 		} else {
-			osMutexKV.Lock("SwAuth")
-			defer osMutexKV.Unlock("SwAuth")
+			c.MutexKV.Lock("SwAuth")
+			defer c.MutexKV.Unlock("SwAuth")
 
 			if c.swAuthFailed != nil {
 				return nil, c.swAuthFailed
