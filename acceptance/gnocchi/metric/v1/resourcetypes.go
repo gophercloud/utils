@@ -18,14 +18,14 @@ func CreateResourceType(t *testing.T, client *gophercloud.ServiceClient) (*resou
 	createOpts := resourcetypes.CreateOpts{
 		Name: resourceTypeName,
 		Attributes: map[string]resourcetypes.AttributeOpts{
-			attributeStringName: resourcetypes.AttributeOpts{
+			attributeStringName: {
 				Type: "string",
 				Details: map[string]interface{}{
 					"max_length": 128,
 					"required":   false,
 				},
 			},
-			attributeUUIDName: resourcetypes.AttributeOpts{
+			attributeUUIDName: {
 				Type: "uuid",
 				Details: map[string]interface{}{
 					"required": true,

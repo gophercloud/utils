@@ -71,7 +71,7 @@ func TestGet(t *testing.T) {
 	th.AssertEquals(t, s.Name, "compute_instance")
 	th.AssertEquals(t, s.State, "active")
 	th.AssertDeepEquals(t, s.Attributes, map[string]resourcetypes.Attribute{
-		"host": resourcetypes.Attribute{
+		"host": {
 			Type: "string",
 			Details: map[string]interface{}{
 				"max_length": float64(255),
@@ -79,7 +79,7 @@ func TestGet(t *testing.T) {
 				"required":   true,
 			},
 		},
-		"image_ref": resourcetypes.Attribute{
+		"image_ref": {
 			Type: "uuid",
 			Details: map[string]interface{}{
 				"required": false,
@@ -136,14 +136,14 @@ func TestCreateWithAttributes(t *testing.T) {
 	opts := resourcetypes.CreateOpts{
 		Name: "compute_instance_network",
 		Attributes: map[string]resourcetypes.AttributeOpts{
-			"port_name": resourcetypes.AttributeOpts{
+			"port_name": {
 				Type: "string",
 				Details: map[string]interface{}{
 					"max_length": 128,
 					"required":   false,
 				},
 			},
-			"port_id": resourcetypes.AttributeOpts{
+			"port_id": {
 				Type: "uuid",
 				Details: map[string]interface{}{
 					"required": true,
@@ -157,7 +157,7 @@ func TestCreateWithAttributes(t *testing.T) {
 	th.AssertEquals(t, s.Name, "compute_instance_network")
 	th.AssertEquals(t, s.State, "active")
 	th.AssertDeepEquals(t, s.Attributes, map[string]resourcetypes.Attribute{
-		"port_name": resourcetypes.Attribute{
+		"port_name": {
 			Type: "string",
 			Details: map[string]interface{}{
 				"max_length": float64(128),
@@ -165,7 +165,7 @@ func TestCreateWithAttributes(t *testing.T) {
 				"required":   false,
 			},
 		},
-		"port_id": resourcetypes.Attribute{
+		"port_id": {
 			Type: "uuid",
 			Details: map[string]interface{}{
 				"required": true,
@@ -231,19 +231,19 @@ func TestUpdate(t *testing.T) {
 	th.AssertEquals(t, s.Name, "identity_project")
 	th.AssertEquals(t, s.State, "active")
 	th.AssertDeepEquals(t, s.Attributes, map[string]resourcetypes.Attribute{
-		"enabled": resourcetypes.Attribute{
+		"enabled": {
 			Type: "bool",
 			Details: map[string]interface{}{
 				"required": true,
 			},
 		},
-		"parent_id": resourcetypes.Attribute{
+		"parent_id": {
 			Type: "uuid",
 			Details: map[string]interface{}{
 				"required": false,
 			},
 		},
-		"name": resourcetypes.Attribute{
+		"name": {
 			Type: "string",
 			Details: map[string]interface{}{
 				"required":   true,
