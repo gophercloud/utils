@@ -122,11 +122,11 @@ func CreateResourcesToBatchMeasures(t *testing.T, client *gophercloud.ServiceCli
 	tools.PrintResource(t, secondResource)
 
 	resourcesReferenceMap := map[string][]string{
-		firstResource.ID: []string{
+		firstResource.ID: {
 			firstMetricName,
 			secondMetricName,
 		},
-		secondResource.ID: []string{
+		secondResource.ID: {
 			thirdMetricName,
 		},
 	}

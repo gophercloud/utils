@@ -15,25 +15,25 @@ import (
 
 func TestGetCloudFromYAML(t *testing.T) {
 	allClientOpts := map[string]*clientconfig.ClientOpts{
-		"hawaii": &clientconfig.ClientOpts{
+		"hawaii": {
 			Cloud:     "hawaii",
 			EnvPrefix: "FOO",
 		},
-		"california": &clientconfig.ClientOpts{
+		"california": {
 			Cloud:     "california",
 			EnvPrefix: "FOO",
 		},
-		"florida_insecure":   &clientconfig.ClientOpts{Cloud: "florida_insecure"},
-		"florida_secure":     &clientconfig.ClientOpts{Cloud: "florida_secure"},
-		"nevada":             &clientconfig.ClientOpts{Cloud: "nevada"},
-		"texas":              &clientconfig.ClientOpts{Cloud: "texas"},
-		"alberta":            &clientconfig.ClientOpts{Cloud: "alberta"},
-		"yukon":              &clientconfig.ClientOpts{Cloud: "yukon"},
-		"chicago":            &clientconfig.ClientOpts{Cloud: "chicago"},
-		"chicago_legacy":     &clientconfig.ClientOpts{Cloud: "chicago_legacy"},
-		"chicago_useprofile": &clientconfig.ClientOpts{Cloud: "chicago_useprofile"},
-		"philadelphia":       &clientconfig.ClientOpts{Cloud: "philadelphia"},
-		"virginia":           &clientconfig.ClientOpts{Cloud: "virginia"},
+		"florida_insecure":   {Cloud: "florida_insecure"},
+		"florida_secure":     {Cloud: "florida_secure"},
+		"nevada":             {Cloud: "nevada"},
+		"texas":              {Cloud: "texas"},
+		"alberta":            {Cloud: "alberta"},
+		"yukon":              {Cloud: "yukon"},
+		"chicago":            {Cloud: "chicago"},
+		"chicago_legacy":     {Cloud: "chicago_legacy"},
+		"chicago_useprofile": {Cloud: "chicago_useprofile"},
+		"philadelphia":       {Cloud: "philadelphia"},
+		"virginia":           {Cloud: "virginia"},
 	}
 
 	expectedClouds := map[string]*clientconfig.Cloud{
@@ -297,12 +297,12 @@ func TestGetCloudFromYAMLWithCustomYAMLOpts(t *testing.T) {
 	}
 
 	allClientOpts := map[string]*clientconfig.ClientOpts{
-		"hawaii": &clientconfig.ClientOpts{
+		"hawaii": {
 			Cloud:     "hawaii",
 			EnvPrefix: "FOO",
 			YAMLOpts:  yamlOpts,
 		},
-		"california": &clientconfig.ClientOpts{
+		"california": {
 			Cloud:     "california",
 			EnvPrefix: "FOO",
 			YAMLOpts:  yamlOpts,

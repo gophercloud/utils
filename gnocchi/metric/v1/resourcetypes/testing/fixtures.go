@@ -45,7 +45,7 @@ var ResourceType2 = resourcetypes.ResourceType{
 	Name:  "identity_project",
 	State: "active",
 	Attributes: map[string]resourcetypes.Attribute{
-		"parent_id": resourcetypes.Attribute{
+		"parent_id": {
 			Type: "uuid",
 			Details: map[string]interface{}{
 				"required": false,
@@ -59,7 +59,7 @@ var ResourceType3 = resourcetypes.ResourceType{
 	Name:  "compute_instance",
 	State: "active",
 	Attributes: map[string]resourcetypes.Attribute{
-		"host": resourcetypes.Attribute{
+		"host": {
 			Type: "string",
 			Details: map[string]interface{}{
 				"max_length": float64(128),
