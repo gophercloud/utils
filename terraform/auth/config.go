@@ -58,7 +58,7 @@ type Config struct {
 	TerraformVersion string
 	SDKVersion       string
 
-	mutexkv.MutexKV
+	*mutexkv.MutexKV
 }
 
 // LoadAndValidate performs the authentication and initial configuration
