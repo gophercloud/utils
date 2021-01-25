@@ -6,14 +6,18 @@ import (
 )
 
 func TestMutexKVLock(t *testing.T) {
-	mkv := NewMutexKV()
+	s := struct {
+		mkv *MutexKV
+	}{
+		mkv: NewMutexKV(),
+	}
 
-	mkv.Lock("foo")
+	s.mkv.Lock("foo")
 
 	doneCh := make(chan struct{})
 
 	go func() {
-		mkv.Lock("foo")
+		s.mkv.Lock("foo")
 		close(doneCh)
 	}()
 
@@ -26,15 +30,19 @@ func TestMutexKVLock(t *testing.T) {
 }
 
 func TestMutexKVUnlock(t *testing.T) {
-	mkv := NewMutexKV()
+	s := struct {
+		mkv *MutexKV
+	}{
+		mkv: NewMutexKV(),
+	}
 
-	mkv.Lock("foo")
-	mkv.Unlock("foo")
+	s.mkv.Lock("foo")
+	s.mkv.Unlock("foo")
 
 	doneCh := make(chan struct{})
 
 	go func() {
-		mkv.Lock("foo")
+		s.mkv.Lock("foo")
 		close(doneCh)
 	}()
 
@@ -47,14 +55,18 @@ func TestMutexKVUnlock(t *testing.T) {
 }
 
 func TestMutexKVDifferentKeys(t *testing.T) {
-	mkv := NewMutexKV()
+	s := struct {
+		mkv *MutexKV
+	}{
+		mkv: NewMutexKV(),
+	}
 
-	mkv.Lock("foo")
+	s.mkv.Lock("foo")
 
 	doneCh := make(chan struct{})
 
 	go func() {
-		mkv.Lock("bar")
+		s.mkv.Lock("bar")
 		close(doneCh)
 	}()
 
