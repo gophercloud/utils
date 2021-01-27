@@ -133,6 +133,18 @@ clouds:
       password: "this should be overwritten by secure.yaml"
       project_name: "Some Project"
     region_name: "PHL"
+  philadelphia_complex:
+    auth:
+      auth_url: "https://phl.example.com:5000/v3"
+      username: "jdoe"
+      password: "password"
+      project_name: "Some Project"
+    regions:
+      - name: PHL1
+        values:
+          auth:
+            auth_url: "https://phl1.example.com:5000/v3"
+      - PHL2
   virginia:
     auth_type: "v3applicationcredential"
     auth:

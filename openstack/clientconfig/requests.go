@@ -299,6 +299,16 @@ func GetCloudFromYAML(opts *ClientOpts) (*Cloud, error) {
 		cloud.Verify = &iTrue
 	}
 
+	// merging per-region value overrides
+	if opts.RegionName != "" {
+		for _, v := range cloud.Regions {
+			if opts.RegionName == v.Name {
+				cloud, err = mergeClouds(v.Values, cloud)
+				break
+			}
+		}
+	}
+
 	// TODO: this is where reading vendor files should go be considered when not found in
 	// clouds-public.yml
 	// https://github.com/openstack/openstacksdk/tree/master/openstack/config/vendors
