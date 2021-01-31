@@ -90,6 +90,10 @@ func (c *Config) LoadAndValidate() error {
 		return fmt.Errorf("Invalid endpoint type provided")
 	}
 
+	if c.MaxRetries < 0 {
+		return fmt.Errorf("max_retries should be a positive value")
+	}
+
 	clientOpts := new(clientconfig.ClientOpts)
 
 	// If a cloud entry was given, base AuthOptions on a clouds.yaml file.
@@ -187,15 +191,16 @@ func (c *Config) LoadAndValidate() error {
 		client.HTTPClient.Transport.(*osClient.RoundTripper).SetHeaders(extraHeaders)
 	}
 
+	if c.MaxRetries > 0 {
+		client.MaxBackoffRetries = uint(c.MaxRetries)
+		client.RetryBackoffFunc = osClient.RetryBackoffFunc(logger)
+	}
+
 	if !c.DelayedAuth && !c.Swauth {
 		err = openstack.Authenticate(client, *ao)
 		if err != nil {
 			return err
 		}
-	}
-
-	if c.MaxRetries < 0 {
-		return fmt.Errorf("max_retries should be a positive value")
 	}
 
 	c.authOpts = ao
