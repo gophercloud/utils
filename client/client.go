@@ -395,6 +395,7 @@ func RetryBackoffFunc(logger Logger) retryFunc {
 				if l != nil {
 					l.Printf("Sleeping aborted: %w", c.Err())
 				}
+				return e
 			}
 		} else {
 			time.Sleep(sleep)
