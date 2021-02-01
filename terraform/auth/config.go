@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -45,6 +46,7 @@ type Config struct {
 	UseOctavia                  bool
 	MaxRetries                  int
 	DisableNoCacheHeader        bool
+	Context                     context.Context
 
 	DelayedAuth   bool
 	AllowReauth   bool
@@ -160,6 +162,8 @@ func (c *Config) LoadAndValidate() error {
 	if err != nil {
 		return err
 	}
+
+	client.Context = c.Context
 
 	// Set UserAgent
 	client.UserAgent.Prepend(terraformUserAgent(c.TerraformVersion, c.SDKVersion))
