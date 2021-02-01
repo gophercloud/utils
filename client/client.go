@@ -378,10 +378,10 @@ func RetryBackoffFunc(logger Logger) retryFunc {
 		// Parse delay seconds or HTTP date
 		if v, err := strconv.ParseUint(retryAfter, 10, 32); err == nil {
 			sleep = time.Duration(v) * time.Second
-		} else if v, err := time.Parse(http.TimeFormat, retryAfter); err != nil {
-			return e
-		} else {
+		} else if v, err := time.Parse(http.TimeFormat, retryAfter); err == nil {
 			sleep = time.Until(v)
+		} else {
+			return e
 		}
 
 		l := logger
