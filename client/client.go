@@ -364,9 +364,7 @@ func FormatJSON(raw []byte) (string, error) {
 	return string(pretty), nil
 }
 
-type retryFunc func(context.Context, *gophercloud.ErrUnexpectedResponseCode, error, uint) error
-
-func RetryBackoffFunc(logger Logger) retryFunc {
+func RetryBackoffFunc(logger Logger) gophercloud.RetryFunc {
 	return func(ctx context.Context, respErr *gophercloud.ErrUnexpectedResponseCode, e error, retries uint) error {
 		retryAfter := respErr.ResponseHeader.Get("Retry-After")
 		if retryAfter == "" {
