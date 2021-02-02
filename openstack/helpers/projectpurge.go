@@ -336,9 +336,10 @@ func clearNetworkingRouters(projectID string, networkClient *gophercloud.Service
 				return err
 			}
 
+			routes := []routers.Route{}
 			// Clear all routes
 			updateOpts := routers.UpdateOpts{
-				Routes: []routers.Route{},
+				Routes: &routes,
 			}
 
 			_, err := routers.Update(networkClient, router.ID, updateOpts).Extract()
