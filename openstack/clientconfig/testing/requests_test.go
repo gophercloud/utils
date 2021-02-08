@@ -42,6 +42,18 @@ func TestGetCloudFromYAML(t *testing.T) {
 			RegionName: "PHL2",
 		},
 		"virginia": {Cloud: "virginia"},
+		"disconnected_smw": {
+			Cloud:      "disconnected_clouds",
+			RegionName: "SOMEWHERE",
+		},
+		"disconnected_anw": {
+			Cloud:      "disconnected_clouds",
+			RegionName: "ANYWHERE",
+		},
+		"disconnected_now": {
+			Cloud:      "disconnected_clouds",
+			RegionName: "NOWHERE",
+		},
 	}
 
 	expectedClouds := map[string]*clientconfig.Cloud{
@@ -60,6 +72,9 @@ func TestGetCloudFromYAML(t *testing.T) {
 		"philadelphia_phl1":  &PhiladelphiaComplexPhl1CloudYAML,
 		"philadelphia_phl2":  &PhiladelphiaComplexPhl2CloudYAML,
 		"virginia":           &VirginiaCloudYAML,
+		"disconnected_smw":   &DisconnectedSomewhereCloudYAML,
+		"disconnected_anw":   &DisconnectedAnywhereCloudYAML,
+		"disconnected_now":   &DisconnectedNowhereCloudYAML,
 	}
 
 	for cloud, clientOpts := range allClientOpts {

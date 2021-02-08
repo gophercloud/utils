@@ -152,3 +152,21 @@ clouds:
       application_credential_id: "app-cred-id"
       application_credential_secret: "secret"
     region_name: "VA"
+  disconnected_clouds:
+    auth:
+      username: "jdoe"
+      password: "password"
+      project_name: "Some Project"
+    regions:
+      - name: SOMEWHERE
+        values:
+          auth:
+            auth_url: "https://somewhere.example.com:5000/v3"
+      - name: ANYWHERE
+        values:
+          auth:
+            auth_url: "https://anywhere.example.com:5000/v3"
+      - name: NOWHERE
+        values:
+          auth:
+            auth_url: "https://nowhere.example.com:5000/v3"
