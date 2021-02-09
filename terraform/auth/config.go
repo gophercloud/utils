@@ -102,6 +102,9 @@ func (c *Config) LoadAndValidate() error {
 	if c.Cloud != "" {
 		clientOpts.Cloud = c.Cloud
 
+		// Passing region allows GetCloudFromYAML to apply per-region overrides
+		clientOpts.RegionName = c.Region
+
 		cloud, err := clientconfig.GetCloudFromYAML(clientOpts)
 		if err != nil {
 			return err

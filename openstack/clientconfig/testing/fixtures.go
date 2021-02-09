@@ -44,6 +44,94 @@ var PhiladelphiaCloudYAML = clientconfig.Cloud{
 	AuthType: "password",
 }
 
+var PhiladelphiaComplexPhl1CloudYAML = clientconfig.Cloud{
+	AuthInfo: &clientconfig.AuthInfo{
+		AuthURL:     "https://phl1.example.com:5000/v3",
+		Username:    "jdoe",
+		Password:    "password",
+		ProjectName: "Some Project",
+	},
+	Regions: []clientconfig.Region{
+		{
+			Name:   "PHL1",
+			Values: clientconfig.Cloud{AuthInfo: &clientconfig.AuthInfo{AuthURL: "https://phl1.example.com:5000/v3"}},
+		},
+		{
+			Name:   "PHL2",
+			Values: clientconfig.Cloud{},
+		},
+	},
+	Verify: &iTrue,
+}
+
+var PhiladelphiaComplexPhl2CloudYAML = clientconfig.Cloud{
+	AuthInfo: &clientconfig.AuthInfo{
+		AuthURL:     "https://phl.example.com:5000/v3",
+		Username:    "jdoe",
+		Password:    "password",
+		ProjectName: "Some Project",
+	},
+	Regions: []clientconfig.Region{
+		{
+			Name:   "PHL1",
+			Values: clientconfig.Cloud{AuthInfo: &clientconfig.AuthInfo{AuthURL: "https://phl1.example.com:5000/v3"}},
+		},
+		{
+			Name:   "PHL2",
+			Values: clientconfig.Cloud{},
+		},
+	},
+	Verify: &iTrue,
+}
+
+var disconnected_regions = []clientconfig.Region{
+	{
+		Name:   "SOMEWHERE",
+		Values: clientconfig.Cloud{AuthInfo: &clientconfig.AuthInfo{AuthURL: "https://somewhere.example.com:5000/v3"}},
+	},
+	{
+		Name:   "ANYWHERE",
+		Values: clientconfig.Cloud{AuthInfo: &clientconfig.AuthInfo{AuthURL: "https://anywhere.example.com:5000/v3"}},
+	},
+	{
+		Name:   "NOWHERE",
+		Values: clientconfig.Cloud{AuthInfo: &clientconfig.AuthInfo{AuthURL: "https://nowhere.example.com:5000/v3"}},
+	},
+}
+
+var DisconnectedSomewhereCloudYAML = clientconfig.Cloud{
+	AuthInfo: &clientconfig.AuthInfo{
+		AuthURL:     "https://somewhere.example.com:5000/v3",
+		Username:    "jdoe",
+		Password:    "password",
+		ProjectName: "Some Project",
+	},
+	Regions: disconnected_regions,
+	Verify:  &iTrue,
+}
+
+var DisconnectedAnywhereCloudYAML = clientconfig.Cloud{
+	AuthInfo: &clientconfig.AuthInfo{
+		AuthURL:     "https://anywhere.example.com:5000/v3",
+		Username:    "jdoe",
+		Password:    "password",
+		ProjectName: "Some Project",
+	},
+	Regions: disconnected_regions,
+	Verify:  &iTrue,
+}
+
+var DisconnectedNowhereCloudYAML = clientconfig.Cloud{
+	AuthInfo: &clientconfig.AuthInfo{
+		AuthURL:     "https://nowhere.example.com:5000/v3",
+		Username:    "jdoe",
+		Password:    "password",
+		ProjectName: "Some Project",
+	},
+	Regions: disconnected_regions,
+	Verify:  &iTrue,
+}
+
 var ChicagoCloudYAML = clientconfig.Cloud{
 	Profile:    "rackspace",
 	RegionName: "ORD",
@@ -197,10 +285,11 @@ var FloridaAuthOpts = &gophercloud.AuthOptions{
 
 var CaliforniaCloudYAML = clientconfig.Cloud{
 	EndpointType: "internal",
-	Regions: []interface{}{
-		"SAN",
-		"LAX",
-	},
+	Regions: []clientconfig.Region{{
+		Name: "SAN",
+	}, {
+		Name: "LAX",
+	}},
 	AuthInfo: &clientconfig.AuthInfo{
 		AuthURL:           "https://ca.example.com:5000/v3",
 		Username:          "jdoe",

@@ -33,7 +33,27 @@ func TestGetCloudFromYAML(t *testing.T) {
 		"chicago_legacy":     {Cloud: "chicago_legacy"},
 		"chicago_useprofile": {Cloud: "chicago_useprofile"},
 		"philadelphia":       {Cloud: "philadelphia"},
-		"virginia":           {Cloud: "virginia"},
+		"philadelphia_phl1": {
+			Cloud:      "philadelphia_complex",
+			RegionName: "PHL1",
+		},
+		"philadelphia_phl2": {
+			Cloud:      "philadelphia_complex",
+			RegionName: "PHL2",
+		},
+		"virginia": {Cloud: "virginia"},
+		"disconnected_smw": {
+			Cloud:      "disconnected_clouds",
+			RegionName: "SOMEWHERE",
+		},
+		"disconnected_anw": {
+			Cloud:      "disconnected_clouds",
+			RegionName: "ANYWHERE",
+		},
+		"disconnected_now": {
+			Cloud:      "disconnected_clouds",
+			RegionName: "NOWHERE",
+		},
 	}
 
 	expectedClouds := map[string]*clientconfig.Cloud{
@@ -49,7 +69,12 @@ func TestGetCloudFromYAML(t *testing.T) {
 		"chicago_legacy":     &ChicagoCloudLegacyYAML,
 		"chicago_useprofile": &ChicagoCloudUseProfileYAML,
 		"philadelphia":       &PhiladelphiaCloudYAML,
+		"philadelphia_phl1":  &PhiladelphiaComplexPhl1CloudYAML,
+		"philadelphia_phl2":  &PhiladelphiaComplexPhl2CloudYAML,
 		"virginia":           &VirginiaCloudYAML,
+		"disconnected_smw":   &DisconnectedSomewhereCloudYAML,
+		"disconnected_anw":   &DisconnectedAnywhereCloudYAML,
+		"disconnected_now":   &DisconnectedNowhereCloudYAML,
 	}
 
 	for cloud, clientOpts := range allClientOpts {

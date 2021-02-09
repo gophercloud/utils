@@ -133,6 +133,18 @@ clouds:
       password: "this should be overwritten by secure.yaml"
       project_name: "Some Project"
     region_name: "PHL"
+  philadelphia_complex:
+    auth:
+      auth_url: "https://phl.example.com:5000/v3"
+      username: "jdoe"
+      password: "password"
+      project_name: "Some Project"
+    regions:
+      - name: PHL1
+        values:
+          auth:
+            auth_url: "https://phl1.example.com:5000/v3"
+      - PHL2
   virginia:
     auth_type: "v3applicationcredential"
     auth:
@@ -140,3 +152,21 @@ clouds:
       application_credential_id: "app-cred-id"
       application_credential_secret: "secret"
     region_name: "VA"
+  disconnected_clouds:
+    auth:
+      username: "jdoe"
+      password: "password"
+      project_name: "Some Project"
+    regions:
+      - name: SOMEWHERE
+        values:
+          auth:
+            auth_url: "https://somewhere.example.com:5000/v3"
+      - name: ANYWHERE
+        values:
+          auth:
+            auth_url: "https://anywhere.example.com:5000/v3"
+      - name: NOWHERE
+        values:
+          auth:
+            auth_url: "https://nowhere.example.com:5000/v3"
