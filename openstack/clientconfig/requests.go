@@ -138,7 +138,7 @@ func LoadSecureCloudsYAML() (map[string]Cloud, error) {
 
 	_, content, err := FindAndReadSecureCloudsYAML()
 	if err != nil {
-		if err.Error() == "no secure.yaml file found" {
+		if err.Error() == "no secure.yaml file found" || err.Error() == "no secure.yml file found" {
 			// secure.yaml is optional so just ignore read error
 			return secureClouds.Clouds, nil
 		}
