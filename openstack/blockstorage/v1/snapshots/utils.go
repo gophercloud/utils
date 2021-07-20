@@ -5,7 +5,7 @@ import (
 	"github.com/gophercloud/gophercloud/openstack/blockstorage/v1/snapshots"
 )
 
-// IDFromName is a convienience function that returns a snapshot's ID given its name.
+// IDFromName is a convenience function that returns a snapshot's ID given its name.
 func IDFromName(client *gophercloud.ServiceClient, name string) (string, error) {
 	count := 0
 	id := ""
