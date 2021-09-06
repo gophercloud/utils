@@ -373,9 +373,17 @@ func AuthOptions(opts *ClientOpts) (*gophercloud.AuthOptions, error) {
 		}
 	}
 
+	// Set default value for AllowReauth
+	if opts.AuthInfo != nil {
+		allowReauth := false
+		if opts.AuthInfo.AllowReauth == nil {
+			opts.AuthInfo.AllowReauth = &allowReauth
+		}
+	}
+
 	// If cloud.AuthInfo is nil, then no cloud was specified.
 	if cloud.AuthInfo == nil {
-		// If opts.Auth is not nil, then try using the auth settings from it.
+		// If opts.AuthInfo is not nil, then try using the auth settings from it.
 		if opts.AuthInfo != nil {
 			cloud.AuthInfo = opts.AuthInfo
 		}
@@ -512,6 +520,7 @@ func v2auth(cloud *Cloud, opts *ClientOpts) (*gophercloud.AuthOptions, error) {
 		Password:         cloud.AuthInfo.Password,
 		TenantID:         cloud.AuthInfo.ProjectID,
 		TenantName:       cloud.AuthInfo.ProjectName,
+		AllowReauth:      *cloud.AuthInfo.AllowReauth,
 	}
 
 	return ao, nil
@@ -684,6 +693,7 @@ func v3auth(cloud *Cloud, opts *ClientOpts) (*gophercloud.AuthOptions, error) {
 		ApplicationCredentialID:     cloud.AuthInfo.ApplicationCredentialID,
 		ApplicationCredentialName:   cloud.AuthInfo.ApplicationCredentialName,
 		ApplicationCredentialSecret: cloud.AuthInfo.ApplicationCredentialSecret,
+		AllowReauth:                 *cloud.AuthInfo.AllowReauth,
 	}
 
 	// If an auth_type of "token" was specified, then make sure
