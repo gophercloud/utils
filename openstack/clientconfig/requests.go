@@ -66,6 +66,20 @@ type ClientOpts struct {
 	// admin endpoint of a service.
 	EndpointType string
 
+	// AllowReauth should be set to true if you grant permission for Gophercloud to
+	// cache your credentials in memory, and to allow Gophercloud to attempt to
+	// re-authenticate automatically if/when your token expires.  If you set it to
+	// false, it will not cache these settings, but re-authentication will not be
+	// possible.  This setting defaults to false.
+	//
+	// NOTE: The reauth function will try to re-authenticate endlessly if left
+	// unchecked. The way to limit the number of attempts is to provide a custom
+	// HTTP client to the provider client and provide a transport that implements
+	// the RoundTripper interface and stores the number of failed retries. For an
+	// example of this, see here:
+	// https://github.com/rackspace/rack/blob/1.0.0/auth/clients.go#L311
+	AllowReauth *bool
+
 	// HTTPClient provides the ability customize the ProviderClient's
 	// internal HTTP client.
 	HTTPClient *http.Client
@@ -343,6 +357,11 @@ func AuthOptions(opts *ClientOpts) (*gophercloud.AuthOptions, error) {
 	// If no opts were passed in, create an empty ClientOpts.
 	if opts == nil {
 		opts = new(ClientOpts)
+	}
+
+	allowReauth := false
+	if opts.AllowReauth == nil {
+		opts.AllowReauth = &allowReauth
 	}
 
 	// Determine if a clouds.yaml entry should be retrieved.
