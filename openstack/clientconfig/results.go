@@ -139,7 +139,7 @@ type AuthInfo struct {
 	// the RoundTripper interface and stores the number of failed retries. For an
 	// example of this, see here:
 	// https://github.com/rackspace/rack/blob/1.0.0/auth/clients.go#L311
-	AllowReauth *bool `yaml:"allow_reauth,omitempty" json:"allow_reauth,omitempty"`
+	AllowReauth bool `yaml:"allow_reauth,omitempty" json:"allow_reauth,omitempty"`
 }
 
 // Region represents a region included as part of cloud in clouds.yaml
