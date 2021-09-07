@@ -150,7 +150,6 @@ func (c *Config) LoadAndValidate() error {
 			ApplicationCredentialID:     c.ApplicationCredentialID,
 			ApplicationCredentialName:   c.ApplicationCredentialName,
 			ApplicationCredentialSecret: c.ApplicationCredentialSecret,
-			AllowReauth:                 &c.AllowReauth,
 		}
 		clientOpts.AuthInfo = authInfo
 	}
