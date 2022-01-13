@@ -656,6 +656,9 @@ func v3auth(cloud *Cloud, opts *ClientOpts) (*gophercloud.AuthOptions, error) {
 			} else if cloud.AuthInfo.DomainName != "" {
 				scope.DomainName = cloud.AuthInfo.DomainName
 			}
+			if cloud.AuthInfo.SystemScope != "" {
+				scope.System = true
+			}
 		} else {
 			// If Domain* is set, but UserDomain* or ProjectDomain* aren't,
 			// then use Domain* as the default setting.
