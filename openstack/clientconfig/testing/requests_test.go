@@ -86,6 +86,7 @@ func TestGetCloudFromYAML(t *testing.T) {
 
 func TestGetCloudFromYAMLOSCLOUD(t *testing.T) {
 	os.Setenv("OS_CLOUD", "california")
+	defer os.Unsetenv("OS_CLOUD")
 
 	clientOpts := &clientconfig.ClientOpts{
 		Cloud: "hawaii",
@@ -94,18 +95,15 @@ func TestGetCloudFromYAMLOSCLOUD(t *testing.T) {
 	actual, err := clientconfig.GetCloudFromYAML(clientOpts)
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, &HawaiiCloudYAML, actual)
-
-	os.Unsetenv("OS_CLOUD")
 }
 
 func TestGetCloudFromYAMLMissingClientOpts(t *testing.T) {
 	os.Setenv("OS_CLOUD", "california")
+	defer os.Unsetenv("OS_CLOUD")
 
 	actual, err := clientconfig.GetCloudFromYAML(nil)
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, &CaliforniaCloudYAML, actual)
-
-	os.Unsetenv("OS_CLOUD")
 }
 
 func TestAuthOptionsExplicitCloud(t *testing.T) {
@@ -125,6 +123,7 @@ func TestAuthOptionsExplicitCloud(t *testing.T) {
 
 func TestAuthOptionsOSCLOUD(t *testing.T) {
 	os.Setenv("FOO_CLOUD", "hawaii")
+	defer os.Unsetenv("FOO_CLOUD")
 
 	clientOpts := &clientconfig.ClientOpts{
 		EnvPrefix: "FOO_",
@@ -136,12 +135,11 @@ func TestAuthOptionsOSCLOUD(t *testing.T) {
 	}
 
 	th.AssertDeepEquals(t, HawaiiAuthOpts, actual)
-
-	os.Unsetenv("FOO_CLOUD")
 }
 
 func TestAuthOptionsExplicitCloudAndOSCLOUD(t *testing.T) {
 	os.Setenv("FOO_CLOUD", "hawaii")
+	defer os.Unsetenv("FOO_CLOUD")
 
 	clientOpts := &clientconfig.ClientOpts{
 		EnvPrefix: "FOO_",
@@ -155,12 +153,11 @@ func TestAuthOptionsExplicitCloudAndOSCLOUD(t *testing.T) {
 
 	// We should have ignored the cloud configuration option
 	th.AssertDeepEquals(t, CaliforniaAuthOpts, actual)
-
-	os.Unsetenv("FOO_CLOUD")
 }
 
 func TestAuthOptionsMissingClientOpts(t *testing.T) {
 	os.Setenv("OS_CLOUD", "hawaii")
+	defer os.Unsetenv("OS_CLOUD")
 
 	actual, err := clientconfig.AuthOptions(nil)
 	if err != nil {
@@ -170,8 +167,6 @@ func TestAuthOptionsMissingClientOpts(t *testing.T) {
 	// We should have handled the missing config opts and fallen back to
 	// defaults
 	th.AssertDeepEquals(t, HawaiiAuthOpts, actual)
-
-	os.Unsetenv("OS_CLOUD")
 }
 
 func TestAuthOptionsCreationFromCloudsYAML(t *testing.T) {
@@ -304,15 +299,12 @@ func TestAuthOptionsCreationFromEnv(t *testing.T) {
 	for cloud, envVars := range allEnvVars {
 		for k, v := range envVars {
 			os.Setenv(k, v)
+			defer os.Unsetenv(k)
 		}
 
 		actualAuthOpts, err := clientconfig.AuthOptions(nil)
 		th.AssertNoErr(t, err)
 		th.AssertDeepEquals(t, expectedAuthOpts[cloud], actualAuthOpts)
-
-		for k := range envVars {
-			os.Unsetenv(k)
-		}
 	}
 }
 
@@ -332,15 +324,12 @@ func TestAuthOptionsCreationFromLegacyEnv(t *testing.T) {
 	for cloud, envVars := range allEnvVars {
 		for k, v := range envVars {
 			os.Setenv(k, v)
+			defer os.Unsetenv(k)
 		}
 
 		actualAuthOpts, err := clientconfig.AuthOptions(nil)
 		th.AssertNoErr(t, err)
 		th.AssertDeepEquals(t, expectedAuthOpts[cloud], actualAuthOpts)
-
-		for k := range envVars {
-			os.Unsetenv(k)
-		}
 	}
 }
 
