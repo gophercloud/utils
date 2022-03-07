@@ -297,14 +297,16 @@ func TestAuthOptionsCreationFromEnv(t *testing.T) {
 	}
 
 	for cloud, envVars := range allEnvVars {
-		for k, v := range envVars {
-			os.Setenv(k, v)
-			defer os.Unsetenv(k)
-		}
+		t.Run(cloud, func(t *testing.T) {
+			for k, v := range envVars {
+				os.Setenv(k, v)
+				defer os.Unsetenv(k)
+			}
 
-		actualAuthOpts, err := clientconfig.AuthOptions(nil)
-		th.AssertNoErr(t, err)
-		th.AssertDeepEquals(t, expectedAuthOpts[cloud], actualAuthOpts)
+			actualAuthOpts, err := clientconfig.AuthOptions(nil)
+			th.AssertNoErr(t, err)
+			th.AssertDeepEquals(t, expectedAuthOpts[cloud], actualAuthOpts)
+		})
 	}
 }
 
@@ -322,14 +324,16 @@ func TestAuthOptionsCreationFromLegacyEnv(t *testing.T) {
 	}
 
 	for cloud, envVars := range allEnvVars {
-		for k, v := range envVars {
-			os.Setenv(k, v)
-			defer os.Unsetenv(k)
-		}
+		t.Run(cloud, func(t *testing.T) {
+			for k, v := range envVars {
+				os.Setenv(k, v)
+				defer os.Unsetenv(k)
+			}
 
-		actualAuthOpts, err := clientconfig.AuthOptions(nil)
-		th.AssertNoErr(t, err)
-		th.AssertDeepEquals(t, expectedAuthOpts[cloud], actualAuthOpts)
+			actualAuthOpts, err := clientconfig.AuthOptions(nil)
+			th.AssertNoErr(t, err)
+			th.AssertDeepEquals(t, expectedAuthOpts[cloud], actualAuthOpts)
+		})
 	}
 }
 
