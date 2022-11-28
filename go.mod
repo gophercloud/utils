@@ -1,7 +1,7 @@
 module github.com/gophercloud/utils
 
 require (
-	github.com/gophercloud/gophercloud v1.0.0
+	github.com/gophercloud/gophercloud v1.1.0
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/mitchellh/go-homedir v1.1.0
 	golang.org/x/sys v0.2.0
