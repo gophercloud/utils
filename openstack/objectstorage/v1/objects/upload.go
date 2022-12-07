@@ -65,7 +65,8 @@ type UploadOpts struct {
 }
 
 // originalObject is an interal structure used to store information about an
-//  existing object.
+//
+//	existing object.
 type originalObject struct {
 	headers  *objects.GetHeader
 	metadata map[string]string

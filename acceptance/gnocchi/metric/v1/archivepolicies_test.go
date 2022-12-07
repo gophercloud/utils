@@ -1,3 +1,4 @@
+//go:build acceptance || metric || archivepolicies
 // +build acceptance metric archivepolicies
 
 package v1

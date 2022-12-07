@@ -1,3 +1,4 @@
+//go:build acceptance || metric || resources
 // +build acceptance metric resources
 
 package v1

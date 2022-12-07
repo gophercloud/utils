@@ -1,3 +1,4 @@
+//go:build acceptance || metric || resourcetypes
 // +build acceptance metric resourcetypes
 
 package v1
