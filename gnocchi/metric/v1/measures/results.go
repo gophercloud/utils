@@ -47,16 +47,18 @@ UnmarshalJSON helps to unmarshal response from reading Gnocchi measures.
 Gnocchi APIv1 returns measures in a such format:
 
 [
-    [
-        "2017-01-08T10:00:00+00:00",
-        300.0,
-        146.0
-    ],
-    [
-        "2017-01-08T10:05:00+00:00",
-        300.0,
-        58.0
-    ]
+
+	[
+	    "2017-01-08T10:00:00+00:00",
+	    300.0,
+	    146.0
+	],
+	[
+	    "2017-01-08T10:05:00+00:00",
+	    300.0,
+	    58.0
+	]
+
 ]
 
 Helper unmarshals every nested array into the Measure type.

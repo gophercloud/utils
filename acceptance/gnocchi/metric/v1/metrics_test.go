@@ -1,3 +1,4 @@
+//go:build acceptance || metric || metrics
 // +build acceptance metric metrics
 
 package v1
