@@ -17,7 +17,28 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-// AuthType respresents a valid method of authentication.
+// ServiceKind represents a kind of client, e.g. compute or volume.
+type ServiceKind string
+
+const (
+	Volume         ServiceKind = "volume"
+	Clustering     ServiceKind = "clustering"
+	Compute        ServiceKind = "compute"
+	Container      ServiceKind = "container"
+	ContainerInfra ServiceKind = "container-infra"
+	Database       ServiceKind = "database"
+	Dns            ServiceKind = "dns"
+	Gnocchi        ServiceKind = "gnocchi"
+	Identity       ServiceKind = "identity"
+	Image          ServiceKind = "image"
+	LoadBalancer   ServiceKind = "load-balancer"
+	Network        ServiceKind = "network"
+	ObjectStore    ServiceKind = "object-store"
+	Orchestration  ServiceKind = "orchestration"
+	Sharev2        ServiceKind = "sharev2"
+)
+
+// AuthType represents a valid method of authentication.
 type AuthType string
 
 const (
@@ -875,21 +896,20 @@ func NewServiceClient(service string, opts *ClientOpts) (*gophercloud.ServiceCli
 	}
 
 	switch service {
-	case "clustering":
+	case string(Clustering):
 		return openstack.NewClusteringV1(pClient, eo)
-	case "compute":
-		return openstack.NewComputeV2(pClient, eo)
-	case "container":
+	case string(Compute):
+	case string(Container):
 		return openstack.NewContainerV1(pClient, eo)
-	case "container-infra":
+	case string(ContainerInfra):
 		return openstack.NewContainerInfraV1(pClient, eo)
-	case "database":
+	case string(Database):
 		return openstack.NewDBV1(pClient, eo)
-	case "dns":
+	case string(Dns):
 		return openstack.NewDNSV2(pClient, eo)
-	case "gnocchi":
+	case string(Gnocchi):
 		return gnocchi.NewGnocchiV1(pClient, eo)
-	case "identity":
+	case string(Identity):
 		identityVersion := "3"
 		if v := cloud.IdentityAPIVersion; v != "" {
 			identityVersion = v
@@ -903,19 +923,19 @@ func NewServiceClient(service string, opts *ClientOpts) (*gophercloud.ServiceCli
 		default:
 			return nil, fmt.Errorf("invalid identity API version")
 		}
-	case "image":
+	case string(Image):
 		return openstack.NewImageServiceV2(pClient, eo)
-	case "load-balancer":
+	case string(LoadBalancer):
 		return openstack.NewLoadBalancerV2(pClient, eo)
-	case "network":
+	case string(Network):
 		return openstack.NewNetworkV2(pClient, eo)
-	case "object-store":
+	case string(ObjectStore):
 		return openstack.NewObjectStorageV1(pClient, eo)
-	case "orchestration":
+	case string(Orchestration):
 		return openstack.NewOrchestrationV1(pClient, eo)
-	case "sharev2":
+	case string(Sharev2):
 		return openstack.NewSharedFileSystemV2(pClient, eo)
-	case "volume":
+	case string(Volume):
 		volumeVersion := "3"
 		if v := cloud.VolumeAPIVersion; v != "" {
 			volumeVersion = v
