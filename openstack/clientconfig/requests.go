@@ -895,21 +895,27 @@ func NewServiceClient(service string, opts *ClientOpts) (*gophercloud.ServiceCli
 		Availability: GetEndpointType(endpointType),
 	}
 
+	var newClient func(*gophercloud.ProviderClient, gophercloud.EndpointOpts) (*gophercloud.ServiceClient, error)
+	var microversion string
+
 	switch service {
 	case string(Clustering):
-		return openstack.NewClusteringV1(pClient, eo)
+		newClient = openstack.NewClusteringV1
 	case string(Compute):
+		microversion = getMicroversion(envPrefix+"COMPUTE_API_VERSION", cloud.ComputeAPIVersion)
+		newClient = openstack.NewComputeV2
 	case string(Container):
-		return openstack.NewContainerV1(pClient, eo)
+		newClient = openstack.NewContainerV1
 	case string(ContainerInfra):
-		return openstack.NewContainerInfraV1(pClient, eo)
+		newClient = openstack.NewContainerInfraV1
 	case string(Database):
-		return openstack.NewDBV1(pClient, eo)
+		newClient = openstack.NewDBV1
 	case string(Dns):
-		return openstack.NewDNSV2(pClient, eo)
+		newClient = openstack.NewDNSV2
 	case string(Gnocchi):
-		return gnocchi.NewGnocchiV1(pClient, eo)
+		newClient = gnocchi.NewGnocchiV1
 	case string(Identity):
+		microversion = getMicroversion(envPrefix+"IDENTITY_API_VERSION", cloud.IdentityAPIVersion)
 		identityVersion := "3"
 		if v := cloud.IdentityAPIVersion; v != "" {
 			identityVersion = v
@@ -917,25 +923,29 @@ func NewServiceClient(service string, opts *ClientOpts) (*gophercloud.ServiceCli
 
 		switch identityVersion {
 		case "v2", "2", "2.0":
-			return openstack.NewIdentityV2(pClient, eo)
+			newClient = openstack.NewIdentityV2
 		case "v3", "3":
-			return openstack.NewIdentityV3(pClient, eo)
+			newClient = openstack.NewIdentityV3
 		default:
 			return nil, fmt.Errorf("invalid identity API version")
 		}
 	case string(Image):
-		return openstack.NewImageServiceV2(pClient, eo)
+		microversion = getMicroversion(envPrefix+"IMAGE_API_VERSION", cloud.ImageAPIVersion)
+		newClient = openstack.NewImageServiceV2
 	case string(LoadBalancer):
-		return openstack.NewLoadBalancerV2(pClient, eo)
+		newClient = openstack.NewLoadBalancerV2
 	case string(Network):
-		return openstack.NewNetworkV2(pClient, eo)
+		microversion = getMicroversion(envPrefix+"NETWORK_API_VERSION", cloud.NetworkAPIVersion)
+		newClient = openstack.NewNetworkV2
 	case string(ObjectStore):
-		return openstack.NewObjectStorageV1(pClient, eo)
+		newClient = openstack.NewObjectStorageV1
 	case string(Orchestration):
-		return openstack.NewOrchestrationV1(pClient, eo)
+		microversion = getMicroversion(envPrefix+"ORCHESTRATION_API_VERSION", cloud.OrchestrationAPIVersion)
+		newClient = openstack.NewOrchestrationV1
 	case string(Sharev2):
-		return openstack.NewSharedFileSystemV2(pClient, eo)
+		newClient = openstack.NewSharedFileSystemV2
 	case string(Volume):
+		microversion = getMicroversion(envPrefix+"VOLUME_API_VERSION", cloud.VolumeAPIVersion)
 		volumeVersion := "3"
 		if v := cloud.VolumeAPIVersion; v != "" {
 			volumeVersion = v
@@ -943,14 +953,23 @@ func NewServiceClient(service string, opts *ClientOpts) (*gophercloud.ServiceCli
 
 		switch volumeVersion {
 		case "v1", "1":
-			return openstack.NewBlockStorageV1(pClient, eo)
+			newClient = openstack.NewBlockStorageV1
 		case "v2", "2":
-			return openstack.NewBlockStorageV2(pClient, eo)
+			newClient = openstack.NewBlockStorageV2
 		case "v3", "3":
-			return openstack.NewBlockStorageV3(pClient, eo)
+			newClient = openstack.NewBlockStorageV3
 		default:
 			return nil, fmt.Errorf("invalid volume API version")
 		}
+	}
+
+	if newClient != nil {
+		client, err := newClient(pClient, eo)
+		if err != nil {
+			return nil, err
+		}
+		client.Microversion = microversion
+		return client, nil
 	}
 
 	return nil, fmt.Errorf("unable to create a service client for %s", service)
@@ -1014,4 +1033,19 @@ func isApplicationCredential(authInfo *AuthInfo) bool {
 		return false
 	}
 	return true
+}
+
+func getMicroversion(envVar string, cloudVar string) string {
+	var microversion string
+	// First, check if the environment variable is set.
+	if v := env.Getenv(envVar); v != "" {
+		microversion = v
+	}
+	// Next, check if the cloud entry.
+	if v := cloudVar; v != "" {
+		microversion = v
+	}
+	// TODO: Do we need to check opts also?
+	// They don't currently contain versioning information, but maybe they should...
+	return microversion
 }

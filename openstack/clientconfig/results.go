@@ -32,8 +32,23 @@ type Cloud struct {
 	Interface    string `yaml:"interface,omitempty" json:"interface,omitempty"`
 
 	// API Version overrides.
-	IdentityAPIVersion string `yaml:"identity_api_version,omitempty" json:"identity_api_version,omitempty"`
-	VolumeAPIVersion   string `yaml:"volume_api_version,omitempty" json:"volume_api_version,omitempty"`
+	IdentityAPIVersion      string `yaml:"identity_api_version,omitempty" json:"identity_api_version,omitempty"`
+	VolumeAPIVersion        string `yaml:"volume_api_version,omitempty" json:"volume_api_version,omitempty"`
+	ComputeAPIVersion       string `yaml:"compute_api_version,omitempty" json:"compute_api_version,omitempty"`
+	ImageAPIVersion         string `yaml:"image_api_version,omitempty" json:"image_api_version,omitempty"`
+	NetworkAPIVersion       string `yaml:"network_api_version,omitempty" json:"network_api_version,omitempty"`
+	BaremetalAPIVersion     string `yaml:"baremetal_api_version,omitempty" json:"baremetal_api_version,omitempty"`
+	OrchestrationAPIVersion string `yaml:"orchestration_api_version,omitempty" json:"orchestration_api_version,omitempty"`
+	LoadbalancerAPIVersion  string `yaml:"loadbalancer_api_version,omitempty" json:"loadbalancer_api_version,omitempty"`
+	// TODO:
+	// Container
+	// ContainerInfra?
+	// Clustering
+	// Database
+	// Dns
+	// Gnocci?
+	// Object
+	// Share?
 
 	// Verify whether or not SSL API requests should be verified.
 	Verify *bool `yaml:"verify,omitempty" json:"verify,omitempty"`

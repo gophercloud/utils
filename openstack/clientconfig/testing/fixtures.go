@@ -596,3 +596,20 @@ var LegacyCloudYAML = clientconfig.Clouds{
 		"yukon":   YukonCloudYAML,
 	},
 }
+
+var VersionedCloudYAML = clientconfig.Cloud{
+	AuthInfo: &clientconfig.AuthInfo{
+		Username:    "jdoe",
+		Password:    "password",
+		ProjectName: "Some Project",
+	},
+	IdentityAPIVersion:      "3",
+	VolumeAPIVersion:        "3.68",
+	ComputeAPIVersion:       "2.53",
+	ImageAPIVersion:         "2.16",
+	NetworkAPIVersion:       "2.0",
+	BaremetalAPIVersion:     "1.78",
+	OrchestrationAPIVersion: "2.57",
+	LoadbalancerAPIVersion:  "2",
+	Verify:                  &iTrue,
+}

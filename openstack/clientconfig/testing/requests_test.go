@@ -54,6 +54,9 @@ func TestGetCloudFromYAML(t *testing.T) {
 			Cloud:      "disconnected_clouds",
 			RegionName: "NOWHERE",
 		},
+		"versioned_cloud": {
+			Cloud: "versioned_cloud",
+		},
 	}
 
 	expectedClouds := map[string]*clientconfig.Cloud{
@@ -75,6 +78,7 @@ func TestGetCloudFromYAML(t *testing.T) {
 		"disconnected_smw":   &DisconnectedSomewhereCloudYAML,
 		"disconnected_anw":   &DisconnectedAnywhereCloudYAML,
 		"disconnected_now":   &DisconnectedNowhereCloudYAML,
+		"versioned_cloud":    &VersionedCloudYAML,
 	}
 
 	for cloud, clientOpts := range allClientOpts {
@@ -335,6 +339,32 @@ func TestAuthOptionsCreationFromLegacyEnv(t *testing.T) {
 			th.AssertDeepEquals(t, expectedAuthOpts[cloud], actualAuthOpts)
 		})
 	}
+}
+
+func TestAPIVersionFromEnv(t *testing.T) {
+	os.Unsetenv("OS_CLOUD")
+
+	var apiVersionEnvVars = map[string]string{
+		"COMPUTE_API_VERSION": "2.93",
+		"IMAGE_API_VERSION":   "2",
+	}
+
+	expected := VersionedCloudYAML
+	expected.ComputeAPIVersion = "2.93"
+	expected.ImageAPIVersion = "2"
+
+	for k, v := range apiVersionEnvVars {
+		os.Setenv(k, v)
+		defer os.Unsetenv(k)
+	}
+
+	opts := &clientconfig.ClientOpts{
+		Cloud: "versioned_cloud",
+	}
+
+	actual, err := clientconfig.GetCloudFromYAML(opts)
+	th.AssertNoErr(t, err)
+	th.AssertDeepEquals(t, &VersionedCloudYAML, actual)
 }
 
 type CustomYAMLOpts struct {

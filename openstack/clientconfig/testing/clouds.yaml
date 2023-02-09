@@ -170,3 +170,16 @@ clouds:
         values:
           auth:
             auth_url: "https://nowhere.example.com:5000/v3"
+  versioned_cloud:
+    auth:
+      username: "jdoe"
+      password: "password"
+      project_name: "Some Project"
+    identity_api_version: "3"
+    volume_api_version: "3.68"
+    compute_api_version: "2.53"
+    image_api_version: "2.16"
+    network_api_version: "2.0"
+    baremetal_api_version: "1.78"
+    orchestration_api_version: "2.57"
+    loadbalancer_api_version: "2"
