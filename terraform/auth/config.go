@@ -51,7 +51,7 @@ type Config struct {
 	DelayedAuth   bool
 	AllowReauth   bool
 	OsClient      *gophercloud.ProviderClient
-	authOpts      *gophercloud.AuthOptions
+	AuthOpts      *gophercloud.AuthOptions
 	authenticated bool
 	authFailed    error
 	swClient      *gophercloud.ServiceClient
@@ -211,7 +211,7 @@ func (c *Config) LoadAndValidate() error {
 		}
 	}
 
-	c.authOpts = ao
+	c.AuthOpts = ao
 	c.OsClient = client
 
 	return nil
@@ -230,7 +230,7 @@ func (c *Config) Authenticate() error {
 	}
 
 	if !c.authenticated {
-		if err := openstack.Authenticate(c.OsClient, *c.authOpts); err != nil {
+		if err := openstack.Authenticate(c.OsClient, *c.AuthOpts); err != nil {
 			c.authFailed = err
 			return err
 		}
