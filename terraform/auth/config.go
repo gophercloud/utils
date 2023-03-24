@@ -151,6 +151,12 @@ func (c *Config) LoadAndValidate() error {
 			ApplicationCredentialName:   c.ApplicationCredentialName,
 			ApplicationCredentialSecret: c.ApplicationCredentialSecret,
 		}
+
+		// Define System Scope if enabled
+		if c.AuthOpts.Scope.System {
+			authInfo.SystemScope = "true"
+		}
+
 		clientOpts.AuthInfo = authInfo
 	}
 
