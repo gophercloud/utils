@@ -366,6 +366,9 @@ func (c *Config) ObjectStorageV1Client(region string) (*gophercloud.ServiceClien
 				User: c.Username,
 				Key:  c.Password,
 			})
+			if err != nil {
+				return nil, err
+			}
 		} else {
 			c.MutexKV.Lock("SwAuth")
 			defer c.MutexKV.Unlock("SwAuth")
