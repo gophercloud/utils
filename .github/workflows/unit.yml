@@ -2,7 +2,7 @@ on: [push, pull_request]
 name: Unit Testing
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -14,11 +14,11 @@ jobs:
 
     steps:
       - name: Setup Go ${{ matrix.go-version }}
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Setup environment
         run: |
@@ -26,7 +26,7 @@ jobs:
           cd "$(mktemp -d)"
           go mod init unit_tests
 
-          go get golang.org/x/tools/cmd/goimports@latest
+          go install golang.org/x/tools/cmd/goimports@latest
 
       - name: Run go vet
         run: |
