@@ -1,8 +1,8 @@
 package images
 
 import (
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/openstack/imageservice/v2/images"
+	"github.com/gophercloud/gophercloud/v2"
+	"github.com/gophercloud/gophercloud/v2/openstack/imageservice/v2/images"
 )
 
 // IDFromName is a convenience function that returns an image's ID given its

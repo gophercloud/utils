@@ -7,7 +7,7 @@ jobs:
       fail-fast: false
       matrix:
         go-version:
-          - "1.15"
+          - "1.21"
 
     env:
       GO111MODULE: "on"
@@ -26,8 +26,7 @@ jobs:
           cd "$(mktemp -d)"
           go mod init unit_tests
 
-          # Pin to a version that Go v1.15 supports
-          go get golang.org/x/tools/cmd/goimports@v0.8.0
+          go get golang.org/x/tools/cmd/goimports@latest
 
       - name: Run go vet
         run: |

@@ -1,8 +1,8 @@
 package snapshots
 
 import (
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/openstack/blockstorage/v3/snapshots"
+	"github.com/gophercloud/gophercloud/v2"
+	"github.com/gophercloud/gophercloud/v2/openstack/blockstorage/v3/snapshots"
 )
 
 // IDFromName is a convenience function that returns a snapshot's ID given its

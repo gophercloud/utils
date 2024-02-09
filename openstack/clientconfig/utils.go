@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"reflect"
 
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/utils/env"
+	"github.com/gophercloud/gophercloud/v2"
+	"github.com/gophercloud/utils/v2/env"
 )
 
 // defaultIfEmpty is a helper function to make it cleaner to set default value

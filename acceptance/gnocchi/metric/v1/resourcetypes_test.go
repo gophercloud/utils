@@ -6,9 +6,9 @@ package v1
 import (
 	"testing"
 
-	"github.com/gophercloud/gophercloud/acceptance/tools"
-	"github.com/gophercloud/utils/acceptance/clients"
-	"github.com/gophercloud/utils/gnocchi/metric/v1/resourcetypes"
+	"github.com/gophercloud/gophercloud/v2/internal/acceptance/tools"
+	"github.com/gophercloud/utils/v2/acceptance/clients"
+	"github.com/gophercloud/utils/v2/gnocchi/metric/v1/resourcetypes"
 )
 
 func TestResourceTypesList(t *testing.T) {

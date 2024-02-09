@@ -11,11 +11,11 @@ import (
 	"path"
 	"testing"
 
-	"github.com/gophercloud/gophercloud/acceptance/tools"
 	th "github.com/gophercloud/gophercloud/testhelper"
+	"github.com/gophercloud/gophercloud/v2/internal/acceptance/tools"
 
-	"github.com/gophercloud/utils/openstack/clientconfig"
-	"github.com/gophercloud/utils/openstack/objectstorage/v1/objects"
+	"github.com/gophercloud/utils/v2/openstack/clientconfig"
+	"github.com/gophercloud/utils/v2/openstack/objectstorage/v1/objects"
 )
 
 func TestObjectStreamingUploadDownload(t *testing.T) {

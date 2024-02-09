@@ -7,12 +7,12 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/openstack"
-	"github.com/gophercloud/utils/client"
-	"github.com/gophercloud/utils/env"
-	"github.com/gophercloud/utils/gnocchi"
-	"github.com/gophercloud/utils/openstack/clientconfig"
+	"github.com/gophercloud/gophercloud/v2/openstack"
+	"github.com/gophercloud/gophercloud/v2"
+	"github.com/gophercloud/utils/v2/client"
+	"github.com/gophercloud/utils/v2/env"
+	"github.com/gophercloud/utils/v2/gnocchi"
+	"github.com/gophercloud/utils/v2/openstack/clientconfig"
 )
 
 // NewGnocchiV1Client returns a *ServiceClient for making calls

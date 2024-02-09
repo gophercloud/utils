@@ -3,8 +3,8 @@ package testing
 import (
 	"testing"
 
-	th "github.com/gophercloud/gophercloud/testhelper"
-	"github.com/gophercloud/utils/openstack/objectstorage/v1/objects"
+	th "github.com/gophercloud/gophercloud/v2/testhelper"
+	"github.com/gophercloud/utils/v2/openstack/objectstorage/v1/objects"
 )
 
 func TestContainerPartition(t *testing.T) {

@@ -3,10 +3,10 @@ package testing
 import (
 	"testing"
 
-	o "github.com/gophercloud/gophercloud/openstack/objectstorage/v1/objects"
-	th "github.com/gophercloud/gophercloud/testhelper"
-	fake "github.com/gophercloud/gophercloud/testhelper/client"
-	"github.com/gophercloud/utils/openstack/objectstorage/v1/objects"
+	o "github.com/gophercloud/gophercloud/v2/openstack/objectstorage/v1/objects"
+	th "github.com/gophercloud/gophercloud/v2/testhelper"
+	fake "github.com/gophercloud/gophercloud/v2/testhelper/client"
+	"github.com/gophercloud/utils/v2/openstack/objectstorage/v1/objects"
 )
 
 func TestIsIdentical(t *testing.T) {

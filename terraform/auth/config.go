@@ -7,13 +7,13 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/openstack"
-	"github.com/gophercloud/gophercloud/openstack/objectstorage/v1/swauth"
-	osClient "github.com/gophercloud/utils/client"
-	"github.com/gophercloud/utils/internal"
-	"github.com/gophercloud/utils/openstack/clientconfig"
-	"github.com/gophercloud/utils/terraform/mutexkv"
+	"github.com/gophercloud/gophercloud/v2"
+	"github.com/gophercloud/gophercloud/v2/openstack"
+	"github.com/gophercloud/gophercloud/v2/openstack/objectstorage/v1/swauth"
+	osClient "github.com/gophercloud/utils/v2/client"
+	"github.com/gophercloud/utils/v2/internal"
+	"github.com/gophercloud/utils/v2/openstack/clientconfig"
+	"github.com/gophercloud/utils/v2/terraform/mutexkv"
 )
 
 type Config struct {

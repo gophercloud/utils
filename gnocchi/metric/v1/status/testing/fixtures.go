@@ -1,6 +1,6 @@
 package testing
 
-import "github.com/gophercloud/utils/gnocchi/metric/v1/status"
+import "github.com/gophercloud/utils/v2/gnocchi/metric/v1/status"
 
 // StatusGetWithDetailsResult represents raw server response with all status attributes
 // from a server to a get request.
