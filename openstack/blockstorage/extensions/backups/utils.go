@@ -1,8 +1,8 @@
 package backups
 
 import (
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/openstack/blockstorage/extensions/backups"
+	"github.com/gophercloud/gophercloud/v2"
+	"github.com/gophercloud/gophercloud/v2/openstack/blockstorage/extensions/backups"
 )
 
 // IDFromName is a convenience function that returns a backup's ID given its

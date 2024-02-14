@@ -10,10 +10,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/openstack/objectstorage/v1/containers"
-	"github.com/gophercloud/gophercloud/openstack/objectstorage/v1/objects"
-	"github.com/gophercloud/gophercloud/pagination"
+	"github.com/gophercloud/gophercloud/v2"
+	"github.com/gophercloud/gophercloud/v2/openstack/objectstorage/v1/containers"
+	"github.com/gophercloud/gophercloud/v2/openstack/objectstorage/v1/objects"
+	"github.com/gophercloud/gophercloud/v2/pagination"
 )
 
 // DownloadOpts represents options used for downloading an object.
@@ -61,7 +61,6 @@ func Download(client *gophercloud.ServiceClient, containerName string, objectNam
 		if opts.YesAll {
 			// Download everything
 			listOpts := containers.ListOpts{
-				Full:      true,
 				Delimiter: opts.Delimiter,
 				Prefix:    opts.Prefix,
 			}
@@ -351,7 +350,6 @@ func downloadObject(client *gophercloud.ServiceClient, containerName string, obj
 // downloadContainer will download all objects in a given container.
 func downloadContainer(client *gophercloud.ServiceClient, containerName string, opts *DownloadOpts) ([]DownloadResult, error) {
 	listOpts := objects.ListOpts{
-		Full:      true,
 		Prefix:    opts.Prefix,
 		Delimiter: opts.Delimiter,
 	}

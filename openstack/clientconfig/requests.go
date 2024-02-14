@@ -8,11 +8,11 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/openstack"
-	"github.com/gophercloud/utils/env"
-	"github.com/gophercloud/utils/gnocchi"
-	"github.com/gophercloud/utils/internal"
+	"github.com/gophercloud/gophercloud/v2"
+	"github.com/gophercloud/gophercloud/v2/openstack"
+	"github.com/gophercloud/utils/v2/env"
+	"github.com/gophercloud/utils/v2/gnocchi"
+	"github.com/gophercloud/utils/v2/internal"
 
 	"github.com/hashicorp/go-uuid"
 	yaml "gopkg.in/yaml.v2"

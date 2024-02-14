@@ -3,7 +3,7 @@ package testing
 import (
 	"time"
 
-	"github.com/gophercloud/utils/gnocchi/metric/v1/resources"
+	"github.com/gophercloud/utils/v2/gnocchi/metric/v1/resources"
 )
 
 // ResourceListResult represents raw server response from a server to a list call.

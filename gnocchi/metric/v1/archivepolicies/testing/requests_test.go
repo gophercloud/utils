@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/gophercloud/gophercloud/pagination"
-	th "github.com/gophercloud/gophercloud/testhelper"
-	"github.com/gophercloud/utils/gnocchi/metric/v1/archivepolicies"
-	fake "github.com/gophercloud/utils/gnocchi/testhelper/client"
+	"github.com/gophercloud/gophercloud/v2/pagination"
+	th "github.com/gophercloud/gophercloud/v2/testhelper"
+	"github.com/gophercloud/utils/v2/gnocchi/metric/v1/archivepolicies"
+	fake "github.com/gophercloud/utils/v2/gnocchi/testhelper/client"
 )
 
 func TestListArchivePolicies(t *testing.T) {

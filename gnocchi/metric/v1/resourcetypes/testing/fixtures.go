@@ -1,6 +1,6 @@
 package testing
 
-import "github.com/gophercloud/utils/gnocchi/metric/v1/resourcetypes"
+import "github.com/gophercloud/utils/v2/gnocchi/metric/v1/resourcetypes"
 
 // ResourceTypeListResult represents raw server response from a server to a list call.
 const ResourceTypeListResult = `[

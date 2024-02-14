@@ -11,10 +11,10 @@ Example usage with the default logger:
 		"net/http"
 		"os"
 
-		"github.com/gophercloud/gophercloud"
-		"github.com/gophercloud/gophercloud/openstack"
-		"github.com/gophercloud/utils/client"
-		"github.com/gophercloud/utils/openstack/clientconfig"
+		"github.com/gophercloud/gophercloud/v2"
+		"github.com/gophercloud/gophercloud/v2/openstack"
+		"github.com/gophercloud/utils/v2/client"
+		"github.com/gophercloud/utils/v2/openstack/clientconfig"
 	)
 
 	func NewComputeV2Client() (*gophercloud.ServiceClient, error) {
@@ -55,10 +55,10 @@ Example usage with the custom logger:
 		"net/http"
 		"os"
 
-		"github.com/gophercloud/gophercloud"
-		"github.com/gophercloud/gophercloud/openstack"
-		"github.com/gophercloud/utils/client"
-		"github.com/gophercloud/utils/openstack/clientconfig"
+		"github.com/gophercloud/gophercloud/v2"
+		"github.com/gophercloud/gophercloud/v2/openstack"
+		"github.com/gophercloud/utils/v2/client"
+		"github.com/gophercloud/utils/v2/openstack/clientconfig"
 		log "github.com/sirupsen/logrus"
 	)
 
@@ -108,10 +108,10 @@ Example usage with additinal headers:
 		"net/http"
 		"os"
 
-		"github.com/gophercloud/gophercloud"
-		"github.com/gophercloud/gophercloud/openstack"
-		"github.com/gophercloud/utils/client"
-		"github.com/gophercloud/utils/openstack/clientconfig"
+		"github.com/gophercloud/gophercloud/v2"
+		"github.com/gophercloud/gophercloud/v2/openstack"
+		"github.com/gophercloud/utils/v2/client"
+		"github.com/gophercloud/utils/v2/openstack/clientconfig"
 	)
 
 	func NewComputeV2Client() (*gophercloud.ServiceClient, error) {

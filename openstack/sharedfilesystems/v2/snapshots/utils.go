@@ -1,8 +1,8 @@
 package snapshots
 
 import (
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/openstack/sharedfilesystems/v2/snapshots"
+	"github.com/gophercloud/gophercloud/v2"
+	"github.com/gophercloud/gophercloud/v2/openstack/sharedfilesystems/v2/snapshots"
 )
 
 // IDFromName is a convenience function that returns a network's ID given its

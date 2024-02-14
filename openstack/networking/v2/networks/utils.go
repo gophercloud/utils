@@ -1,8 +1,8 @@
 package networks
 
 import (
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/openstack/networking/v2/networks"
+	"github.com/gophercloud/gophercloud/v2"
+	"github.com/gophercloud/gophercloud/v2/openstack/networking/v2/networks"
 )
 
 // IDFromName is a convenience function that returns a network's ID given its
