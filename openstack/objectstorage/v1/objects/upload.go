@@ -2,6 +2,7 @@ package objects
 
 import (
 	"bytes"
+	"context"
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
@@ -117,7 +118,7 @@ type sloManifest struct {
 // Upload uploads a single object to swift.
 //
 // https://github.com/openstack/python-swiftclient/blob/e65070964c7b1e04119c87e5f344d39358780d18/swiftclient/service.py#L1371
-func Upload(client *gophercloud.ServiceClient, containerName, objectName string, opts *UploadOpts) (*UploadResult, error) {
+func Upload(ctx context.Context, client *gophercloud.ServiceClient, containerName, objectName string, opts *UploadOpts) (*UploadResult, error) {
 	var sourceFileInfo os.FileInfo
 	origObject := new(originalObject)
 
@@ -145,10 +146,10 @@ func Upload(client *gophercloud.ServiceClient, containerName, objectName string,
 	// Try to create the container, but ignore any errors.
 	// TODO: add X-Storage-Policy to Gophercloud.
 	// If a storage policy was specified, create the container with that policy.
-	containers.Create(client, containerName, nil)
+	containers.Create(ctx, client, containerName, nil)
 
 	// Check and see if the object being requested already exists.
-	objectResult := objects.Get(client, containerName, objectName, nil)
+	objectResult := objects.Get(ctx, client, containerName, objectName, nil)
 	if objectResult.Err != nil {
 		if _, ok := objectResult.Err.(gophercloud.ErrDefault404); ok {
 			origObject = nil
@@ -206,7 +207,7 @@ func Upload(client *gophercloud.ServiceClient, containerName, objectName string,
 		// TODO: add X-Storage-Policy to Gophercloud.
 		// Create the segment container in either the specified policy or the same
 		// policy as the above container.
-		res := containers.Create(client, opts.SegmentContainer, nil)
+		res := containers.Create(ctx, client, opts.SegmentContainer, nil)
 		if res.Err != nil {
 			return nil, fmt.Errorf("error creating segment container %s: %s", opts.SegmentContainer, res.Err)
 		}
@@ -214,7 +215,7 @@ func Upload(client *gophercloud.ServiceClient, containerName, objectName string,
 
 	// If an io.Reader (streaming) was specified...
 	if opts.Content != nil {
-		return uploadObject(client, containerName, objectName, opts, origObject, sourceFileInfo)
+		return uploadObject(ctx, client, containerName, objectName, opts, origObject, sourceFileInfo)
 	}
 
 	// If a local path was specified...
@@ -222,25 +223,26 @@ func Upload(client *gophercloud.ServiceClient, containerName, objectName string,
 		if sourceFileInfo.IsDir() {
 			// If the source path is a directory, then create a Directory Marker,
 			// even if DirMarker wasn't specified.
-			return createDirMarker(client, containerName, objectName, opts, origObject, sourceFileInfo)
+			return createDirMarker(ctx, client, containerName, objectName, opts, origObject, sourceFileInfo)
 		}
 
-		return uploadObject(client, containerName, objectName, opts, origObject, sourceFileInfo)
+		return uploadObject(ctx, client, containerName, objectName, opts, origObject, sourceFileInfo)
 	}
 
 	if opts.DirMarker {
-		return createDirMarker(client, containerName, objectName, opts, origObject, sourceFileInfo)
+		return createDirMarker(ctx, client, containerName, objectName, opts, origObject, sourceFileInfo)
 	}
 
 	// Finally, create an empty object.
 	opts.Content = strings.NewReader("")
-	return uploadObject(client, containerName, objectName, opts, origObject, sourceFileInfo)
+	return uploadObject(ctx, client, containerName, objectName, opts, origObject, sourceFileInfo)
 }
 
 // createDirMarker will create a pseudo-directory in Swift.
 //
 // https://github.com/openstack/python-swiftclient/blob/e65070964c7b1e04119c87e5f344d39358780d18/swiftclient/service.py#L1656
 func createDirMarker(
+	ctx context.Context,
 	client *gophercloud.ServiceClient,
 	containerName string,
 	objectName string,
@@ -291,7 +293,7 @@ func createDirMarker(
 		Metadata:      opts.Metadata,
 	}
 
-	res := objects.Create(client, containerName, objectName, createOpts)
+	res := objects.Create(ctx, client, containerName, objectName, createOpts)
 	if res.Err != nil {
 		return uploadResult, res.Err
 	}
@@ -306,6 +308,7 @@ func createDirMarker(
 //
 // https://github.com/openstack/python-swiftclient/blob/e65070964c7b1e04119c87e5f344d39358780d18/swiftclient/service.py#L2006
 func uploadObject(
+	ctx context.Context,
 	client *gophercloud.ServiceClient,
 	containerName string,
 	objectName string,
@@ -350,7 +353,7 @@ func uploadObject(
 					StaticLargeObject: origHeaders.StaticLargeObject,
 				}
 
-				manifestData, err = GetManifest(client, mo)
+				manifestData, err = GetManifest(ctx, client, mo)
 				if err != nil {
 					return nil, fmt.Errorf("unable to get manifest for %s/%s: %s", containerName, objectName, err)
 				}
@@ -447,7 +450,7 @@ func uploadObject(
 				SegmentStart:     segStart,
 			}
 
-			result, err := uploadSegment(client, uso)
+			result, err := uploadSegment(ctx, client, uso)
 			if err != nil {
 				return nil, err
 			}
@@ -466,7 +469,7 @@ func uploadObject(
 				Metadata:      opts.Metadata,
 			}
 
-			err := uploadSLOManifest(client, uploadOpts)
+			err := uploadSLOManifest(ctx, client, uploadOpts)
 			if err != nil {
 				return nil, err
 			}
@@ -494,7 +497,7 @@ func uploadObject(
 				ObjectManifest: newObjectManifest,
 			}
 
-			res := objects.Create(client, containerName, objectName, createOpts)
+			res := objects.Create(ctx, client, containerName, objectName, createOpts)
 			if res.Err != nil {
 				return nil, res.Err
 			}
@@ -519,7 +522,7 @@ func uploadObject(
 				SegmentSize:      opts.SegmentSize,
 			}
 
-			uploadSegmentResult, err := uploadStreamingSegment(client, uso)
+			uploadSegmentResult, err := uploadStreamingSegment(ctx, client, uso)
 			if err != nil {
 				return nil, fmt.Errorf("error uploading segment %d of %s/%s: %s", segIndex, containerName, objectName, err)
 			}
@@ -548,7 +551,7 @@ func uploadObject(
 					Metadata:      opts.Metadata,
 				}
 
-				err := uploadSLOManifest(client, uploadOpts)
+				err := uploadSLOManifest(ctx, client, uploadOpts)
 				if err != nil {
 					return nil, fmt.Errorf("error uploading SLO manifest for %s/%s: %s", containerName, objectName, err)
 				}
@@ -649,7 +652,7 @@ func uploadObject(
 			NoETag:        noETag,
 		}
 
-		createHeader, err := objects.Create(client, containerName, objectName, createOpts).Extract()
+		createHeader, err := objects.Create(ctx, client, containerName, objectName, createOpts).Extract()
 		if err != nil {
 			return nil, err
 		}
@@ -676,7 +679,7 @@ func uploadObject(
 			listOpts := objects.ListOpts{
 				Prefix: sPrefix,
 			}
-			allPages, err := objects.List(client, sContainer, listOpts).AllPages()
+			allPages, err := objects.List(client, sContainer, listOpts).AllPages(ctx)
 			if err != nil {
 				return nil, err
 			}
@@ -722,7 +725,7 @@ func uploadObject(
 
 		for sContainer, oldObjects := range delObjectMap {
 			for _, oldObject := range oldObjects {
-				res := objects.Delete(client, sContainer, oldObject, nil)
+				res := objects.Delete(ctx, client, sContainer, oldObject, nil)
 				if res.Err != nil {
 					return nil, res.Err
 				}
@@ -736,7 +739,7 @@ func uploadObject(
 }
 
 // https://github.com/openstack/python-swiftclient/blob/e65070964c7b1e04119c87e5f344d39358780d18/swiftclient/service.py#L1966
-func uploadSLOManifest(client *gophercloud.ServiceClient, opts *uploadSLOManifestOpts) error {
+func uploadSLOManifest(ctx context.Context, client *gophercloud.ServiceClient, opts *uploadSLOManifestOpts) error {
 	var manifest []sloManifest
 	for _, result := range opts.Results {
 		m := sloManifest{
@@ -761,7 +764,7 @@ func uploadSLOManifest(client *gophercloud.ServiceClient, opts *uploadSLOManifes
 		NoETag:            true,
 	}
 
-	res := objects.Create(client, opts.ContainerName, opts.ObjectName, createOpts)
+	res := objects.Create(ctx, client, opts.ContainerName, opts.ObjectName, createOpts)
 	if res.Err != nil {
 		return res.Err
 	}
@@ -770,7 +773,7 @@ func uploadSLOManifest(client *gophercloud.ServiceClient, opts *uploadSLOManifes
 }
 
 // https://github.com/openstack/python-swiftclient/blob/e65070964c7b1e04119c87e5f344d39358780d18/swiftclient/service.py#L1719
-func uploadSegment(client *gophercloud.ServiceClient, opts *uploadSegmentOpts) (*uploadSegmentResult, error) {
+func uploadSegment(ctx context.Context, client *gophercloud.ServiceClient, opts *uploadSegmentOpts) (*uploadSegmentResult, error) {
 	f, err := os.Open(opts.Path)
 	if err != nil {
 		return nil, err
@@ -808,7 +811,7 @@ func uploadSegment(client *gophercloud.ServiceClient, opts *uploadSegmentOpts) (
 		NoETag:        noETag,
 	}
 
-	createHeader, err := objects.Create(client, opts.SegmentContainer, opts.SegmentName, createOpts).Extract()
+	createHeader, err := objects.Create(ctx, client, opts.SegmentContainer, opts.SegmentName, createOpts).Extract()
 	if err != nil {
 		return nil, err
 	}
@@ -833,7 +836,7 @@ func uploadSegment(client *gophercloud.ServiceClient, opts *uploadSegmentOpts) (
 // uploadStreamingSegment will upload an object segment from a streaming source.
 //
 // https://github.com/openstack/python-swiftclient/blob/e65070964c7b1e04119c87e5f344d39358780d18/swiftclient/service.py#L1846
-func uploadStreamingSegment(client *gophercloud.ServiceClient, opts *uploadSegmentOpts) (*uploadSegmentResult, error) {
+func uploadStreamingSegment(ctx context.Context, client *gophercloud.ServiceClient, opts *uploadSegmentOpts) (*uploadSegmentResult, error) {
 	var result uploadSegmentResult
 
 	// Checksum is always done when streaming.
@@ -863,14 +866,14 @@ func uploadStreamingSegment(client *gophercloud.ServiceClient, opts *uploadSegme
 	}
 
 	if opts.SegmentIndex == 0 && n < opts.SegmentSize {
-		res := objects.Create(client, opts.ContainerName, opts.ObjectName, createOpts)
+		res := objects.Create(ctx, client, opts.ContainerName, opts.ObjectName, createOpts)
 		if res.Err != nil {
 			return nil, res.Err
 		}
 
 		result.Location = fmt.Sprintf("/%s/%s", opts.ContainerName, opts.ObjectName)
 	} else {
-		res := objects.Create(client, opts.SegmentContainer, opts.SegmentName, createOpts)
+		res := objects.Create(ctx, client, opts.SegmentContainer, opts.SegmentName, createOpts)
 		if res.Err != nil {
 			return nil, res.Err
 		}

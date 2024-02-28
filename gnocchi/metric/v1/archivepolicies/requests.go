@@ -1,6 +1,8 @@
 package archivepolicies
 
 import (
+	"context"
+
 	"github.com/gophercloud/gophercloud/v2"
 	"github.com/gophercloud/gophercloud/v2/pagination"
 )
@@ -13,8 +15,8 @@ func List(client *gophercloud.ServiceClient) pagination.Pager {
 }
 
 // Get retrieves a specific Gnocchi archive policy based on its name.
-func Get(c *gophercloud.ServiceClient, archivePolicyName string) (r GetResult) {
-	_, r.Err = c.Get(getURL(c, archivePolicyName), &r.Body, nil)
+func Get(ctx context.Context, c *gophercloud.ServiceClient, archivePolicyName string) (r GetResult) {
+	_, r.Err = c.Get(ctx, getURL(c, archivePolicyName), &r.Body, nil)
 	return
 }
 
@@ -64,13 +66,13 @@ func (opts CreateOpts) ToArchivePolicyCreateMap() (map[string]interface{}, error
 }
 
 // Create requests the creation of a new Gnocchi archive policy on the server.
-func Create(client *gophercloud.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
+func Create(ctx context.Context, client *gophercloud.ServiceClient, opts CreateOptsBuilder) (r CreateResult) {
 	b, err := opts.ToArchivePolicyCreateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(createURL(client), b, &r.Body, &gophercloud.RequestOpts{
+	_, r.Err = client.Post(ctx, createURL(client), b, &r.Body, &gophercloud.RequestOpts{
 		OkCodes: []int{201},
 	})
 
@@ -95,13 +97,13 @@ func (opts UpdateOpts) ToArchivePolicyUpdateMap() (map[string]interface{}, error
 }
 
 // Update accepts a UpdateOpts and updates an existing Gnocchi archive policy using the values provided.
-func Update(client *gophercloud.ServiceClient, archivePolicyName string, opts UpdateOptsBuilder) (r UpdateResult) {
+func Update(ctx context.Context, client *gophercloud.ServiceClient, archivePolicyName string, opts UpdateOptsBuilder) (r UpdateResult) {
 	b, err := opts.ToArchivePolicyUpdateMap()
 	if err != nil {
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Patch(updateURL(client, archivePolicyName), b, &r.Body, &gophercloud.RequestOpts{
+	_, r.Err = client.Patch(ctx, updateURL(client, archivePolicyName), b, &r.Body, &gophercloud.RequestOpts{
 		OkCodes: []int{200},
 	})
 
@@ -109,12 +111,12 @@ func Update(client *gophercloud.ServiceClient, archivePolicyName string, opts Up
 }
 
 // Delete accepts a Gnocchi archive policy by its name.
-func Delete(c *gophercloud.ServiceClient, archivePolicyName string) (r DeleteResult) {
+func Delete(ctx context.Context, c *gophercloud.ServiceClient, archivePolicyName string) (r DeleteResult) {
 	requestOpts := &gophercloud.RequestOpts{
 		MoreHeaders: map[string]string{
 			"Accept": "application/json, */*",
 		},
 	}
-	_, r.Err = c.Delete(deleteURL(c, archivePolicyName), requestOpts)
+	_, r.Err = c.Delete(ctx, deleteURL(c, archivePolicyName), requestOpts)
 	return
 }

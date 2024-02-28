@@ -10,7 +10,7 @@ Example to Create a Provider Client From clouds.yaml
 		Cloud: "hawaii",
 	}
 
-	pClient, err := clientconfig.AuthenticatedClient(opts)
+	pClient, err := clientconfig.AuthenticatedClient(ctx, opts)
 	if err != nil {
 		panic(err)
 	}
@@ -27,7 +27,7 @@ Example to Manually Create a Provider Client
 		},
 	}
 
-	pClient, err := clientconfig.AuthenticatedClient(opts)
+	pClient, err := clientconfig.AuthenticatedClient(ctx, opts)
 	if err != nil {
 		panic(err)
 	}
@@ -38,7 +38,7 @@ Example to Create a Service Client from clouds.yaml
 		Cloud: "hawaii",
 	}
 
-	computeClient, err := clientconfig.NewServiceClient("compute", opts)
+	computeClient, err := clientconfig.NewServiceClient(ctx, "compute", opts)
 	if err != nil {
 		panic(err)
 	}

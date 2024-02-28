@@ -1,6 +1,8 @@
 package status
 
 import (
+	"context"
+
 	"github.com/gophercloud/gophercloud/v2"
 )
 
@@ -22,7 +24,7 @@ func (opts GetOpts) ToStatusGetQuery() (string, error) {
 }
 
 // Get retrieves the overall status of the Gnocchi installation.
-func Get(c *gophercloud.ServiceClient, opts GetOptsBuilder) (r GetResult) {
+func Get(ctx context.Context, c *gophercloud.ServiceClient, opts GetOptsBuilder) (r GetResult) {
 	url := getURL(c)
 	if opts != nil {
 		query, err := opts.ToStatusGetQuery()
@@ -32,6 +34,6 @@ func Get(c *gophercloud.ServiceClient, opts GetOptsBuilder) (r GetResult) {
 		}
 		url += query
 	}
-	_, r.Err = c.Get(url, &r.Body, nil)
+	_, r.Err = c.Get(ctx, url, &r.Body, nil)
 	return
 }

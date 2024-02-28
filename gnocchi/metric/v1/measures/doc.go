@@ -10,7 +10,7 @@ Example of Listing measures of a known metric
 		Granularity: "1h",
 		Start: &startTime,
 	}
-	allPages, err := measures.List(gnocchiClient, metricID, listOpts).AllPages()
+	allPages, err := measures.List(gnocchiClient, metricID, listOpts).AllPages(ctx)
 	if err != nil {
 		panic(err)
 	}

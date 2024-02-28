@@ -1,6 +1,7 @@
 package testing
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"testing"
@@ -38,7 +39,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	metrics.List(fake.ServiceClient(), metrics.ListOpts{}).EachPage(func(page pagination.Page) (bool, error) {
+	metrics.List(fake.ServiceClient(), metrics.ListOpts{}).EachPage(context.TODO(), func(_ context.Context, page pagination.Page) (bool, error) {
 		count++
 		actual, err := metrics.ExtractMetrics(page)
 		if err != nil {
@@ -75,7 +76,7 @@ func TestGet(t *testing.T) {
 		fmt.Fprintf(w, MetricGetResult)
 	})
 
-	s, err := metrics.Get(fake.ServiceClient(), "0ddf61cf-3747-4f75-bf13-13c28ff03ae3").Extract()
+	s, err := metrics.Get(context.TODO(), fake.ServiceClient(), "0ddf61cf-3747-4f75-bf13-13c28ff03ae3").Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertDeepEquals(t, s.ArchivePolicy, archivepolicies.ArchivePolicy{
@@ -144,7 +145,7 @@ func TestCreate(t *testing.T) {
 		ResourceID:        "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
 		Unit:              "B/s",
 	}
-	s, err := metrics.Create(fake.ServiceClient(), opts).Extract()
+	s, err := metrics.Create(context.TODO(), fake.ServiceClient(), opts).Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, s.ArchivePolicyName, "high")
@@ -167,6 +168,6 @@ func TestDelete(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	})
 
-	res := metrics.Delete(fake.ServiceClient(), "01b2953e-de74-448a-a305-c84440697933")
+	res := metrics.Delete(context.TODO(), fake.ServiceClient(), "01b2953e-de74-448a-a305-c84440697933")
 	th.AssertNoErr(t, res.Err)
 }

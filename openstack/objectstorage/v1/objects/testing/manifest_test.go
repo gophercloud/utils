@@ -1,6 +1,7 @@
 package testing
 
 import (
+	"context"
 	"testing"
 
 	o "github.com/gophercloud/gophercloud/v2/openstack/objectstorage/v1/objects"
@@ -49,7 +50,7 @@ func TestChunkData(t *testing.T) {
 		MultipartManifest: "get",
 	}
 
-	res := o.Download(fake.ServiceClient(), "testContainer", "testObject", downloadOpts)
+	res := o.Download(context.TODO(), fake.ServiceClient(), "testContainer", "testObject", downloadOpts)
 	defer res.Body.Close()
 	th.AssertNoErr(t, res.Err)
 
@@ -66,7 +67,7 @@ func TestChunkData(t *testing.T) {
 		StaticLargeObject: true,
 	}
 
-	actualChunkData, err := objects.GetManifest(fake.ServiceClient(), gmo)
+	actualChunkData, err := objects.GetManifest(context.TODO(), fake.ServiceClient(), gmo)
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, actualChunkData, expectedMultipartManifest)
 }
