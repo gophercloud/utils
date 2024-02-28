@@ -4,7 +4,7 @@ through the Gnocchi API.
 
 Example of Listing archive policies
 
-	allPages, err := archivepolicies.List(gnocchiClient).AllPages()
+	allPages, err := archivepolicies.List(gnocchiClient).AllPages(ctx)
 	if err != nil {
 		panic(err)
 	}

@@ -1,5 +1,5 @@
-github.com/gophercloud/gophercloud/v2 v2.0.0-beta.1 h1:FYzj3NlCp3wTJahn9VHETY0WQlqWhHylkjhrZDAJpyQ=
-github.com/gophercloud/gophercloud/v2 v2.0.0-beta.1/go.mod h1:p9iS4WRTI84BeqLH7Q7lu0V2UryWXvHQuqgThrB9xuU=
+github.com/gophercloud/gophercloud/v2 v2.0.0-beta.2 h1:JWv6L7eg3+aIS57n11YlVvtn1pVCKpVlMo24ANj/OVc=
+github.com/gophercloud/gophercloud/v2 v2.0.0-beta.2/go.mod h1:Sy5GHwY4iazyaRf94rzL/VxJToVWn8WnIH+1cXqoAks=
 github.com/hashicorp/go-uuid v1.0.3 h1:2gKiV6YVmrJ1i2CKKa9obLvRieoRGviZFL26PcT/Co8=
 github.com/hashicorp/go-uuid v1.0.3/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
 github.com/mitchellh/go-homedir v1.1.0 h1:lukF9ziXFxDFPkA1vsr5zpc1XuPDn/wFntq5mG+4E0Y=

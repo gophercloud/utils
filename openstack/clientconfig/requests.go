@@ -1,6 +1,7 @@
 package clientconfig
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -726,17 +727,17 @@ func v3auth(cloud *Cloud, opts *ClientOpts) (*gophercloud.AuthOptions, error) {
 
 // AuthenticatedClient is a convenience function to get a new provider client
 // based on a clouds.yaml entry.
-func AuthenticatedClient(opts *ClientOpts) (*gophercloud.ProviderClient, error) {
+func AuthenticatedClient(ctx context.Context, opts *ClientOpts) (*gophercloud.ProviderClient, error) {
 	ao, err := AuthOptions(opts)
 	if err != nil {
 		return nil, err
 	}
 
-	return openstack.AuthenticatedClient(*ao)
+	return openstack.AuthenticatedClient(ctx, *ao)
 }
 
 // NewServiceClient is a convenience function to get a new service client.
-func NewServiceClient(service string, opts *ClientOpts) (*gophercloud.ServiceClient, error) {
+func NewServiceClient(ctx context.Context, service string, opts *ClientOpts) (*gophercloud.ServiceClient, error) {
 	cloud := new(Cloud)
 
 	// If no opts were passed in, create an empty ClientOpts.
@@ -838,7 +839,7 @@ func NewServiceClient(service string, opts *ClientOpts) (*gophercloud.ServiceCli
 		pClient.HTTPClient = http.Client{Transport: transport}
 	}
 
-	err = openstack.Authenticate(pClient, *ao)
+	err = openstack.Authenticate(ctx, pClient, *ao)
 	if err != nil {
 		return nil, err
 	}

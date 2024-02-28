@@ -3,7 +3,7 @@ Package resourcetypes provides ability to manage resource types through the Gnoc
 
 Example of Listing resource types
 
-	  allPages, err := resourcetypes.List(client).AllPages()
+	  allPages, err := resourcetypes.List(client).AllPages(ctx)
 	  if err != nil {
 	    panic(err)
 		}

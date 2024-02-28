@@ -1,6 +1,7 @@
 package testing
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"testing"
@@ -27,7 +28,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	resourcetypes.List(fake.ServiceClient()).EachPage(func(page pagination.Page) (bool, error) {
+	resourcetypes.List(fake.ServiceClient()).EachPage(context.TODO(), func(_ context.Context, page pagination.Page) (bool, error) {
 		count++
 		actual, err := resourcetypes.ExtractResourceTypes(page)
 		if err != nil {
@@ -65,7 +66,7 @@ func TestGet(t *testing.T) {
 		fmt.Fprintf(w, ResourceTypeGetResult)
 	})
 
-	s, err := resourcetypes.Get(fake.ServiceClient(), "compute_instance").Extract()
+	s, err := resourcetypes.Get(context.TODO(), fake.ServiceClient(), "compute_instance").Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, s.Name, "compute_instance")
@@ -108,7 +109,7 @@ func TestCreateWithoutAttributes(t *testing.T) {
 	opts := resourcetypes.CreateOpts{
 		Name: "identity_project",
 	}
-	s, err := resourcetypes.Create(fake.ServiceClient(), opts).Extract()
+	s, err := resourcetypes.Create(context.TODO(), fake.ServiceClient(), opts).Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, s.Name, "identity_project")
@@ -151,7 +152,7 @@ func TestCreateWithAttributes(t *testing.T) {
 			},
 		},
 	}
-	s, err := resourcetypes.Create(fake.ServiceClient(), opts).Extract()
+	s, err := resourcetypes.Create(context.TODO(), fake.ServiceClient(), opts).Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, s.Name, "compute_instance_network")
@@ -225,7 +226,7 @@ func TestUpdate(t *testing.T) {
 		},
 	}
 
-	s, err := resourcetypes.Update(fake.ServiceClient(), "identity_project", opts).Extract()
+	s, err := resourcetypes.Update(context.TODO(), fake.ServiceClient(), "identity_project", opts).Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, s.Name, "identity_project")
@@ -264,6 +265,6 @@ func TestDelete(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	})
 
-	res := resourcetypes.Delete(fake.ServiceClient(), "compute_instance_network")
+	res := resourcetypes.Delete(context.TODO(), fake.ServiceClient(), "compute_instance_network")
 	th.AssertNoErr(t, res.Err)
 }

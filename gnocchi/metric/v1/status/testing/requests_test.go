@@ -1,6 +1,7 @@
 package testing
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"testing"
@@ -30,7 +31,7 @@ func TestGetWithDetails(t *testing.T) {
 		Details: &details,
 	}
 
-	s, err := status.Get(fake.ServiceClient(), getOpts).Extract()
+	s, err := status.Get(context.TODO(), fake.ServiceClient(), getOpts).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, s.Metricd, GetStatusWithDetailsExpected.Metricd)
 	th.AssertDeepEquals(t, s.Storage, GetStatusWithDetailsExpected.Storage)
@@ -56,7 +57,7 @@ func TestGetWithoutDetails(t *testing.T) {
 		Details: &details,
 	}
 
-	s, err := status.Get(fake.ServiceClient(), getOpts).Extract()
+	s, err := status.Get(context.TODO(), fake.ServiceClient(), getOpts).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, s.Metricd, GetStatusWithoutDetailsExpected.Metricd)
 	th.AssertDeepEquals(t, s.Storage, GetStatusWithoutDetailsExpected.Storage)

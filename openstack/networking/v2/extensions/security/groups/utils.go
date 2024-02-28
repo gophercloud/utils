@@ -1,13 +1,15 @@
 package groups
 
 import (
+	"context"
+
 	"github.com/gophercloud/gophercloud/v2"
 	"github.com/gophercloud/gophercloud/v2/openstack/networking/v2/extensions/security/groups"
 )
 
 // IDFromName is a convenience function that returns a security group's ID,
 // given its name.
-func IDFromName(client *gophercloud.ServiceClient, name string) (string, error) {
+func IDFromName(ctx context.Context, client *gophercloud.ServiceClient, name string) (string, error) {
 	count := 0
 	id := ""
 
@@ -15,7 +17,7 @@ func IDFromName(client *gophercloud.ServiceClient, name string) (string, error) 
 		Name: name,
 	}
 
-	pages, err := groups.List(client, listOpts).AllPages()
+	pages, err := groups.List(client, listOpts).AllPages(ctx)
 	if err != nil {
 		return "", err
 	}

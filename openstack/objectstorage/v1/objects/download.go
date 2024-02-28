@@ -1,6 +1,7 @@
 package objects
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -50,7 +51,7 @@ type DownloadOpts struct {
 // It is roughly based on the python-swiftclient implementation:
 //
 // https://github.com/openstack/python-swiftclient/blob/e65070964c7b1e04119c87e5f344d39358780d18/swiftclient/service.py#L1024
-func Download(client *gophercloud.ServiceClient, containerName string, objectNames []string, opts *DownloadOpts) ([]DownloadResult, error) {
+func Download(ctx context.Context, client *gophercloud.ServiceClient, containerName string, objectNames []string, opts *DownloadOpts) ([]DownloadResult, error) {
 	var downloadResults []DownloadResult
 
 	if strings.Contains(containerName, "/") {
@@ -65,14 +66,14 @@ func Download(client *gophercloud.ServiceClient, containerName string, objectNam
 				Prefix:    opts.Prefix,
 			}
 
-			err := containers.List(client, listOpts).EachPage(func(page pagination.Page) (bool, error) {
+			err := containers.List(client, listOpts).EachPage(ctx, func(ctx context.Context, page pagination.Page) (bool, error) {
 				containerList, err := containers.ExtractInfo(page)
 				if err != nil {
 					return false, fmt.Errorf("error listing containers: %s", err)
 				}
 
 				for _, c := range containerList {
-					results, err := downloadContainer(client, c.Name, opts)
+					results, err := downloadContainer(ctx, client, c.Name, opts)
 					if err != nil {
 						return false, fmt.Errorf("error downloading container %s: %s", c.Name, err)
 					}
@@ -92,7 +93,7 @@ func Download(client *gophercloud.ServiceClient, containerName string, objectNam
 	}
 
 	if len(objectNames) == 0 {
-		results, err := downloadContainer(client, containerName, opts)
+		results, err := downloadContainer(ctx, client, containerName, opts)
 		if err != nil {
 			return nil, fmt.Errorf("error downloading container %s: %s", containerName, err)
 		}
@@ -102,7 +103,7 @@ func Download(client *gophercloud.ServiceClient, containerName string, objectNam
 	}
 
 	for _, objectName := range objectNames {
-		result, err := downloadObject(client, containerName, objectName, opts)
+		result, err := downloadObject(ctx, client, containerName, objectName, opts)
 		if err != nil {
 			return nil, fmt.Errorf("error downloading object %s/%s: %s", containerName, objectName, err)
 		}
@@ -113,12 +114,12 @@ func Download(client *gophercloud.ServiceClient, containerName string, objectNam
 }
 
 // downloadObject will download a specified object.
-func downloadObject(client *gophercloud.ServiceClient, containerName string, objectName string, opts *DownloadOpts) (*DownloadResult, error) {
+func downloadObject(ctx context.Context, client *gophercloud.ServiceClient, containerName string, objectName string, opts *DownloadOpts) (*DownloadResult, error) {
 	var objectDownloadOpts objects.DownloadOpts
 	var pseudoDir bool
 
 	// Perform a get on the object in order to get its metadata.
-	originalObject := objects.Get(client, containerName, objectName, nil)
+	originalObject := objects.Get(ctx, client, containerName, objectName, nil)
 	if originalObject.Err != nil {
 		return nil, fmt.Errorf("error retrieving object %s/%s: %s", containerName, objectName, originalObject.Err)
 	}
@@ -165,7 +166,7 @@ func downloadObject(client *gophercloud.ServiceClient, containerName string, obj
 	}
 
 	// Attempt to download the object
-	res := objects.Download(client, containerName, objectName, objectDownloadOpts)
+	res := objects.Download(ctx, client, containerName, objectName, objectDownloadOpts)
 	if res.Err != nil {
 		// Ignore the error if SkipIdentical is set.
 		// This is because a second attempt to download the object will happen later.
@@ -208,7 +209,7 @@ func downloadObject(client *gophercloud.ServiceClient, containerName string, obj
 				StaticLargeObject: headers.StaticLargeObject,
 			}
 
-			manifestData, err := GetManifest(client, mo)
+			manifestData, err := GetManifest(ctx, client, mo)
 			if err != nil {
 				return nil, fmt.Errorf("unable to get manifest for %s/%s: %s", containerName, objectName, err)
 			}
@@ -234,7 +235,7 @@ func downloadObject(client *gophercloud.ServiceClient, containerName string, obj
 
 				// This is a Large object
 				objectDownloadOpts.MultipartManifest = ""
-				res = objects.Download(client, containerName, objectName, objectDownloadOpts)
+				res = objects.Download(ctx, client, containerName, objectName, objectDownloadOpts)
 				if res.Err != nil {
 					return nil, fmt.Errorf("error downloading object %s/%s: %s", containerName, objectName, err)
 				}
@@ -348,21 +349,21 @@ func downloadObject(client *gophercloud.ServiceClient, containerName string, obj
 }
 
 // downloadContainer will download all objects in a given container.
-func downloadContainer(client *gophercloud.ServiceClient, containerName string, opts *DownloadOpts) ([]DownloadResult, error) {
+func downloadContainer(ctx context.Context, client *gophercloud.ServiceClient, containerName string, opts *DownloadOpts) ([]DownloadResult, error) {
 	listOpts := objects.ListOpts{
 		Prefix:    opts.Prefix,
 		Delimiter: opts.Delimiter,
 	}
 
 	var downloadResults []DownloadResult
-	err := objects.List(client, containerName, listOpts).EachPage(func(page pagination.Page) (bool, error) {
+	err := objects.List(client, containerName, listOpts).EachPage(ctx, func(ctx context.Context, page pagination.Page) (bool, error) {
 		objectList, err := objects.ExtractNames(page)
 		if err != nil {
 			return false, fmt.Errorf("error listing container %s: %s", containerName, err)
 		}
 
 		for _, objectName := range objectList {
-			result, err := downloadObject(client, containerName, objectName, opts)
+			result, err := downloadObject(ctx, client, containerName, objectName, opts)
 			if err != nil {
 				return false, fmt.Errorf("error downloading object %s/%s: %s", containerName, objectName, err)
 			}

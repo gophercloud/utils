@@ -1,6 +1,7 @@
 package servers
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/gophercloud/gophercloud/v2"
@@ -9,8 +10,8 @@ import (
 
 // IDFromName is a convenience function that returns a server's ID given its
 // name. Errors when the number of items found is not one.
-func IDFromName(client *gophercloud.ServiceClient, name string) (string, error) {
-	IDs, err := IDsFromName(client, name)
+func IDFromName(ctx context.Context, client *gophercloud.ServiceClient, name string) (string, error) {
+	IDs, err := IDsFromName(ctx, client, name)
 	if err != nil {
 		return "", err
 	}
@@ -27,11 +28,11 @@ func IDFromName(client *gophercloud.ServiceClient, name string) (string, error) 
 
 // IDsFromName returns zero or more IDs corresponding to a name. The returned
 // error is only non-nil in case of failure.
-func IDsFromName(client *gophercloud.ServiceClient, name string) ([]string, error) {
+func IDsFromName(ctx context.Context, client *gophercloud.ServiceClient, name string) ([]string, error) {
 	pages, err := servers.List(client, servers.ListOpts{
 		// nova list uses a name field as a regexp
 		Name: fmt.Sprintf("^%s$", name),
-	}).AllPages()
+	}).AllPages(ctx)
 	if err != nil {
 		return nil, err
 	}
