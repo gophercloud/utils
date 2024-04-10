@@ -16,7 +16,7 @@ import (
 	"github.com/gophercloud/utils/v2/internal"
 
 	"github.com/hashicorp/go-uuid"
-	yaml "gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v3"
 )
 
 // AuthType respresents a valid method of authentication.

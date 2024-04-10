@@ -10,7 +10,7 @@ import (
 	"github.com/gophercloud/utils/v2/openstack/clientconfig"
 
 	th "github.com/gophercloud/gophercloud/v2/testhelper"
-	yaml "gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v3"
 )
 
 func TestGetCloudFromYAML(t *testing.T) {
