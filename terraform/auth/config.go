@@ -173,8 +173,6 @@ func (c *Config) LoadAndValidate(ctx context.Context) error {
 		return err
 	}
 
-	client.Context = c.Context
-
 	// Set UserAgent
 	client.UserAgent.Prepend(terraformUserAgent(c.TerraformVersion, c.SDKVersion))
 
@@ -327,7 +325,7 @@ func (c *Config) IdentityV3Client(ctx context.Context, region string) (*gophercl
 }
 
 func (c *Config) ImageV2Client(ctx context.Context, region string) (*gophercloud.ServiceClient, error) {
-	return c.CommonServiceClientInit(ctx, openstack.NewImageServiceV2, region, "image")
+	return c.CommonServiceClientInit(ctx, openstack.NewImageV2, region, "image")
 }
 
 func (c *Config) MessagingV2Client(ctx context.Context, region string) (*gophercloud.ServiceClient, error) {

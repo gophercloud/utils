@@ -890,8 +890,6 @@ func NewServiceClient(ctx context.Context, service string, opts *ClientOpts) (*g
 		return openstack.NewBareMetalV1(pClient, eo)
 	case "baremetal-introspection":
 		return openstack.NewBareMetalIntrospectionV1(pClient, eo)
-	case "clustering":
-		return openstack.NewClusteringV1(pClient, eo)
 	case "compute":
 		return openstack.NewComputeV2(pClient, eo)
 	case "container":
@@ -919,7 +917,7 @@ func NewServiceClient(ctx context.Context, service string, opts *ClientOpts) (*g
 			return nil, fmt.Errorf("invalid identity API version")
 		}
 	case "image":
-		return openstack.NewImageServiceV2(pClient, eo)
+		return openstack.NewImageV2(pClient, eo)
 	case "key-manager":
 		return openstack.NewKeyManagerV1(pClient, eo)
 	case "load-balancer":

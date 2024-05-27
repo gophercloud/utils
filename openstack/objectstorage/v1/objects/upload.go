@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"net/http"
 	"net/url"
 	"os"
 	"strings"
@@ -151,7 +152,7 @@ func Upload(ctx context.Context, client *gophercloud.ServiceClient, containerNam
 	// Check and see if the object being requested already exists.
 	objectResult := objects.Get(ctx, client, containerName, objectName, nil)
 	if objectResult.Err != nil {
-		if _, ok := objectResult.Err.(gophercloud.ErrDefault404); ok {
+		if gophercloud.ResponseCodeIs(objectResult.Err, http.StatusNotFound) {
 			origObject = nil
 		} else {
 			return nil, fmt.Errorf("error retrieving original object %s/%s: %s", containerName, objectName, objectResult.Err)

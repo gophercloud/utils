@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/gophercloud/gophercloud/v2"
-	"github.com/gophercloud/gophercloud/v2/openstack/compute/v2/extensions/availabilityzones"
+	"github.com/gophercloud/gophercloud/v2/openstack/compute/v2/availabilityzones"
 )
 
 // ListAvailableAvailabilityZones is a convenience function that return a slice of available Availability Zones.

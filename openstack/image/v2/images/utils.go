@@ -1,13 +1,13 @@
-package backups
+package images
 
 import (
 	"context"
 
 	"github.com/gophercloud/gophercloud/v2"
-	"github.com/gophercloud/gophercloud/v2/openstack/blockstorage/extensions/backups"
+	"github.com/gophercloud/gophercloud/v2/openstack/image/v2/images"
 )
 
-// IDFromName is a convenience function that returns a backup's ID given its
+// IDFromName is a convenience function that returns an image's ID given its
 // name. Errors when the number of items found is not one.
 func IDFromName(ctx context.Context, client *gophercloud.ServiceClient, name string) (string, error) {
 	IDs, err := IDsFromName(ctx, client, name)
@@ -17,25 +17,25 @@ func IDFromName(ctx context.Context, client *gophercloud.ServiceClient, name str
 
 	switch count := len(IDs); count {
 	case 0:
-		return "", gophercloud.ErrResourceNotFound{Name: name, ResourceType: "backup"}
+		return "", gophercloud.ErrResourceNotFound{Name: name, ResourceType: "image"}
 	case 1:
 		return IDs[0], nil
 	default:
-		return "", gophercloud.ErrMultipleResourcesFound{Name: name, Count: count, ResourceType: "backup"}
+		return "", gophercloud.ErrMultipleResourcesFound{Name: name, Count: count, ResourceType: "image"}
 	}
 }
 
 // IDsFromName returns zero or more IDs corresponding to a name. The returned
 // error is only non-nil in case of failure.
 func IDsFromName(ctx context.Context, client *gophercloud.ServiceClient, name string) ([]string, error) {
-	pages, err := backups.List(client, backups.ListOpts{
+	pages, err := images.List(client, images.ListOpts{
 		Name: name,
 	}).AllPages(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	all, err := backups.ExtractBackups(pages)
+	all, err := images.ExtractImages(pages)
 	if err != nil {
 		return nil, err
 	}
