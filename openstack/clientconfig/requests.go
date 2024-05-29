@@ -15,7 +15,8 @@ import (
 	"github.com/gophercloud/utils/v2/gnocchi"
 	"github.com/gophercloud/utils/v2/internal"
 
-	"github.com/hashicorp/go-uuid"
+	"github.com/gofrs/uuid/v5"
+
 	yaml "gopkg.in/yaml.v3"
 )
 
@@ -923,11 +924,11 @@ func NewServiceClient(ctx context.Context, service string, opts *ClientOpts) (*g
 	case "load-balancer":
 		return openstack.NewLoadBalancerV2(pClient, eo)
 	case "messaging":
-		clientID, err := uuid.GenerateUUID()
+		clientID, err := uuid.NewV4()
 		if err != nil {
 			return nil, fmt.Errorf("failed to generate UUID: %w", err)
 		}
-		return openstack.NewMessagingV2(pClient, clientID, eo)
+		return openstack.NewMessagingV2(pClient, clientID.String(), eo)
 	case "network":
 		return openstack.NewNetworkV2(pClient, eo)
 	case "object-store":
