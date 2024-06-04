@@ -46,6 +46,9 @@ func mergeClouds(override, cloud interface{}) (*Cloud, error) {
 	var mergedCloud Cloud
 	mergedInterface := mergeInterfaces(overrideInterface, cloudInterface)
 	mergedJson, err := json.Marshal(mergedInterface)
+	if err != nil {
+		return nil, err
+	}
 	err = json.Unmarshal(mergedJson, &mergedCloud)
 	if err != nil {
 		return nil, err

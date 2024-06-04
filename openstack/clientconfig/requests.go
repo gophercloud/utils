@@ -332,7 +332,7 @@ func GetCloudFromYAML(opts *ClientOpts) (*Cloud, error) {
 
 	cloud.Interface = ""
 
-	return cloud, nil
+	return cloud, err
 }
 
 // AuthOptions creates a gophercloud.AuthOptions structure with the
