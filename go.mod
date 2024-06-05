@@ -7,6 +7,6 @@ require (
 	github.com/gophercloud/gophercloud/v2 v2.0.0-rc.2
 	github.com/mitchellh/go-homedir v1.1.0
 	golang.org/x/sys v0.21.0
-	golang.org/x/text v0.15.0
+	golang.org/x/text v0.16.0
 	gopkg.in/yaml.v3 v3.0.1
 )
