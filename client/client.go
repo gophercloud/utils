@@ -364,22 +364,27 @@ func FormatJSON(raw []byte) (string, error) {
 	return string(pretty), nil
 }
 
-func RetryBackoffFunc(logger Logger) gophercloud.RetryBackoffFunc {
+func RetryBackoffFunc(logger Logger, RetriesDefaultWaitTime int) gophercloud.RetryBackoffFunc {
 	return func(ctx context.Context, respErr *gophercloud.ErrUnexpectedResponseCode, e error, retries uint) error {
-		retryAfter := respErr.ResponseHeader.Get("Retry-After")
-		if retryAfter == "" {
-			return e
-		}
-
 		var sleep time.Duration
 
-		// Parse delay seconds or HTTP date
-		if v, err := strconv.ParseUint(retryAfter, 10, 32); err == nil {
-			sleep = time.Duration(v) * time.Second
-		} else if v, err := time.Parse(http.TimeFormat, retryAfter); err == nil {
-			sleep = time.Until(v)
-		} else {
+		retryAfter := respErr.ResponseHeader.Get("Retry-After")
+		// No Retry-After Header set by service and no default wait time set
+		if retryAfter == "" && RetriesDefaultWaitTime == 0 {
 			return e
+			// No Retry-After Header set by service and default wait time set
+		} else if retryAfter == "" && RetriesDefaultWaitTime > 0 {
+			sleep = time.Duration(RetriesDefaultWaitTime) * time.Second
+			// Retry-After Header is set
+		} else {
+			// Parse delay seconds or HTTP date
+			if v, err := strconv.ParseUint(retryAfter, 10, 32); err == nil {
+				sleep = time.Duration(v) * time.Second
+			} else if v, err := time.Parse(http.TimeFormat, retryAfter); err == nil {
+				sleep = time.Until(v)
+			} else {
+				return e
+			}
 		}
 
 		l := logger

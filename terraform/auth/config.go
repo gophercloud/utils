@@ -45,6 +45,7 @@ type Config struct {
 	ApplicationCredentialSecret string
 	UseOctavia                  bool
 	MaxRetries                  int
+	RetriesDefaultWaitTime      int
 	DisableNoCacheHeader        bool
 	Context                     context.Context
 
@@ -95,6 +96,10 @@ func (c *Config) LoadAndValidate(ctx context.Context) error {
 
 	if c.MaxRetries < 0 {
 		return fmt.Errorf("max_retries should be a positive value")
+	}
+
+	if c.RetriesDefaultWaitTime < 0 {
+		return fmt.Errorf("retries_default_wait_time should be a positive value")
 	}
 
 	clientOpts := new(clientconfig.ClientOpts)
@@ -205,7 +210,7 @@ func (c *Config) LoadAndValidate(ctx context.Context) error {
 
 	if c.MaxRetries > 0 {
 		client.MaxBackoffRetries = uint(c.MaxRetries)
-		client.RetryBackoffFunc = osClient.RetryBackoffFunc(logger)
+		client.RetryBackoffFunc = osClient.RetryBackoffFunc(logger, c.RetriesDefaultWaitTime)
 	}
 
 	if !c.DelayedAuth && !c.Swauth {
