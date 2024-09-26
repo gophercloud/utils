@@ -64,7 +64,8 @@ func List(c *gophercloud.ServiceClient, opts ListOptsBuilder, resourceType strin
 
 // Get retrieves a specific Gnocchi resource based on its type and ID.
 func Get(ctx context.Context, c *gophercloud.ServiceClient, resourceType string, resourceID string) (r GetResult) {
-	_, r.Err = c.Get(ctx, getURL(c, resourceType, resourceID), &r.Body, nil)
+	resp, err := c.Get(ctx, getURL(c, resourceType, resourceID), &r.Body, nil)
+	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
 	return
 }
 
@@ -132,9 +133,10 @@ func Create(ctx context.Context, client *gophercloud.ServiceClient, resourceType
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(ctx, createURL(client, resourceType), b, &r.Body, &gophercloud.RequestOpts{
+	resp, err := client.Post(ctx, createURL(client, resourceType), b, &r.Body, &gophercloud.RequestOpts{
 		OkCodes: []int{201},
 	})
+	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
 	return
 }
 
@@ -200,9 +202,10 @@ func Update(ctx context.Context, c *gophercloud.ServiceClient, resourceType, res
 		r.Err = err
 		return
 	}
-	_, r.Err = c.Patch(ctx, updateURL(c, resourceType, resourceID), b, &r.Body, &gophercloud.RequestOpts{
+	resp, err := c.Patch(ctx, updateURL(c, resourceType, resourceID), b, &r.Body, &gophercloud.RequestOpts{
 		OkCodes: []int{200},
 	})
+	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
 	return
 }
 
@@ -213,6 +216,7 @@ func Delete(ctx context.Context, c *gophercloud.ServiceClient, resourceType, res
 			"Accept": "application/json, */*",
 		},
 	}
-	_, r.Err = c.Delete(ctx, deleteURL(c, resourceType, resourceID), requestOpts)
+	resp, err := c.Delete(ctx, deleteURL(c, resourceType, resourceID), requestOpts)
+	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
 	return
 }

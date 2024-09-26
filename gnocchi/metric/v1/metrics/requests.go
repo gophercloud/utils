@@ -71,7 +71,8 @@ func List(c *gophercloud.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 
 // Get retrieves a specific Gnocchi metric based on its id.
 func Get(ctx context.Context, c *gophercloud.ServiceClient, metricID string) (r GetResult) {
-	_, r.Err = c.Get(ctx, getURL(c, metricID), &r.Body, nil)
+	resp, err := c.Get(ctx, getURL(c, metricID), &r.Body, nil)
+	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
 	return
 }
 
@@ -117,9 +118,10 @@ func Create(ctx context.Context, client *gophercloud.ServiceClient, opts CreateO
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(ctx, createURL(client), b, &r.Body, &gophercloud.RequestOpts{
+	resp, err := client.Post(ctx, createURL(client), b, &r.Body, &gophercloud.RequestOpts{
 		OkCodes: []int{201},
 	})
+	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
 	return
 }
 
@@ -130,6 +132,7 @@ func Delete(ctx context.Context, c *gophercloud.ServiceClient, metricID string) 
 			"Accept": "application/json, */*",
 		},
 	}
-	_, r.Err = c.Delete(ctx, deleteURL(c, metricID), requestOpts)
+	resp, err := c.Delete(ctx, deleteURL(c, metricID), requestOpts)
+	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
 	return
 }

@@ -16,7 +16,8 @@ func List(client *gophercloud.ServiceClient) pagination.Pager {
 
 // Get retrieves a specific Gnocchi archive policy based on its name.
 func Get(ctx context.Context, c *gophercloud.ServiceClient, archivePolicyName string) (r GetResult) {
-	_, r.Err = c.Get(ctx, getURL(c, archivePolicyName), &r.Body, nil)
+	resp, err := c.Get(ctx, getURL(c, archivePolicyName), &r.Body, nil)
+	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
 	return
 }
 
@@ -72,10 +73,10 @@ func Create(ctx context.Context, client *gophercloud.ServiceClient, opts CreateO
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(ctx, createURL(client), b, &r.Body, &gophercloud.RequestOpts{
+	resp, err := client.Post(ctx, createURL(client), b, &r.Body, &gophercloud.RequestOpts{
 		OkCodes: []int{201},
 	})
-
+	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
 	return
 }
 
@@ -103,10 +104,10 @@ func Update(ctx context.Context, client *gophercloud.ServiceClient, archivePolic
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Patch(ctx, updateURL(client, archivePolicyName), b, &r.Body, &gophercloud.RequestOpts{
+	resp, err := client.Patch(ctx, updateURL(client, archivePolicyName), b, &r.Body, &gophercloud.RequestOpts{
 		OkCodes: []int{200},
 	})
-
+	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
 	return
 }
 
@@ -117,6 +118,7 @@ func Delete(ctx context.Context, c *gophercloud.ServiceClient, archivePolicyName
 			"Accept": "application/json, */*",
 		},
 	}
-	_, r.Err = c.Delete(ctx, deleteURL(c, archivePolicyName), requestOpts)
+	resp, err := c.Delete(ctx, deleteURL(c, archivePolicyName), requestOpts)
+	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
 	return
 }

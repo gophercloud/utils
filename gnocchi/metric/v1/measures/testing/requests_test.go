@@ -65,7 +65,6 @@ func TestCreateMeasures(t *testing.T) {
 		th.TestHeader(t, r, "Accept", "application/json, */*")
 		th.TestJSONRequest(t, r, MeasuresCreateRequest)
 		w.WriteHeader(http.StatusAccepted)
-		fmt.Fprintf(w, `{}`)
 	})
 
 	firstMeasureTimestamp := time.Date(2018, 1, 18, 12, 31, 0, 0, time.UTC)
@@ -97,7 +96,6 @@ func TestBatchCreateMetrics(t *testing.T) {
 		th.TestHeader(t, r, "Accept", "application/json, */*")
 		th.TestJSONRequest(t, r, MeasuresBatchCreateMetricsRequest)
 		w.WriteHeader(http.StatusAccepted)
-		fmt.Fprintf(w, `{}`)
 	})
 
 	firstTimestamp := time.Date(2018, 1, 10, 01, 00, 0, 0, time.UTC)
@@ -130,8 +128,8 @@ func TestBatchCreateMetrics(t *testing.T) {
 			},
 		},
 	}
-	res := measures.BatchCreateMetrics(context.TODO(), fake.ServiceClient(), createOpts)
-	th.AssertNoErr(t, res.Err)
+	err := measures.BatchCreateMetrics(context.TODO(), fake.ServiceClient(), createOpts).ExtractErr()
+	th.AssertNoErr(t, err)
 }
 
 func TestBatchCreateResourcesMetrics(t *testing.T) {
@@ -145,7 +143,6 @@ func TestBatchCreateResourcesMetrics(t *testing.T) {
 		th.TestHeader(t, r, "Accept", "application/json, */*")
 		th.TestJSONRequest(t, r, MeasuresBatchCreateResourcesMetricsRequest)
 		w.WriteHeader(http.StatusAccepted)
-		fmt.Fprintf(w, `{}`)
 	})
 
 	firstTimestamp := time.Date(2018, 1, 20, 12, 30, 0, 0, time.UTC)
@@ -210,6 +207,6 @@ func TestBatchCreateResourcesMetrics(t *testing.T) {
 			},
 		},
 	}
-	res := measures.BatchCreateResourcesMetrics(context.TODO(), fake.ServiceClient(), createOpts)
-	th.AssertNoErr(t, res.Err)
+	err := measures.BatchCreateResourcesMetrics(context.TODO(), fake.ServiceClient(), createOpts).ExtractErr()
+	th.AssertNoErr(t, err)
 }
