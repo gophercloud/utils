@@ -128,12 +128,13 @@ func Create(ctx context.Context, client *gophercloud.ServiceClient, metricID str
 		r.Err = err
 		return
 	}
-	_, r.Err = client.Post(ctx, createURL(client, metricID), b["measures"], &r.Body, &gophercloud.RequestOpts{
+	resp, err := client.Post(ctx, createURL(client, metricID), b["measures"], nil, &gophercloud.RequestOpts{
 		OkCodes: []int{202},
 		MoreHeaders: map[string]string{
 			"Accept": "application/json, */*",
 		},
 	})
+	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
 	return
 }
 
@@ -210,12 +211,13 @@ func BatchCreateMetrics(ctx context.Context, client *gophercloud.ServiceClient, 
 		return
 	}
 
-	_, r.Err = client.Post(ctx, batchCreateMetricsURL(client), b["batchCreateMetrics"], &r.Body, &gophercloud.RequestOpts{
+	resp, err := client.Post(ctx, batchCreateMetricsURL(client), b["batchCreateMetrics"], nil, &gophercloud.RequestOpts{
 		OkCodes: []int{202},
 		MoreHeaders: map[string]string{
 			"Accept": "application/json, */*",
 		},
 	})
+	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
 	return
 }
 
@@ -390,11 +392,12 @@ func BatchCreateResourcesMetrics(ctx context.Context, client *gophercloud.Servic
 		return
 	}
 
-	_, r.Err = client.Post(ctx, url, b["batchCreateResourcesMetrics"], &r.Body, &gophercloud.RequestOpts{
+	resp, err := client.Post(ctx, url, b["batchCreateResourcesMetrics"], nil, &gophercloud.RequestOpts{
 		OkCodes: []int{202},
 		MoreHeaders: map[string]string{
 			"Accept": "application/json, */*",
 		},
 	})
+	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
 	return
 }

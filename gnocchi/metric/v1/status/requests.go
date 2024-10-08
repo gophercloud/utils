@@ -34,6 +34,7 @@ func Get(ctx context.Context, c *gophercloud.ServiceClient, opts GetOptsBuilder)
 		}
 		url += query
 	}
-	_, r.Err = c.Get(ctx, url, &r.Body, nil)
+	resp, err := c.Get(ctx, url, &r.Body, nil)
+	_, r.Header, r.Err = gophercloud.ParseResponse(resp, err)
 	return
 }
