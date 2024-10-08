@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 
 	"github.com/gophercloud/gophercloud/v2"
@@ -246,20 +247,40 @@ func (c *Config) Authenticate(ctx context.Context) error {
 
 // DetermineEndpoint is a helper method to determine if the user wants to
 // override an endpoint returned from the catalog.
-func (c *Config) DetermineEndpoint(client *gophercloud.ServiceClient, service string) *gophercloud.ServiceClient {
-	finalEndpoint := client.ResourceBaseURL()
-
-	if v, ok := c.EndpointOverrides[service]; ok {
-		if endpoint, ok := v.(string); ok && endpoint != "" {
-			finalEndpoint = endpoint
-			client.Endpoint = endpoint
-			client.ResourceBase = ""
-		}
+func (c *Config) DetermineEndpoint(client *gophercloud.ServiceClient, eo gophercloud.EndpointOpts, service string) (*gophercloud.ServiceClient, error) {
+	v, ok := c.EndpointOverrides[service]
+	if !ok {
+		return client, nil
+	}
+	val, ok := v.(string)
+	if !ok || val == "" {
+		return client, nil
 	}
 
-	log.Printf("[DEBUG] OpenStack Endpoint for %s: %s", service, finalEndpoint)
+	// overriden endpoint is a URL
+	if u, err := url.Parse(val); err == nil && u.Scheme != "" && u.Host != "" {
+		eo.ApplyDefaults(service)
+		client.ProviderClient = c.OsClient
+		client.Endpoint = val
+		client.ResourceBase = ""
+		client.Type = service
+		log.Printf("[DEBUG] OpenStack Endpoint for %s: %s", service, val)
+		return client, nil
+	}
 
-	return client
+	// overriden endpoint is a new service type
+	eo.ApplyDefaults(val)
+	url, err := c.OsClient.EndpointLocator(eo)
+	if err != nil {
+		log.Printf("[DEBUG] Cannot set a new OpenStack Endpoint %s alias: %v", val, err)
+		return client, err
+	}
+	client.ProviderClient = c.OsClient
+	client.Endpoint = url
+	client.Type = val
+
+	log.Printf("[DEBUG] OpenStack Endpoint for %s alias: %s", val, url)
+	return client, nil
 }
 
 // DetermineRegion is a helper method to determine the region based on
@@ -285,19 +306,25 @@ func (c *Config) CommonServiceClientInit(ctx context.Context, newClient commonCo
 		return nil, err
 	}
 
-	client, err := newClient(c.OsClient, gophercloud.EndpointOpts{
+	eo := gophercloud.EndpointOpts{
 		Region:       c.DetermineRegion(region),
 		Availability: clientconfig.GetEndpointType(c.EndpointType),
-	})
-
-	if err != nil {
+	}
+	client, err := newClient(c.OsClient, eo)
+	if err, ok := err.(*gophercloud.ErrEndpointNotFound); ok && client != nil {
+		client, e := c.DetermineEndpoint(client, eo, service)
+		if e != nil {
+			return client, e
+		}
+		// if the endpoint is still not found, return the original error
+		if client.ProviderClient == nil {
+			return client, err
+		}
+	} else if err != nil {
 		return client, err
 	}
 
-	// Check if an endpoint override was specified for the volume service.
-	client = c.DetermineEndpoint(client, service)
-
-	return client, nil
+	return c.DetermineEndpoint(client, eo, service)
 }
 
 func (c *Config) BlockStorageV1Client(ctx context.Context, region string) (*gophercloud.ServiceClient, error) {
@@ -328,24 +355,30 @@ func (c *Config) ImageV2Client(ctx context.Context, region string) (*gophercloud
 	return c.CommonServiceClientInit(ctx, openstack.NewImageV2, region, "image")
 }
 
-func (c *Config) MessagingV2Client(ctx context.Context, region string) (*gophercloud.ServiceClient, error) {
+func (c *Config) MessagingV2Client(ctx context.Context, clientID string, region string) (*gophercloud.ServiceClient, error) {
 	if err := c.Authenticate(ctx); err != nil {
 		return nil, err
 	}
 
-	client, err := openstack.NewMessagingV2(c.OsClient, "", gophercloud.EndpointOpts{
+	eo := gophercloud.EndpointOpts{
 		Region:       c.DetermineRegion(region),
 		Availability: clientconfig.GetEndpointType(c.EndpointType),
-	})
-
-	if err != nil {
+	}
+	client, err := openstack.NewMessagingV2(c.OsClient, clientID, eo)
+	if err, ok := err.(*gophercloud.ErrEndpointNotFound); ok && client != nil {
+		client, e := c.DetermineEndpoint(client, eo, "messaging")
+		if e != nil {
+			return client, e
+		}
+		// if the endpoint is still not found, return the original error
+		if client.ProviderClient == nil {
+			return client, err
+		}
+	} else if err != nil {
 		return client, err
 	}
 
-	// Check if an endpoint override was specified for the messaging service.
-	client = c.DetermineEndpoint(client, "message")
-
-	return client, nil
+	return c.DetermineEndpoint(client, eo, "messaging")
 }
 
 func (c *Config) NetworkingV2Client(ctx context.Context, region string) (*gophercloud.ServiceClient, error) {
@@ -353,61 +386,34 @@ func (c *Config) NetworkingV2Client(ctx context.Context, region string) (*gopher
 }
 
 func (c *Config) ObjectStorageV1Client(ctx context.Context, region string) (*gophercloud.ServiceClient, error) {
-	var client *gophercloud.ServiceClient
-	var err error
-
-	// If Swift Authentication is being used, return a swauth client.
-	// Otherwise, use a Keystone-based client.
-	if c.Swauth {
-		if !c.DelayedAuth {
-			client, err = swauth.NewObjectStorageV1(ctx, c.OsClient, swauth.AuthOpts{
-				User: c.Username,
-				Key:  c.Password,
-			})
-			if err != nil {
-				return nil, err
-			}
-		} else {
-			c.MutexKV.Lock("SwAuth")
-			defer c.MutexKV.Unlock("SwAuth")
-
-			if c.swAuthFailed != nil {
-				return nil, c.swAuthFailed
-			}
-
-			if c.swClient == nil {
-				c.swClient, err = swauth.NewObjectStorageV1(ctx, c.OsClient, swauth.AuthOpts{
-					User: c.Username,
-					Key:  c.Password,
-				})
-
-				if err != nil {
-					c.swAuthFailed = err
-					return nil, err
-				}
-			}
-
-			client = c.swClient
-		}
-	} else {
-		if err := c.Authenticate(ctx); err != nil {
-			return nil, err
-		}
-
-		client, err = openstack.NewObjectStorageV1(c.OsClient, gophercloud.EndpointOpts{
-			Region:       c.DetermineRegion(region),
-			Availability: clientconfig.GetEndpointType(c.EndpointType),
-		})
-
-		if err != nil {
-			return client, err
-		}
+	if !c.Swauth {
+		return c.CommonServiceClientInit(ctx, openstack.NewObjectStorageV1, region, "object-store")
 	}
 
-	// Check if an endpoint override was specified for the object-store service.
-	client = c.DetermineEndpoint(client, "object-store")
+	// If Swift Authentication is being used, return a swauth client.
+	if !c.DelayedAuth {
+		return swauth.NewObjectStorageV1(ctx, c.OsClient, swauth.AuthOpts{
+			User: c.Username,
+			Key:  c.Password,
+		})
+	}
 
-	return client, nil
+	c.MutexKV.Lock("SwAuth")
+	defer c.MutexKV.Unlock("SwAuth")
+
+	if c.swAuthFailed != nil {
+		return nil, c.swAuthFailed
+	}
+
+	if c.swClient == nil {
+		c.swClient, c.swAuthFailed = swauth.NewObjectStorageV1(ctx, c.OsClient, swauth.AuthOpts{
+			User: c.Username,
+			Key:  c.Password,
+		})
+		return c.swClient, c.swAuthFailed
+	}
+
+	return c.swClient, nil
 }
 
 func (c *Config) OrchestrationV1Client(ctx context.Context, region string) (*gophercloud.ServiceClient, error) {
