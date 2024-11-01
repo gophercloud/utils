@@ -440,6 +440,10 @@ func (c *Config) KeyManagerV1Client(ctx context.Context, region string) (*gopher
 	return c.CommonServiceClientInit(ctx, openstack.NewKeyManagerV1, region, "key-manager")
 }
 
+func (c *Config) WorkflowV2Client(ctx context.Context, region string) (*gophercloud.ServiceClient, error) {
+	return c.CommonServiceClientInit(ctx, openstack.NewWorkflowV2, region, "workflowv2")
+}
+
 // A wrapper to determine if logging in gophercloud should be enabled, with a fallback
 // to the OS_DEBUG environment variable when no explicit configuration is passed.
 func enableLogging(enable bool) bool {
