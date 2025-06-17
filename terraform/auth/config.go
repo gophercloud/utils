@@ -320,7 +320,8 @@ func (c *Config) CommonServiceClientInit(ctx context.Context, newClient commonCo
 		if client.ProviderClient == nil {
 			return client, err
 		}
-	} else if err != nil {
+	}
+	if err != nil {
 		return client, err
 	}
 
@@ -374,7 +375,8 @@ func (c *Config) MessagingV2Client(ctx context.Context, clientID string, region 
 		if client.ProviderClient == nil {
 			return client, err
 		}
-	} else if err != nil {
+	}
+	if err != nil {
 		return client, err
 	}
 
