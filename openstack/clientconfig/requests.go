@@ -888,21 +888,21 @@ func NewServiceClient(ctx context.Context, service string, opts *ClientOpts) (*g
 
 	switch service {
 	case "baremetal":
-		return openstack.NewBareMetalV1(pClient, eo)
+		return openstack.NewBareMetalV1(ctx, pClient, eo)
 	case "baremetal-introspection":
-		return openstack.NewBareMetalIntrospectionV1(pClient, eo)
+		return openstack.NewBareMetalIntrospectionV1(ctx, pClient, eo)
 	case "compute":
-		return openstack.NewComputeV2(pClient, eo)
+		return openstack.NewComputeV2(ctx, pClient, eo)
 	case "container":
-		return openstack.NewContainerV1(pClient, eo)
+		return openstack.NewContainerV1(ctx, pClient, eo)
 	case "container-infra":
-		return openstack.NewContainerInfraV1(pClient, eo)
+		return openstack.NewContainerInfraV1(ctx, pClient, eo)
 	case "database":
-		return openstack.NewDBV1(pClient, eo)
+		return openstack.NewDBV1(ctx, pClient, eo)
 	case "dns":
-		return openstack.NewDNSV2(pClient, eo)
+		return openstack.NewDNSV2(ctx, pClient, eo)
 	case "gnocchi":
-		return gnocchi.NewGnocchiV1(pClient, eo)
+		return gnocchi.NewGnocchiV1(ctx, pClient, eo)
 	case "identity":
 		identityVersion := "3"
 		if v := cloud.IdentityAPIVersion; v != "" {
@@ -911,34 +911,34 @@ func NewServiceClient(ctx context.Context, service string, opts *ClientOpts) (*g
 
 		switch identityVersion {
 		case "v2", "2", "2.0":
-			return openstack.NewIdentityV2(pClient, eo)
+			return openstack.NewIdentityV2(ctx, pClient, eo)
 		case "v3", "3":
-			return openstack.NewIdentityV3(pClient, eo)
+			return openstack.NewIdentityV3(ctx, pClient, eo)
 		default:
 			return nil, fmt.Errorf("invalid identity API version")
 		}
 	case "image":
-		return openstack.NewImageV2(pClient, eo)
+		return openstack.NewImageV2(ctx, pClient, eo)
 	case "key-manager":
-		return openstack.NewKeyManagerV1(pClient, eo)
+		return openstack.NewKeyManagerV1(ctx, pClient, eo)
 	case "load-balancer":
-		return openstack.NewLoadBalancerV2(pClient, eo)
+		return openstack.NewLoadBalancerV2(ctx, pClient, eo)
 	case "messaging":
 		clientID, err := uuid.NewV4()
 		if err != nil {
 			return nil, fmt.Errorf("failed to generate UUID: %w", err)
 		}
-		return openstack.NewMessagingV2(pClient, clientID.String(), eo)
+		return openstack.NewMessagingV2(ctx, pClient, clientID.String(), eo)
 	case "network":
-		return openstack.NewNetworkV2(pClient, eo)
+		return openstack.NewNetworkV2(ctx, pClient, eo)
 	case "object-store":
-		return openstack.NewObjectStorageV1(pClient, eo)
+		return openstack.NewObjectStorageV1(ctx, pClient, eo)
 	case "orchestration":
-		return openstack.NewOrchestrationV1(pClient, eo)
+		return openstack.NewOrchestrationV1(ctx, pClient, eo)
 	case "placement":
-		return openstack.NewPlacementV1(pClient, eo)
+		return openstack.NewPlacementV1(ctx, pClient, eo)
 	case "sharev2":
-		return openstack.NewSharedFileSystemV2(pClient, eo)
+		return openstack.NewSharedFileSystemV2(ctx, pClient, eo)
 	case "volume":
 		volumeVersion := "3"
 		if v := cloud.VolumeAPIVersion; v != "" {
@@ -947,16 +947,16 @@ func NewServiceClient(ctx context.Context, service string, opts *ClientOpts) (*g
 
 		switch volumeVersion {
 		case "v1", "1":
-			return openstack.NewBlockStorageV1(pClient, eo)
+			return openstack.NewBlockStorageV1(ctx, pClient, eo)
 		case "v2", "2":
-			return openstack.NewBlockStorageV2(pClient, eo)
+			return openstack.NewBlockStorageV2(ctx, pClient, eo)
 		case "v3", "3":
-			return openstack.NewBlockStorageV3(pClient, eo)
+			return openstack.NewBlockStorageV3(ctx, pClient, eo)
 		default:
 			return nil, fmt.Errorf("invalid volume API version")
 		}
 	case "workflowv2":
-		return openstack.NewWorkflowV2(pClient, eo)
+		return openstack.NewWorkflowV2(ctx, pClient, eo)
 	}
 
 	return nil, fmt.Errorf("unable to create a service client for %s", service)

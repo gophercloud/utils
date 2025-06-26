@@ -12,10 +12,10 @@ import (
 )
 
 func TestGetWithDetails(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	fakeServer := th.SetupHTTP()
+	defer fakeServer.Teardown()
 
-	th.Mux.HandleFunc("/v1/status", func(w http.ResponseWriter, r *http.Request) {
+	fakeServer.Mux.HandleFunc("/v1/status", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
@@ -31,17 +31,17 @@ func TestGetWithDetails(t *testing.T) {
 		Details: &details,
 	}
 
-	s, err := status.Get(context.TODO(), fake.ServiceClient(), getOpts).Extract()
+	s, err := status.Get(context.TODO(), fake.ServiceClient(fakeServer), getOpts).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, s.Metricd, GetStatusWithDetailsExpected.Metricd)
 	th.AssertDeepEquals(t, s.Storage, GetStatusWithDetailsExpected.Storage)
 }
 
 func TestGetWithoutDetails(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	fakeServer := th.SetupHTTP()
+	defer fakeServer.Teardown()
 
-	th.Mux.HandleFunc("/v1/status", func(w http.ResponseWriter, r *http.Request) {
+	fakeServer.Mux.HandleFunc("/v1/status", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
@@ -57,7 +57,7 @@ func TestGetWithoutDetails(t *testing.T) {
 		Details: &details,
 	}
 
-	s, err := status.Get(context.TODO(), fake.ServiceClient(), getOpts).Extract()
+	s, err := status.Get(context.TODO(), fake.ServiceClient(fakeServer), getOpts).Extract()
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, s.Metricd, GetStatusWithoutDetailsExpected.Metricd)
 	th.AssertDeepEquals(t, s.Storage, GetStatusWithoutDetailsExpected.Storage)

@@ -42,15 +42,15 @@ func TestMultipartManifest(t *testing.T) {
 }
 
 func TestChunkData(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
-	HandleDownloadManifestSuccessfully(t)
+	fakeServer := th.SetupHTTP()
+	defer fakeServer.Teardown()
+	HandleDownloadManifestSuccessfully(t, fakeServer)
 
 	downloadOpts := o.DownloadOpts{
 		MultipartManifest: "get",
 	}
 
-	res := o.Download(context.TODO(), fake.ServiceClient(), "testContainer", "testObject", downloadOpts)
+	res := o.Download(context.TODO(), fake.ServiceClient(fakeServer), "testContainer", "testObject", downloadOpts)
 	defer res.Body.Close()
 	th.AssertNoErr(t, res.Err)
 
@@ -67,7 +67,7 @@ func TestChunkData(t *testing.T) {
 		StaticLargeObject: true,
 	}
 
-	actualChunkData, err := objects.GetManifest(context.TODO(), fake.ServiceClient(), gmo)
+	actualChunkData, err := objects.GetManifest(context.TODO(), fake.ServiceClient(fakeServer), gmo)
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, actualChunkData, expectedMultipartManifest)
 }
