@@ -13,10 +13,10 @@ import (
 )
 
 func TestList(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	fakeServer := th.SetupHTTP()
+	defer fakeServer.Teardown()
 
-	th.Mux.HandleFunc("/v1/resource_type", func(w http.ResponseWriter, r *http.Request) {
+	fakeServer.Mux.HandleFunc("/v1/resource_type", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
@@ -28,7 +28,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	resourcetypes.List(fake.ServiceClient()).EachPage(context.TODO(), func(_ context.Context, page pagination.Page) (bool, error) {
+	resourcetypes.List(fake.ServiceClient(fakeServer)).EachPage(context.TODO(), func(_ context.Context, page pagination.Page) (bool, error) {
 		count++
 		actual, err := resourcetypes.ExtractResourceTypes(page)
 		if err != nil {
@@ -53,10 +53,10 @@ func TestList(t *testing.T) {
 }
 
 func TestGet(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	fakeServer := th.SetupHTTP()
+	defer fakeServer.Teardown()
 
-	th.Mux.HandleFunc("/v1/resource_type/compute_instance", func(w http.ResponseWriter, r *http.Request) {
+	fakeServer.Mux.HandleFunc("/v1/resource_type/compute_instance", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
@@ -66,7 +66,7 @@ func TestGet(t *testing.T) {
 		fmt.Fprintf(w, ResourceTypeGetResult)
 	})
 
-	s, err := resourcetypes.Get(context.TODO(), fake.ServiceClient(), "compute_instance").Extract()
+	s, err := resourcetypes.Get(context.TODO(), fake.ServiceClient(fakeServer), "compute_instance").Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, s.Name, "compute_instance")
@@ -90,10 +90,10 @@ func TestGet(t *testing.T) {
 }
 
 func TestCreateWithoutAttributes(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	fakeServer := th.SetupHTTP()
+	defer fakeServer.Teardown()
 
-	th.Mux.HandleFunc("/v1/resource_type", func(w http.ResponseWriter, r *http.Request) {
+	fakeServer.Mux.HandleFunc("/v1/resource_type", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "POST")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		th.TestHeader(t, r, "Content-Type", "application/json")
@@ -109,7 +109,7 @@ func TestCreateWithoutAttributes(t *testing.T) {
 	opts := resourcetypes.CreateOpts{
 		Name: "identity_project",
 	}
-	s, err := resourcetypes.Create(context.TODO(), fake.ServiceClient(), opts).Extract()
+	s, err := resourcetypes.Create(context.TODO(), fake.ServiceClient(fakeServer), opts).Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, s.Name, "identity_project")
@@ -118,10 +118,10 @@ func TestCreateWithoutAttributes(t *testing.T) {
 }
 
 func TestCreateWithAttributes(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	fakeServer := th.SetupHTTP()
+	defer fakeServer.Teardown()
 
-	th.Mux.HandleFunc("/v1/resource_type", func(w http.ResponseWriter, r *http.Request) {
+	fakeServer.Mux.HandleFunc("/v1/resource_type", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "POST")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		th.TestHeader(t, r, "Content-Type", "application/json")
@@ -152,7 +152,7 @@ func TestCreateWithAttributes(t *testing.T) {
 			},
 		},
 	}
-	s, err := resourcetypes.Create(context.TODO(), fake.ServiceClient(), opts).Extract()
+	s, err := resourcetypes.Create(context.TODO(), fake.ServiceClient(fakeServer), opts).Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, s.Name, "compute_instance_network")
@@ -176,10 +176,10 @@ func TestCreateWithAttributes(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	fakeServer := th.SetupHTTP()
+	defer fakeServer.Teardown()
 
-	th.Mux.HandleFunc("/v1/resource_type/identity_project", func(w http.ResponseWriter, r *http.Request) {
+	fakeServer.Mux.HandleFunc("/v1/resource_type/identity_project", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "PATCH")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		th.TestHeader(t, r, "Content-Type", "application/json-patch+json")
@@ -226,7 +226,7 @@ func TestUpdate(t *testing.T) {
 		},
 	}
 
-	s, err := resourcetypes.Update(context.TODO(), fake.ServiceClient(), "identity_project", opts).Extract()
+	s, err := resourcetypes.Update(context.TODO(), fake.ServiceClient(fakeServer), "identity_project", opts).Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertEquals(t, s.Name, "identity_project")
@@ -256,15 +256,15 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	fakeServer := th.SetupHTTP()
+	defer fakeServer.Teardown()
 
-	th.Mux.HandleFunc("/v1/resource_type/compute_instance_network", func(w http.ResponseWriter, r *http.Request) {
+	fakeServer.Mux.HandleFunc("/v1/resource_type/compute_instance_network", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "DELETE")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		w.WriteHeader(http.StatusNoContent)
 	})
 
-	res := resourcetypes.Delete(context.TODO(), fake.ServiceClient(), "compute_instance_network")
+	res := resourcetypes.Delete(context.TODO(), fake.ServiceClient(fakeServer), "compute_instance_network")
 	th.AssertNoErr(t, res.Err)
 }

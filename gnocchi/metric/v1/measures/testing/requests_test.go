@@ -14,10 +14,10 @@ import (
 )
 
 func TestListMeasures(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	fakeServer := th.SetupHTTP()
+	defer fakeServer.Teardown()
 
-	th.Mux.HandleFunc("/v1/metric/9e5a6441-1044-4181-b66e-34e180753040/measures", func(w http.ResponseWriter, r *http.Request) {
+	fakeServer.Mux.HandleFunc("/v1/metric/9e5a6441-1044-4181-b66e-34e180753040/measures", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
@@ -37,7 +37,7 @@ func TestListMeasures(t *testing.T) {
 	}
 	expected := ListMeasuresExpected
 	pages := 0
-	err := measures.List(fake.ServiceClient(), metricID, opts).EachPage(context.TODO(), func(_ context.Context, page pagination.Page) (bool, error) {
+	err := measures.List(fake.ServiceClient(fakeServer), metricID, opts).EachPage(context.TODO(), func(_ context.Context, page pagination.Page) (bool, error) {
 		pages++
 
 		actual, err := measures.ExtractMeasures(page)
@@ -55,10 +55,10 @@ func TestListMeasures(t *testing.T) {
 }
 
 func TestCreateMeasures(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	fakeServer := th.SetupHTTP()
+	defer fakeServer.Teardown()
 
-	th.Mux.HandleFunc("/v1/metric/9e5a6441-1044-4181-b66e-34e180753040/measures", func(w http.ResponseWriter, r *http.Request) {
+	fakeServer.Mux.HandleFunc("/v1/metric/9e5a6441-1044-4181-b66e-34e180753040/measures", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "POST")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		th.TestHeader(t, r, "Content-Type", "application/json")
@@ -81,15 +81,15 @@ func TestCreateMeasures(t *testing.T) {
 			},
 		},
 	}
-	res := measures.Create(context.TODO(), fake.ServiceClient(), "9e5a6441-1044-4181-b66e-34e180753040", createOpts)
+	res := measures.Create(context.TODO(), fake.ServiceClient(fakeServer), "9e5a6441-1044-4181-b66e-34e180753040", createOpts)
 	th.AssertNoErr(t, res.Err)
 }
 
 func TestBatchCreateMetrics(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	fakeServer := th.SetupHTTP()
+	defer fakeServer.Teardown()
 
-	th.Mux.HandleFunc("/v1/batch/metrics/measures", func(w http.ResponseWriter, r *http.Request) {
+	fakeServer.Mux.HandleFunc("/v1/batch/metrics/measures", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "POST")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		th.TestHeader(t, r, "Content-Type", "application/json")
@@ -128,15 +128,15 @@ func TestBatchCreateMetrics(t *testing.T) {
 			},
 		},
 	}
-	err := measures.BatchCreateMetrics(context.TODO(), fake.ServiceClient(), createOpts).ExtractErr()
+	err := measures.BatchCreateMetrics(context.TODO(), fake.ServiceClient(fakeServer), createOpts).ExtractErr()
 	th.AssertNoErr(t, err)
 }
 
 func TestBatchCreateResourcesMetrics(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	fakeServer := th.SetupHTTP()
+	defer fakeServer.Teardown()
 
-	th.Mux.HandleFunc("/v1/batch/resources/metrics/measures", func(w http.ResponseWriter, r *http.Request) {
+	fakeServer.Mux.HandleFunc("/v1/batch/resources/metrics/measures", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "POST")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		th.TestHeader(t, r, "Content-Type", "application/json")
@@ -207,6 +207,6 @@ func TestBatchCreateResourcesMetrics(t *testing.T) {
 			},
 		},
 	}
-	err := measures.BatchCreateResourcesMetrics(context.TODO(), fake.ServiceClient(), createOpts).ExtractErr()
+	err := measures.BatchCreateResourcesMetrics(context.TODO(), fake.ServiceClient(fakeServer), createOpts).ExtractErr()
 	th.AssertNoErr(t, err)
 }

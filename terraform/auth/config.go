@@ -247,7 +247,7 @@ func (c *Config) Authenticate(ctx context.Context) error {
 
 // DetermineEndpoint is a helper method to determine if the user wants to
 // override an endpoint returned from the catalog.
-func (c *Config) DetermineEndpoint(client *gophercloud.ServiceClient, eo gophercloud.EndpointOpts, service string) (*gophercloud.ServiceClient, error) {
+func (c *Config) DetermineEndpoint(ctx context.Context, client *gophercloud.ServiceClient, eo gophercloud.EndpointOpts, service string) (*gophercloud.ServiceClient, error) {
 	v, ok := c.EndpointOverrides[service]
 	if !ok {
 		return client, nil
@@ -270,7 +270,7 @@ func (c *Config) DetermineEndpoint(client *gophercloud.ServiceClient, eo gopherc
 
 	// overriden endpoint is a new service type
 	eo.ApplyDefaults(val)
-	url, err := c.OsClient.EndpointLocator(eo)
+	url, err := c.OsClient.EndpointLocator(ctx, eo)
 	if err != nil {
 		log.Printf("[DEBUG] Cannot set a new OpenStack Endpoint %s alias: %v", val, err)
 		return client, err
@@ -299,7 +299,7 @@ func (c *Config) DetermineRegion(region string) string {
 // The following methods assist with the creation of individual Service Clients
 // which interact with the various OpenStack services.
 
-type commonCommonServiceClientInitFunc func(*gophercloud.ProviderClient, gophercloud.EndpointOpts) (*gophercloud.ServiceClient, error)
+type commonCommonServiceClientInitFunc func(context.Context, *gophercloud.ProviderClient, gophercloud.EndpointOpts) (*gophercloud.ServiceClient, error)
 
 func (c *Config) CommonServiceClientInit(ctx context.Context, newClient commonCommonServiceClientInitFunc, region, service string) (*gophercloud.ServiceClient, error) {
 	if err := c.Authenticate(ctx); err != nil {
@@ -310,9 +310,9 @@ func (c *Config) CommonServiceClientInit(ctx context.Context, newClient commonCo
 		Region:       c.DetermineRegion(region),
 		Availability: clientconfig.GetEndpointType(c.EndpointType),
 	}
-	client, err := newClient(c.OsClient, eo)
+	client, err := newClient(ctx, c.OsClient, eo)
 	if err, ok := err.(*gophercloud.ErrEndpointNotFound); ok && client != nil {
-		client, e := c.DetermineEndpoint(client, eo, service)
+		client, e := c.DetermineEndpoint(ctx, client, eo, service)
 		if e != nil {
 			return client, e
 		}
@@ -325,7 +325,7 @@ func (c *Config) CommonServiceClientInit(ctx context.Context, newClient commonCo
 		return client, err
 	}
 
-	return c.DetermineEndpoint(client, eo, service)
+	return c.DetermineEndpoint(ctx, client, eo, service)
 }
 
 func (c *Config) BlockStorageV1Client(ctx context.Context, region string) (*gophercloud.ServiceClient, error) {
@@ -365,9 +365,9 @@ func (c *Config) MessagingV2Client(ctx context.Context, clientID string, region 
 		Region:       c.DetermineRegion(region),
 		Availability: clientconfig.GetEndpointType(c.EndpointType),
 	}
-	client, err := openstack.NewMessagingV2(c.OsClient, clientID, eo)
+	client, err := openstack.NewMessagingV2(ctx, c.OsClient, clientID, eo)
 	if err, ok := err.(*gophercloud.ErrEndpointNotFound); ok && client != nil {
-		client, e := c.DetermineEndpoint(client, eo, "messaging")
+		client, e := c.DetermineEndpoint(ctx, client, eo, "messaging")
 		if e != nil {
 			return client, e
 		}
@@ -380,7 +380,7 @@ func (c *Config) MessagingV2Client(ctx context.Context, clientID string, region 
 		return client, err
 	}
 
-	return c.DetermineEndpoint(client, eo, "messaging")
+	return c.DetermineEndpoint(ctx, client, eo, "messaging")
 }
 
 func (c *Config) NetworkingV2Client(ctx context.Context, region string) (*gophercloud.ServiceClient, error) {
