@@ -608,7 +608,10 @@ func uploadObject(
 
 				contentLength = int64(len(data))
 				readSeeker = bytes.NewReader(data)
-				readSeeker.Seek(0, io.SeekStart)
+				_, err = readSeeker.Seek(0, io.SeekStart)
+				if err != nil {
+					return nil, err
+				}
 				reader = readSeeker
 			} else {
 				reader = opts.Content
@@ -633,7 +636,10 @@ func uploadObject(
 				return nil, err
 			}
 
-			readSeeker.Seek(0, io.SeekStart)
+			_, err := readSeeker.Seek(0, io.SeekStart)
+			if err != nil {
+				return nil, err
+			}
 			reader = readSeeker
 
 			eTag = fmt.Sprintf("%x", hash.Sum(nil))

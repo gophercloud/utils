@@ -23,7 +23,8 @@ func TestList(t *testing.T) {
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		r.ParseForm()
+		err := r.ParseForm()
+		th.AssertNoErr(t, err)
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
@@ -37,7 +38,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	resources.List(fake.ServiceClient(), resources.ListOpts{}, "generic").EachPage(context.TODO(), func(_ context.Context, page pagination.Page) (bool, error) {
+	err := resources.List(fake.ServiceClient(), resources.ListOpts{}, "generic").EachPage(context.TODO(), func(_ context.Context, page pagination.Page) (bool, error) {
 		count++
 		actual, err := resources.ExtractResources(page)
 		if err != nil {
@@ -54,6 +55,7 @@ func TestList(t *testing.T) {
 
 		return true, nil
 	})
+	th.AssertNoErr(t, err)
 
 	if count != 1 {
 		t.Errorf("Expected 1 page, got %d", count)
