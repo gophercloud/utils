@@ -223,14 +223,14 @@ func Upload(ctx context.Context, client *gophercloud.ServiceClient, containerNam
 		if sourceFileInfo.IsDir() {
 			// If the source path is a directory, then create a Directory Marker,
 			// even if DirMarker wasn't specified.
-			return createDirMarker(ctx, client, containerName, objectName, opts, origObject, sourceFileInfo)
+			return createDirMarker(ctx, client, containerName, objectName, opts, origObject)
 		}
 
 		return uploadObject(ctx, client, containerName, objectName, opts, origObject, sourceFileInfo)
 	}
 
 	if opts.DirMarker {
-		return createDirMarker(ctx, client, containerName, objectName, opts, origObject, sourceFileInfo)
+		return createDirMarker(ctx, client, containerName, objectName, opts, origObject)
 	}
 
 	// Finally, create an empty object.
@@ -247,8 +247,7 @@ func createDirMarker(
 	containerName string,
 	objectName string,
 	opts *UploadOpts,
-	origObject *originalObject,
-	sourceFileInfo os.FileInfo) (*UploadResult, error) {
+	origObject *originalObject) (*UploadResult, error) {
 
 	uploadResult := &UploadResult{
 		Action:    "create_dir_marker",

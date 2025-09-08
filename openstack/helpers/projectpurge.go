@@ -297,7 +297,7 @@ func getAllSubnets(ctx context.Context, projectID string, networkClient *gopherc
 	return subnets, nil
 }
 
-func clearAllRouterInterfaces(ctx context.Context, projectID string, routerID string, subnets []string, networkClient *gophercloud.ServiceClient) error {
+func clearAllRouterInterfaces(ctx context.Context, routerID string, subnets []string, networkClient *gophercloud.ServiceClient) error {
 	for _, subnet := range subnets {
 		intOpts := routers.RemoveInterfaceOpts{
 			SubnetID: subnet,
@@ -332,7 +332,7 @@ func clearNetworkingRouters(ctx context.Context, projectID string, networkClient
 
 	if len(allRouters) > 0 {
 		for _, router := range allRouters {
-			err = clearAllRouterInterfaces(ctx, projectID, router.ID, subnets, networkClient)
+			err = clearAllRouterInterfaces(ctx, router.ID, subnets, networkClient)
 			if err != nil {
 				return err
 			}

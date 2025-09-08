@@ -43,7 +43,7 @@ func RemainingKeys(s interface{}, m map[string]interface{}) (extras map[string]i
 func PrepareTLSConfig(caCertFile, clientCertFile, clientKeyFile string, insecure *bool) (*tls.Config, error) {
 	config := &tls.Config{}
 	if caCertFile != "" {
-		caCert, _, err := pathOrContents(caCertFile)
+		caCert, err := pathOrContents(caCertFile)
 		if err != nil {
 			return nil, fmt.Errorf("error reading CA Cert: %s", err)
 		}
@@ -62,11 +62,11 @@ func PrepareTLSConfig(caCertFile, clientCertFile, clientKeyFile string, insecure
 	}
 
 	if clientCertFile != "" && clientKeyFile != "" {
-		clientCert, _, err := pathOrContents(clientCertFile)
+		clientCert, err := pathOrContents(clientCertFile)
 		if err != nil {
 			return nil, fmt.Errorf("error reading Client Cert: %s", err)
 		}
-		clientKey, _, err := pathOrContents(clientKeyFile)
+		clientKey, err := pathOrContents(clientKeyFile)
 		if err != nil {
 			return nil, fmt.Errorf("error reading Client Key: %s", err)
 		}
@@ -82,16 +82,16 @@ func PrepareTLSConfig(caCertFile, clientCertFile, clientKeyFile string, insecure
 	return config, nil
 }
 
-func pathOrContents(poc string) ([]byte, bool, error) {
+func pathOrContents(poc string) ([]byte, error) {
 	if len(poc) == 0 {
-		return nil, false, nil
+		return nil, nil
 	}
 
 	path := poc
 	if path[0] == '~' {
 		usr, err := user.Current()
 		if err != nil {
-			return []byte(path), true, err
+			return []byte(path), err
 		}
 
 		if len(path) == 1 {
@@ -104,10 +104,10 @@ func pathOrContents(poc string) ([]byte, bool, error) {
 	if _, err := os.Stat(path); err == nil {
 		contents, err := os.ReadFile(path)
 		if err != nil {
-			return contents, true, err
+			return contents, err
 		}
-		return contents, true, nil
+		return contents, nil
 	}
 
-	return []byte(poc), false, nil
+	return []byte(poc), nil
 }
