@@ -1,5 +1,5 @@
-on: [push, pull_request]
 name: Unit Testing
+on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -9,33 +9,19 @@ jobs:
         go-version:
           - "1.22"
 
-    env:
-      GO111MODULE: "on"
-
     steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+
       - name: Setup Go ${{ matrix.go-version }}
         uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
 
-      - uses: actions/checkout@v5
-
-      - name: Setup environment
+      - name: Run linters
         run: |
-          # Changing into a different directory to avoid polluting go.sum with "go get"
-          cd "$(mktemp -d)"
-          go mod init unit_tests
-
-          go install golang.org/x/tools/cmd/goimports@latest
-
-      - name: Run go vet
-        run: |
-          go vet ./...
+          make lint
 
       - name: Run unit tests
         run: |
-          go test -v ./...
-
-      - name: Check for formatting
-        run:
-          ./script/format
+          make unit
