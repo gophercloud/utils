@@ -2,7 +2,7 @@ package measures
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"net/url"
 	"time"
 
@@ -160,11 +160,11 @@ func (opts MetricOpts) ToMap() (map[string]interface{}, error) {
 	// Check provided MetricOpts fields.
 	if opts.ID == "" {
 		errMsg := "missing input for the MetricOpts 'ID' argument"
-		return nil, fmt.Errorf(errMsg)
+		return nil, errors.New(errMsg)
 	}
 	if opts.Measures == nil {
 		errMsg := "missing input for the MetricOpts 'Measures' argument"
-		return nil, fmt.Errorf(errMsg)
+		return nil, errors.New(errMsg)
 	}
 
 	// measures is a slice of measures maps.
@@ -253,11 +253,11 @@ func (opts BatchResourcesMetricsOpts) ToMap() (map[string]interface{}, error) {
 	// Check provided BatchResourcesMetricsOpts fields.
 	if opts.ResourceID == "" {
 		errMsg := "missing input for the BatchResourcesMetricsOpts 'ResourceID' argument"
-		return nil, fmt.Errorf(errMsg)
+		return nil, errors.New(errMsg)
 	}
 	if opts.ResourcesMetrics == nil {
 		errMsg := "missing input for the BatchResourcesMetricsOpts 'ResourcesMetrics' argument"
-		return nil, fmt.Errorf(errMsg)
+		return nil, errors.New(errMsg)
 	}
 
 	// batchResourcesMetricsOpts is an internal map representation of the BatchResourcesMetricsOpts struct.
@@ -312,11 +312,11 @@ func (opts ResourcesMetricsOpts) ToMap() (map[string]interface{}, error) {
 	// Check provided ResourcesMetricsOpts fields.
 	if opts.MetricName == "" {
 		errMsg := "missing input for the ResourcesMetricsOpts 'MetricName' argument"
-		return nil, fmt.Errorf(errMsg)
+		return nil, errors.New(errMsg)
 	}
 	if opts.Measures == nil {
 		errMsg := "missing input for the ResourcesMetricsOpts 'Measures' argument"
-		return nil, fmt.Errorf(errMsg)
+		return nil, errors.New(errMsg)
 	}
 
 	// measures is a slice of measures maps.
