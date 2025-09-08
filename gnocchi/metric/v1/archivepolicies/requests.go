@@ -23,7 +23,7 @@ func Get(ctx context.Context, c *gophercloud.ServiceClient, archivePolicyName st
 
 // CreateOptsBuilder allows extensions to add additional parameters to the Create request.
 type CreateOptsBuilder interface {
-	ToArchivePolicyCreateMap() (map[string]interface{}, error)
+	ToArchivePolicyCreateMap() (map[string]any, error)
 }
 
 // CreateOpts specifies parameters of a new Archive Policy.
@@ -62,7 +62,7 @@ type ArchivePolicyDefinitionOpts struct {
 }
 
 // ToArchivePolicyCreateMap constructs a request body from CreateOpts.
-func (opts CreateOpts) ToArchivePolicyCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToArchivePolicyCreateMap() (map[string]any, error) {
 	return gophercloud.BuildRequestBody(opts, "")
 }
 
@@ -82,7 +82,7 @@ func Create(ctx context.Context, client *gophercloud.ServiceClient, opts CreateO
 
 // UpdateOptsBuilder allows extensions to add additional parameters to the Update request.
 type UpdateOptsBuilder interface {
-	ToArchivePolicyUpdateMap() (map[string]interface{}, error)
+	ToArchivePolicyUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts represents options used to update an archive policy.
@@ -93,7 +93,7 @@ type UpdateOpts struct {
 }
 
 // ToArchivePolicyUpdateMap constructs a request body from UpdateOpts.
-func (opts UpdateOpts) ToArchivePolicyUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToArchivePolicyUpdateMap() (map[string]any, error) {
 	return gophercloud.BuildRequestBody(opts, "")
 }
 

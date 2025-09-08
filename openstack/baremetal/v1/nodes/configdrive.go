@@ -9,11 +9,11 @@ import (
 
 // A ConfigDrive struct will be used to create a base64-encoded, gzipped ISO9660 image for use with Ironic.
 type ConfigDrive struct {
-	UserData       UserDataBuilder        `json:"user_data"`
-	MetaData       map[string]interface{} `json:"meta_data"`
-	NetworkData    map[string]interface{} `json:"network_data"`
-	Version        string                 `json:"-"`
-	BuildDirectory string                 `json:"-"`
+	UserData       UserDataBuilder `json:"user_data"`
+	MetaData       map[string]any  `json:"meta_data"`
+	NetworkData    map[string]any  `json:"network_data"`
+	Version        string          `json:"-"`
+	BuildDirectory string          `json:"-"`
 }
 
 // Interface to let us specify a raw string, or a map for the user data
@@ -21,7 +21,7 @@ type UserDataBuilder interface {
 	ToUserData() ([]byte, error)
 }
 
-type UserDataMap map[string]interface{}
+type UserDataMap map[string]any
 type UserDataString string
 
 // Converts a UserDataMap to JSON-string

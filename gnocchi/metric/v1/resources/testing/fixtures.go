@@ -68,7 +68,7 @@ var Resource1 = resources.Resource{
 	EndedAt:            time.Time{},
 	Type:               "compute_instance",
 	UserID:             "bd5874d666624b24a9f01c128871e4ac",
-	ExtraAttributes: map[string]interface{}{
+	ExtraAttributes: map[string]any{
 		"display_name": "MyInstance00",
 		"flavor_name":  "2CPU4G",
 		"host":         "compute010",
@@ -93,7 +93,7 @@ var Resource2 = resources.Resource{
 	EndedAt:            time.Time{},
 	Type:               "compute_instance_disk",
 	UserID:             "bd5874d666624b24a9f01c128871e4ac",
-	ExtraAttributes: map[string]interface{}{
+	ExtraAttributes: map[string]any{
 		"disk_device_name": "sdb",
 	},
 }

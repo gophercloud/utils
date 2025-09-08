@@ -72,7 +72,7 @@ func Get(ctx context.Context, c *gophercloud.ServiceClient, resourceType string,
 // CreateOptsBuilder allows to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToResourceCreateMap() (map[string]interface{}, error)
+	ToResourceCreateMap() (map[string]any, error)
 }
 
 // CreateOpts specifies parameters of a new Gnocchi resource.
@@ -83,7 +83,7 @@ type CreateOpts struct {
 	// Metrics field can be used to link existing metrics in the resource
 	// or to create metrics with the resource at the same time to save
 	// some requests.
-	Metrics map[string]interface{} `json:"metrics,omitempty"`
+	Metrics map[string]any `json:"metrics,omitempty"`
 
 	// ProjectID is the Identity project of the resource.
 	ProjectID string `json:"project_id,omitempty"`
@@ -99,11 +99,11 @@ type CreateOpts struct {
 
 	// ExtraAttributes is a collection of keys and values that can be found in resources
 	// of different resource types.
-	ExtraAttributes map[string]interface{} `json:"-"`
+	ExtraAttributes map[string]any `json:"-"`
 }
 
 // ToResourceCreateMap constructs a request body from CreateOpts.
-func (opts CreateOpts) ToResourceCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToResourceCreateMap() (map[string]any, error) {
 	b, err := gophercloud.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -143,7 +143,7 @@ func Create(ctx context.Context, client *gophercloud.ServiceClient, resourceType
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
-	ToResourceUpdateMap() (map[string]interface{}, error)
+	ToResourceUpdateMap() (map[string]any, error)
 }
 
 // UpdateOpts represents options used to update a network.
@@ -151,7 +151,7 @@ type UpdateOpts struct {
 	// Metrics field can be used to link existing metrics in the resource
 	// or to create metrics and update the resource at the same time to save
 	// some requests.
-	Metrics *map[string]interface{} `json:"metrics,omitempty"`
+	Metrics *map[string]any `json:"metrics,omitempty"`
 
 	// ProjectID is the Identity project of the resource.
 	ProjectID string `json:"project_id,omitempty"`
@@ -167,11 +167,11 @@ type UpdateOpts struct {
 
 	// ExtraAttributes is a collection of keys and values that can be found in resources
 	// of different resource types.
-	ExtraAttributes map[string]interface{} `json:"-"`
+	ExtraAttributes map[string]any `json:"-"`
 }
 
 // ToResourceUpdateMap builds a request body from UpdateOpts.
-func (opts UpdateOpts) ToResourceUpdateMap() (map[string]interface{}, error) {
+func (opts UpdateOpts) ToResourceUpdateMap() (map[string]any, error) {
 	b, err := gophercloud.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err

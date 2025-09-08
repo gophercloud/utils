@@ -75,7 +75,7 @@ func TestGet(t *testing.T) {
 	th.AssertDeepEquals(t, s.Attributes, map[string]resourcetypes.Attribute{
 		"host": {
 			Type: "string",
-			Details: map[string]interface{}{
+			Details: map[string]any{
 				"max_length": float64(255),
 				"min_length": float64(0),
 				"required":   true,
@@ -83,7 +83,7 @@ func TestGet(t *testing.T) {
 		},
 		"image_ref": {
 			Type: "uuid",
-			Details: map[string]interface{}{
+			Details: map[string]any{
 				"required": false,
 			},
 		},
@@ -140,14 +140,14 @@ func TestCreateWithAttributes(t *testing.T) {
 		Attributes: map[string]resourcetypes.AttributeOpts{
 			"port_name": {
 				Type: "string",
-				Details: map[string]interface{}{
+				Details: map[string]any{
 					"max_length": 128,
 					"required":   false,
 				},
 			},
 			"port_id": {
 				Type: "uuid",
-				Details: map[string]interface{}{
+				Details: map[string]any{
 					"required": true,
 				},
 			},
@@ -161,7 +161,7 @@ func TestCreateWithAttributes(t *testing.T) {
 	th.AssertDeepEquals(t, s.Attributes, map[string]resourcetypes.Attribute{
 		"port_name": {
 			Type: "string",
-			Details: map[string]interface{}{
+			Details: map[string]any{
 				"max_length": float64(128),
 				"min_length": float64(0),
 				"required":   false,
@@ -169,7 +169,7 @@ func TestCreateWithAttributes(t *testing.T) {
 		},
 		"port_id": {
 			Type: "uuid",
-			Details: map[string]interface{}{
+			Details: map[string]any{
 				"required": true,
 			},
 		},
@@ -194,16 +194,16 @@ func TestUpdate(t *testing.T) {
 	})
 
 	enabledAttributeOptions := resourcetypes.AttributeOpts{
-		Details: map[string]interface{}{
+		Details: map[string]any{
 			"required": true,
-			"options": map[string]interface{}{
+			"options": map[string]any{
 				"fill": true,
 			},
 		},
 		Type: "bool",
 	}
 	parendIDAttributeOptions := resourcetypes.AttributeOpts{
-		Details: map[string]interface{}{
+		Details: map[string]any{
 			"required": false,
 		},
 		Type: "uuid",
@@ -235,19 +235,19 @@ func TestUpdate(t *testing.T) {
 	th.AssertDeepEquals(t, s.Attributes, map[string]resourcetypes.Attribute{
 		"enabled": {
 			Type: "bool",
-			Details: map[string]interface{}{
+			Details: map[string]any{
 				"required": true,
 			},
 		},
 		"parent_id": {
 			Type: "uuid",
-			Details: map[string]interface{}{
+			Details: map[string]any{
 				"required": false,
 			},
 		},
 		"name": {
 			Type: "string",
-			Details: map[string]interface{}{
+			Details: map[string]any{
 				"required":   true,
 				"min_length": float64(0),
 				"max_length": float64(128),

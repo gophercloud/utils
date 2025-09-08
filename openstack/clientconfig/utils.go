@@ -23,7 +23,7 @@ func defaultIfEmpty(value string, defaultValue string) string {
 
 // mergeCLouds merges two Clouds recursively (the AuthInfo also gets merged).
 // In case both Clouds define a value, the value in the 'override' cloud takes precedence
-func mergeClouds(override, cloud interface{}) (*Cloud, error) {
+func mergeClouds(override, cloud any) (*Cloud, error) {
 	overrideJson, err := json.Marshal(override)
 	if err != nil {
 		return nil, err
@@ -32,12 +32,12 @@ func mergeClouds(override, cloud interface{}) (*Cloud, error) {
 	if err != nil {
 		return nil, err
 	}
-	var overrideInterface interface{}
+	var overrideInterface any
 	err = json.Unmarshal(overrideJson, &overrideInterface)
 	if err != nil {
 		return nil, err
 	}
-	var cloudInterface interface{}
+	var cloudInterface any
 	err = json.Unmarshal(cloudJson, &cloudInterface)
 	if err != nil {
 		return nil, err
@@ -57,10 +57,10 @@ func mergeClouds(override, cloud interface{}) (*Cloud, error) {
 
 // merges two interfaces. In cases where a value is defined for both 'overridingInterface' and
 // 'inferiorInterface' the value in 'overridingInterface' will take precedence.
-func mergeInterfaces(overridingInterface, inferiorInterface interface{}) interface{} {
+func mergeInterfaces(overridingInterface, inferiorInterface any) any {
 	switch overriding := overridingInterface.(type) {
-	case map[string]interface{}:
-		interfaceMap, ok := inferiorInterface.(map[string]interface{})
+	case map[string]any:
+		interfaceMap, ok := inferiorInterface.(map[string]any)
 		if !ok {
 			return overriding
 		}
@@ -71,8 +71,8 @@ func mergeInterfaces(overridingInterface, inferiorInterface interface{}) interfa
 				overriding[k] = v
 			}
 		}
-	case []interface{}:
-		list, ok := inferiorInterface.([]interface{})
+	case []any:
+		list, ok := inferiorInterface.([]any)
 		if !ok {
 			return overriding
 		}
@@ -80,7 +80,7 @@ func mergeInterfaces(overridingInterface, inferiorInterface interface{}) interfa
 		return overriding
 	case nil:
 		// mergeClouds(nil, map[string]interface{...}) -> map[string]interface{...}
-		v, ok := inferiorInterface.(map[string]interface{})
+		v, ok := inferiorInterface.(map[string]any)
 		if ok {
 			return v
 		}

@@ -119,7 +119,7 @@ func TestGet(t *testing.T) {
 		EndedAt:            time.Time{},
 		Type:               "compute_instance_network",
 		UserID:             "bd5874d666624b24a9f01c128871e4ac",
-		ExtraAttributes:    map[string]interface{}{},
+		ExtraAttributes:    map[string]any{},
 	})
 	th.AssertEquals(t, s.Unit, "packet/s")
 }

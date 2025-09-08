@@ -79,7 +79,7 @@ func Get(ctx context.Context, c *gophercloud.ServiceClient, metricID string) (r 
 // CreateOptsBuilder allows to add additional parameters to the
 // Create request.
 type CreateOptsBuilder interface {
-	ToMetricCreateMap() (map[string]interface{}, error)
+	ToMetricCreateMap() (map[string]any, error)
 }
 
 // CreateOpts specifies parameters of a new Gnocchi metric.
@@ -102,7 +102,7 @@ type CreateOpts struct {
 }
 
 // ToMetricCreateMap constructs a request body from CreateOpts.
-func (opts CreateOpts) ToMetricCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToMetricCreateMap() (map[string]any, error) {
 	b, err := gophercloud.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err

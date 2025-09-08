@@ -64,7 +64,7 @@ Gnocchi APIv1 returns measures in a such format:
 Helper unmarshals every nested array into the Measure type.
 */
 func (r *Measure) UnmarshalJSON(b []byte) error {
-	var measuresSlice []interface{}
+	var measuresSlice []any
 	err := json.Unmarshal(b, &measuresSlice)
 	if err != nil {
 		return err

@@ -78,7 +78,7 @@ func List(c *gophercloud.ServiceClient, metricID string, opts ListOptsBuilder) p
 
 // CreateOptsBuilder is needed to add measures to the Create request.
 type CreateOptsBuilder interface {
-	ToMeasureCreateMap() (map[string]interface{}, error)
+	ToMeasureCreateMap() (map[string]any, error)
 }
 
 // MeasureOpts represents options of a single measure that can be created in the Gnocchi.
@@ -91,7 +91,7 @@ type MeasureOpts struct {
 }
 
 // ToMap is a helper function to convert individual MeasureOpts structure into a sub-map.
-func (opts MeasureOpts) ToMap() (map[string]interface{}, error) {
+func (opts MeasureOpts) ToMap() (map[string]any, error) {
 	b, err := gophercloud.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -109,8 +109,8 @@ type CreateOpts struct {
 }
 
 // ToMeasureCreateMap constructs a request body from CreateOpts.
-func (opts CreateOpts) ToMeasureCreateMap() (map[string]interface{}, error) {
-	measures := make([]map[string]interface{}, len(opts.Measures))
+func (opts CreateOpts) ToMeasureCreateMap() (map[string]any, error) {
+	measures := make([]map[string]any, len(opts.Measures))
 	for i, m := range opts.Measures {
 		measureMap, err := m.ToMap()
 		if err != nil {
@@ -118,7 +118,7 @@ func (opts CreateOpts) ToMeasureCreateMap() (map[string]interface{}, error) {
 		}
 		measures[i] = measureMap
 	}
-	return map[string]interface{}{"measures": measures}, nil
+	return map[string]any{"measures": measures}, nil
 }
 
 // Create requests the creation of a new measures in the single Gnocchi metric.
@@ -140,7 +140,7 @@ func Create(ctx context.Context, client *gophercloud.ServiceClient, metricID str
 
 // BatchCreateMetricsOptsBuilder is needed to add measures to the BatchCreateMetrics request.
 type BatchCreateMetricsOptsBuilder interface {
-	ToMeasuresBatchCreateMetricsMap() (map[string]interface{}, error)
+	ToMeasuresBatchCreateMetricsMap() (map[string]any, error)
 }
 
 // BatchCreateMetricsOpts specifies a parameters for creating measures for different metrics in a single request.
@@ -156,7 +156,7 @@ type MetricOpts struct {
 }
 
 // ToMap is a helper function to convert individual MetricOpts structure into a sub-map.
-func (opts MetricOpts) ToMap() (map[string]interface{}, error) {
+func (opts MetricOpts) ToMap() (map[string]any, error) {
 	// Check provided MetricOpts fields.
 	if opts.ID == "" {
 		errMsg := "missing input for the MetricOpts 'ID' argument"
@@ -168,10 +168,10 @@ func (opts MetricOpts) ToMap() (map[string]interface{}, error) {
 	}
 
 	// measures is a slice of measures maps.
-	measures := make([]map[string]interface{}, len(opts.Measures))
+	measures := make([]map[string]any, len(opts.Measures))
 
 	// metricOpts is an internal map representation of the MetricOpts struct.
-	metricOpts := make(map[string]interface{})
+	metricOpts := make(map[string]any)
 
 	for i, measure := range opts.Measures {
 		measureMap, err := measure.ToMap()
@@ -186,9 +186,9 @@ func (opts MetricOpts) ToMap() (map[string]interface{}, error) {
 }
 
 // ToMeasuresBatchCreateMetricsMap constructs a request body from BatchCreateMetricsOpts.
-func (opts BatchCreateMetricsOpts) ToMeasuresBatchCreateMetricsMap() (map[string]interface{}, error) {
+func (opts BatchCreateMetricsOpts) ToMeasuresBatchCreateMetricsMap() (map[string]any, error) {
 	// batchCreateMetricsOpts is an internal representation of the BatchCreateMetricsOpts struct.
-	batchCreateMetricsOpts := make(map[string]interface{})
+	batchCreateMetricsOpts := make(map[string]any)
 
 	for _, metricOpts := range opts {
 		metricOptsMap, err := metricOpts.ToMap()
@@ -200,7 +200,7 @@ func (opts BatchCreateMetricsOpts) ToMeasuresBatchCreateMetricsMap() (map[string
 		}
 	}
 
-	return map[string]interface{}{"batchCreateMetrics": batchCreateMetricsOpts}, nil
+	return map[string]any{"batchCreateMetrics": batchCreateMetricsOpts}, nil
 }
 
 // BatchCreateMetrics requests the creation of a new measures for different metrics.
@@ -224,7 +224,7 @@ func BatchCreateMetrics(ctx context.Context, client *gophercloud.ServiceClient, 
 // BatchCreateResourcesMetricsOptsBuilder is needed to add measures to the BatchCreateResourcesMetrics request.
 type BatchCreateResourcesMetricsOptsBuilder interface {
 	// ToMeasuresBatchCreateResourcesMetricsMap builds a request body.
-	ToMeasuresBatchCreateResourcesMetricsMap() (map[string]interface{}, error)
+	ToMeasuresBatchCreateResourcesMetricsMap() (map[string]any, error)
 
 	// ToMeasuresBatchCreateResourcesMetricsQuery builds a query string.
 	ToMeasuresBatchCreateResourcesMetricsQuery() (string, error)
@@ -249,7 +249,7 @@ type BatchResourcesMetricsOpts struct {
 }
 
 // ToMap is a helper function to convert individual BatchResourcesMetricsOpts structure into a sub-map.
-func (opts BatchResourcesMetricsOpts) ToMap() (map[string]interface{}, error) {
+func (opts BatchResourcesMetricsOpts) ToMap() (map[string]any, error) {
 	// Check provided BatchResourcesMetricsOpts fields.
 	if opts.ResourceID == "" {
 		errMsg := "missing input for the BatchResourcesMetricsOpts 'ResourceID' argument"
@@ -261,13 +261,13 @@ func (opts BatchResourcesMetricsOpts) ToMap() (map[string]interface{}, error) {
 	}
 
 	// batchResourcesMetricsOpts is an internal map representation of the BatchResourcesMetricsOpts struct.
-	batchResourcesMetricsOpts := make(map[string]interface{})
+	batchResourcesMetricsOpts := make(map[string]any)
 
 	// resourcesMetricsMaps is a temporary slice that contains different metrics for a single resource.
-	resourcesMetricsMaps := make([]map[string]interface{}, len(opts.ResourcesMetrics))
+	resourcesMetricsMaps := make([]map[string]any, len(opts.ResourcesMetrics))
 
 	// resourcesMetricsOptsMap is a temporary map that contains join of different maps from resourcesMetricsMaps slice.
-	resourcesMetricsOptsMap := make(map[string]interface{})
+	resourcesMetricsOptsMap := make(map[string]any)
 
 	// Populate the temporary resourcesMetricsMaps slice.
 	for i, resourcesMetrics := range opts.ResourcesMetrics {
@@ -308,7 +308,7 @@ type ResourcesMetricsOpts struct {
 }
 
 // ToMap is a helper function to convert individual ResourcesMetricsOpts structure into a sub-map.
-func (opts ResourcesMetricsOpts) ToMap() (map[string]interface{}, error) {
+func (opts ResourcesMetricsOpts) ToMap() (map[string]any, error) {
 	// Check provided ResourcesMetricsOpts fields.
 	if opts.MetricName == "" {
 		errMsg := "missing input for the ResourcesMetricsOpts 'MetricName' argument"
@@ -320,13 +320,13 @@ func (opts ResourcesMetricsOpts) ToMap() (map[string]interface{}, error) {
 	}
 
 	// measures is a slice of measures maps.
-	measures := make([]map[string]interface{}, len(opts.Measures))
+	measures := make([]map[string]any, len(opts.Measures))
 
 	// resourcesMetricsOpts is an internal map representation of the ResourcesMetricsOpts struct.
-	resourcesMetricsOpts := make(map[string]interface{})
+	resourcesMetricsOpts := make(map[string]any)
 
 	// metricOpts is an internal nested map for each metric in the resourcesMetricsOpts.
-	metricOpts := make(map[string]interface{})
+	metricOpts := make(map[string]any)
 
 	// Populate metricOpts with values from provided opts.
 	if opts.ArchivePolicyName != "" {
@@ -350,10 +350,10 @@ func (opts ResourcesMetricsOpts) ToMap() (map[string]interface{}, error) {
 }
 
 // ToMeasuresBatchCreateResourcesMetricsMap constructs a request body from the BatchCreateResourcesMetricsOpts.
-func (opts BatchCreateResourcesMetricsOpts) ToMeasuresBatchCreateResourcesMetricsMap() (map[string]interface{}, error) {
+func (opts BatchCreateResourcesMetricsOpts) ToMeasuresBatchCreateResourcesMetricsMap() (map[string]any, error) {
 	// batchCreateResourcesMetricsOpts is an internal representation of the
 	// BatchCreateResourcesMetricsOpts's BatchResourcesMetrics field.
-	batchCreateResourcesMetricsOpts := make(map[string]interface{})
+	batchCreateResourcesMetricsOpts := make(map[string]any)
 
 	for _, resourceMetricsOpts := range opts.BatchResourcesMetrics {
 		resourceMetricsOptsMap, err := resourceMetricsOpts.ToMap()
@@ -365,7 +365,7 @@ func (opts BatchCreateResourcesMetricsOpts) ToMeasuresBatchCreateResourcesMetric
 		}
 	}
 
-	return map[string]interface{}{"batchCreateResourcesMetrics": batchCreateResourcesMetricsOpts}, nil
+	return map[string]any{"batchCreateResourcesMetrics": batchCreateResourcesMetricsOpts}, nil
 }
 
 // ToMeasuresBatchCreateResourcesMetricsQuery formats the BatchCreateResourcesMetricsOpts into a query string.

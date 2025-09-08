@@ -18,14 +18,14 @@ import (
 
 // Logger is an interface representing the Logger struct
 type Logger interface {
-	Printf(format string, args ...interface{})
+	Printf(format string, args ...any)
 }
 
 // DefaultLogger is a default struct, which satisfies the Logger interface
 type DefaultLogger struct{}
 
 // Printf is a default Printf method
-func (DefaultLogger) Printf(format string, args ...interface{}) {
+func (DefaultLogger) Printf(format string, args ...any) {
 	log.Printf("[DEBUG] "+format, args...)
 }
 
@@ -33,7 +33,7 @@ func (DefaultLogger) Printf(format string, args ...interface{}) {
 type noopLogger struct{}
 
 // Printf is a default noop method
-func (noopLogger) Printf(format string, args ...interface{}) {}
+func (noopLogger) Printf(format string, args ...any) {}
 
 // RoundTripper satisfies the http.RoundTripper interface and is used to
 // customize the default http client RoundTripper
@@ -285,14 +285,14 @@ func (rt *RoundTripper) log() Logger {
 // FormatJSON is a default function to pretty-format a JSON body.
 // It will also mask known fields which contain sensitive information.
 func FormatJSON(raw []byte) (string, error) {
-	var rawData interface{}
+	var rawData any
 
 	err := json.Unmarshal(raw, &rawData)
 	if err != nil {
 		return string(raw), fmt.Errorf("unable to parse OpenStack JSON: %s", err)
 	}
 
-	data, ok := rawData.(map[string]interface{})
+	data, ok := rawData.(map[string]any)
 	if !ok {
 		pretty, err := json.MarshalIndent(rawData, "", "  ")
 		if err != nil {
@@ -303,32 +303,32 @@ func FormatJSON(raw []byte) (string, error) {
 	}
 
 	// Mask known password fields
-	if v, ok := data["auth"].(map[string]interface{}); ok {
+	if v, ok := data["auth"].(map[string]any); ok {
 		// v2 auth methods
-		if v, ok := v["passwordCredentials"].(map[string]interface{}); ok {
+		if v, ok := v["passwordCredentials"].(map[string]any); ok {
 			v["password"] = "***"
 		}
-		if v, ok := v["token"].(map[string]interface{}); ok {
+		if v, ok := v["token"].(map[string]any); ok {
 			v["id"] = "***"
 		}
 		// v3 auth methods
-		if v, ok := v["identity"].(map[string]interface{}); ok {
-			if v, ok := v["password"].(map[string]interface{}); ok {
-				if v, ok := v["user"].(map[string]interface{}); ok {
+		if v, ok := v["identity"].(map[string]any); ok {
+			if v, ok := v["password"].(map[string]any); ok {
+				if v, ok := v["user"].(map[string]any); ok {
 					v["password"] = "***"
 				}
 			}
-			if v, ok := v["application_credential"].(map[string]interface{}); ok {
+			if v, ok := v["application_credential"].(map[string]any); ok {
 				v["secret"] = "***"
 			}
-			if v, ok := v["token"].(map[string]interface{}); ok {
+			if v, ok := v["token"].(map[string]any); ok {
 				v["id"] = "***"
 			}
 		}
 	}
 
 	// Mask EC2 access id and body hash
-	if v, ok := data["credentials"].(map[string]interface{}); ok {
+	if v, ok := data["credentials"].(map[string]any); ok {
 		var access string
 		if s, ok := v["access"]; ok {
 			access, _ = s.(string)
@@ -337,7 +337,7 @@ func FormatJSON(raw []byte) (string, error) {
 		if _, ok := v["body_hash"]; ok {
 			v["body_hash"] = "***"
 		}
-		if v, ok := v["headers"].(map[string]interface{}); ok {
+		if v, ok := v["headers"].(map[string]any); ok {
 			if _, ok := v["Authorization"]; ok {
 				if s, ok := v["Authorization"].(string); ok {
 					v["Authorization"] = strings.ReplaceAll(s, access, "***")
@@ -347,7 +347,7 @@ func FormatJSON(raw []byte) (string, error) {
 	}
 
 	// Ignore the huge catalog output
-	if v, ok := data["token"].(map[string]interface{}); ok {
+	if v, ok := data["token"].(map[string]any); ok {
 		if _, ok := v["catalog"]; ok {
 			v["catalog"] = "***"
 		}

@@ -15,8 +15,8 @@ For example:
 		"ignition": map[string]string{
 			"version": "2.2.0",
 		},
-		"systemd": map[string]interface{}{
-			"units": []map[string]interface{}{{
+		"systemd": map[string]any{
+			"units": []map[string]any{{
 				"name":    "example.service",
 				"enabled": true,
 			},

@@ -47,7 +47,7 @@ var ResourceType2 = resourcetypes.ResourceType{
 	Attributes: map[string]resourcetypes.Attribute{
 		"parent_id": {
 			Type: "uuid",
-			Details: map[string]interface{}{
+			Details: map[string]any{
 				"required": false,
 			},
 		},
@@ -61,7 +61,7 @@ var ResourceType3 = resourcetypes.ResourceType{
 	Attributes: map[string]resourcetypes.Attribute{
 		"host": {
 			Type: "string",
-			Details: map[string]interface{}{
+			Details: map[string]any{
 				"max_length": float64(128),
 				"min_length": float64(0),
 				"required":   true,

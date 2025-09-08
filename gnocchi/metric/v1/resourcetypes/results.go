@@ -60,7 +60,7 @@ type Attribute struct {
 	Type string `json:"type"`
 
 	// Details represents different attribute fields.
-	Details map[string]interface{}
+	Details map[string]any
 }
 
 // UnmarshalJSON helps to unmarshal ResourceType fields into needed values.
@@ -68,7 +68,7 @@ func (r *ResourceType) UnmarshalJSON(b []byte) error {
 	type tmp ResourceType
 	var s struct {
 		tmp
-		Attributes map[string]interface{} `json:"attributes"`
+		Attributes map[string]any `json:"attributes"`
 	}
 	err := json.Unmarshal(b, &s)
 	if err != nil {
@@ -84,9 +84,9 @@ func (r *ResourceType) UnmarshalJSON(b []byte) error {
 	attributes := make(map[string]Attribute)
 	for attributeName, attributeValues := range s.Attributes {
 		attribute := new(Attribute)
-		attribute.Details = make(map[string]interface{})
+		attribute.Details = make(map[string]any)
 
-		attributeValuesMap, ok := attributeValues.(map[string]interface{})
+		attributeValuesMap, ok := attributeValues.(map[string]any)
 		if !ok {
 			// Got some strange resource type attribute representation, skip it.
 			continue

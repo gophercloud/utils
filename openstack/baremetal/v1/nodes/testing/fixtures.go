@@ -54,8 +54,8 @@ var (
 		"ignition": map[string]string{
 			"version": "2.2.0",
 		},
-		"systemd": map[string]interface{}{
-			"units": []map[string]interface{}{{
+		"systemd": map[string]any{
+			"units": []map[string]any{{
 				"name":    "example.service",
 				"enabled": true,
 			},
@@ -63,7 +63,7 @@ var (
 		},
 	}
 
-	OpenStackMetaData = map[string]interface{}{
+	OpenStackMetaData = map[string]any{
 		"availability_zone": "nova",
 		"hostname":          "test.novalocal",
 		"public_keys": map[string]string{
@@ -71,7 +71,7 @@ var (
 		},
 	}
 
-	NetworkData = map[string]interface{}{
+	NetworkData = map[string]any{
 		"services": []map[string]string{
 			{
 				"type":    "dns",

@@ -49,7 +49,7 @@ Example of Creating a resource with links to some existing metrics with a starti
 		ID: "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
 		ProjectID: "4154f088-8333-4e04-94c4-1155c33c0fc9",
 		StartedAt: &startedAt,
-		Metrics: map[string]interface{}{
+		Metrics: map[string]any{
 			"disk.read.bytes.rate": "ed1bb76f-6ccc-4ad2-994c-dbb19ddccbae",
 			"disk.write.bytes.rate": "0a2da84d-4753-43f5-a65f-0f8d44d2766c",
 		},
@@ -66,7 +66,7 @@ Example of Creating a resource and a metric a the same time
 		ID: "23d5d3f7-9dfa-4f73-b72b-8b0b0063ec55",
 		ProjectID: "4154f088-8333-4e04-94c4-1155c33c0fc9",
 		UserID: "bd5874d6-6662-4b24-a9f01c128871e4ac",
-		Metrics: map[string]interface{}{
+		Metrics: map[string]any{
 			"cpu.delta": map[string]string{
 				"archive_policy_name": "medium",
 			},
@@ -93,7 +93,7 @@ Example of Updating a resource
 Example of Updating a resource and associating an existing metric to it
 
 	endedAt := time.Date(2018, 1, 16, 12, 0, 0, 0, time.UTC)
-	metrics := map[string]interface{}{
+	metrics := map[string]any{
 			"disk.write.bytes.rate": "0a2da84d-4753-43f5-a65f-0f8d44d2766c",
 	}
 	updateOpts := resources.UpdateOpts{
@@ -109,7 +109,7 @@ Example of Updating a resource and associating an existing metric to it
 
 Example of Updating a resource and creating an associated metric at the same time
 
-	metrics := map[string]interface{}{
+	metrics := map[string]any{
 		"cpu.delta": map[string]string{
 			"archive_policy_name": "medium",
 		},

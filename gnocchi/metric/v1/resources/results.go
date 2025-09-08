@@ -95,7 +95,7 @@ type Resource struct {
 
 	// ExtraAttributes is a collection of keys and values that can be found in resources
 	// of different resource types.
-	ExtraAttributes map[string]interface{} `json:"-"`
+	ExtraAttributes map[string]any `json:"-"`
 }
 
 // UnmarshalJSON helps to unmarshal Resource fields into needed values.
@@ -103,7 +103,7 @@ func (r *Resource) UnmarshalJSON(b []byte) error {
 	type tmp Resource
 	var s struct {
 		tmp
-		ExtraAttributes map[string]interface{}          `json:"extra_attributes"`
+		ExtraAttributes map[string]any                  `json:"extra_attributes"`
 		RevisionStart   gnocchi.JSONRFC3339NanoTimezone `json:"revision_start"`
 		RevisionEnd     gnocchi.JSONRFC3339NanoTimezone `json:"revision_end"`
 		StartedAt       gnocchi.JSONRFC3339NanoTimezone `json:"started_at"`
@@ -126,12 +126,12 @@ func (r *Resource) UnmarshalJSON(b []byte) error {
 	if s.ExtraAttributes != nil {
 		r.ExtraAttributes = s.ExtraAttributes
 	} else {
-		var result interface{}
+		var result any
 		err := json.Unmarshal(b, &result)
 		if err != nil {
 			return err
 		}
-		if resultMap, ok := result.(map[string]interface{}); ok {
+		if resultMap, ok := result.(map[string]any); ok {
 			delete(resultMap, "revision_start")
 			delete(resultMap, "revision_end")
 			delete(resultMap, "started_at")

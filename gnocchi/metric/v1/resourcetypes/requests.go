@@ -25,7 +25,7 @@ func Get(ctx context.Context, c *gophercloud.ServiceClient, resourceTypeName str
 
 // CreateOptsBuilder allows to add additional parameters to the Create request.
 type CreateOptsBuilder interface {
-	ToResourceTypeCreateMap() (map[string]interface{}, error)
+	ToResourceTypeCreateMap() (map[string]any, error)
 }
 
 // AttributeOpts represents options of a single resource type attribute that
@@ -35,11 +35,11 @@ type AttributeOpts struct {
 	Type string `json:"type"`
 
 	// Details represents different attribute fields.
-	Details map[string]interface{} `json:"-"`
+	Details map[string]any `json:"-"`
 }
 
 // ToMap is a helper function to convert individual AttributeOpts structure into a sub-map.
-func (opts AttributeOpts) ToMap() (map[string]interface{}, error) {
+func (opts AttributeOpts) ToMap() (map[string]any, error) {
 	b, err := gophercloud.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -62,7 +62,7 @@ type CreateOpts struct {
 }
 
 // ToResourceTypeCreateMap constructs a request body from CreateOpts.
-func (opts CreateOpts) ToResourceTypeCreateMap() (map[string]interface{}, error) {
+func (opts CreateOpts) ToResourceTypeCreateMap() (map[string]any, error) {
 	b, err := gophercloud.BuildRequestBody(opts, "")
 	if err != nil {
 		return nil, err
@@ -73,7 +73,7 @@ func (opts CreateOpts) ToResourceTypeCreateMap() (map[string]interface{}, error)
 		return b, nil
 	}
 
-	attributes := make(map[string]interface{}, len(opts.Attributes))
+	attributes := make(map[string]any, len(opts.Attributes))
 	for k, v := range opts.Attributes {
 		attributesMap, err := v.ToMap()
 		if err != nil {
@@ -118,7 +118,7 @@ const (
 
 // UpdateOptsBuilder allows to add additional parameters to the Update request.
 type UpdateOptsBuilder interface {
-	ToResourceTypeUpdateMap() ([]map[string]interface{}, error)
+	ToResourceTypeUpdateMap() ([]map[string]any, error)
 }
 
 // UpdateOpts specifies parameters for a Gnocchi resource type update request.
@@ -142,16 +142,16 @@ type AttributeUpdateOpts struct {
 }
 
 // ToResourceTypeUpdateMap constructs a request body from UpdateOpts.
-func (opts UpdateOpts) ToResourceTypeUpdateMap() ([]map[string]interface{}, error) {
+func (opts UpdateOpts) ToResourceTypeUpdateMap() ([]map[string]any, error) {
 	if len(opts.Attributes) == 0 {
 		return nil, errors.New("provided Gnocchi resource type UpdateOpts is empty")
 	}
 
-	updateOptsMaps := make([]map[string]interface{}, len(opts.Attributes))
+	updateOptsMaps := make([]map[string]any, len(opts.Attributes))
 
 	// Populate a map for every attribute.
 	for i, attributeUpdateOpts := range opts.Attributes {
-		attributeUpdateOptsMap := make(map[string]interface{})
+		attributeUpdateOptsMap := make(map[string]any)
 
 		// Populate attribute value map if provided.
 		if attributeUpdateOpts.Value != nil {
