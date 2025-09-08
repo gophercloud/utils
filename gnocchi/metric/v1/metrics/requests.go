@@ -62,7 +62,7 @@ func List(c *gophercloud.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 
 	pager := pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
 		p := MetricPage{pagination.MarkerPageBase{PageResult: r}}
-		p.MarkerPageBase.Owner = p
+		p.Owner = p
 		return p
 	})
 
