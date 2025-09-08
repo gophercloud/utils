@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"sort"
@@ -232,7 +231,7 @@ func (rt *RoundTripper) logRequest(original io.ReadCloser, contentType string) (
 		}
 		rt.log().Printf("OpenStack Request Body: %s", debugInfo)
 
-		return ioutil.NopCloser(strings.NewReader(bs.String())), nil
+		return io.NopCloser(strings.NewReader(bs.String())), nil
 	}
 
 	rt.log().Printf("Not logging because OpenStack request body isn't JSON")
@@ -259,7 +258,7 @@ func (rt *RoundTripper) logResponse(original io.ReadCloser, contentType string) 
 			rt.log().Printf("OpenStack Response Body: %s", debugInfo)
 		}
 
-		return ioutil.NopCloser(strings.NewReader(bs.String())), nil
+		return io.NopCloser(strings.NewReader(bs.String())), nil
 	}
 
 	rt.log().Printf("Not logging because OpenStack response body isn't JSON")

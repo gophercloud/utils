@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -603,7 +602,7 @@ func uploadObject(
 			// Wrap it in a NewReader to prevent the Transport
 			// from doing this.
 			if readSeeker, ok := opts.Content.(io.ReadSeeker); ok {
-				data, err := ioutil.ReadAll(readSeeker)
+				data, err := io.ReadAll(readSeeker)
 				if err != nil {
 					return nil, err
 				}
@@ -623,7 +622,7 @@ func uploadObject(
 			// chance that this can exhaust memory on very large streams.
 			readSeeker, isReadSeeker := reader.(io.ReadSeeker)
 			if !isReadSeeker {
-				data, err := ioutil.ReadAll(reader)
+				data, err := io.ReadAll(reader)
 				if err != nil {
 					return nil, err
 				}

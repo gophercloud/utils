@@ -78,7 +78,6 @@ func PrepareTLSConfig(caCertFile, clientCertFile, clientKeyFile string, insecure
 		}
 
 		config.Certificates = []tls.Certificate{cert}
-		config.BuildNameToCertificate()
 	}
 
 	return config, nil

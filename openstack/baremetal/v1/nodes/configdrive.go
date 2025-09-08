@@ -3,7 +3,6 @@ package nodes
 import (
 	"encoding/base64"
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -41,7 +40,7 @@ type ConfigDriveBuilder interface {
 // Writes out a ConfigDrive to a temporary directory, and returns the path
 func (configDrive ConfigDrive) ToDirectory() (string, error) {
 	// Create a temporary directory for our config drive
-	directory, err := ioutil.TempDir(configDrive.BuildDirectory, "gophercloud")
+	directory, err := os.MkdirTemp(configDrive.BuildDirectory, "gophercloud")
 	if err != nil {
 		return "", err
 	}
@@ -67,7 +66,7 @@ func (configDrive ConfigDrive) ToDirectory() (string, error) {
 			return "", err
 		}
 
-		if err := ioutil.WriteFile(userDataPath, data, 0644); err != nil {
+		if err := os.WriteFile(userDataPath, data, 0644); err != nil {
 			return "", err
 		}
 	}
@@ -80,7 +79,7 @@ func (configDrive ConfigDrive) ToDirectory() (string, error) {
 			return "", err
 		}
 
-		if err := ioutil.WriteFile(metaDataPath, data, 0644); err != nil {
+		if err := os.WriteFile(metaDataPath, data, 0644); err != nil {
 			return "", err
 		}
 	}
@@ -93,7 +92,7 @@ func (configDrive ConfigDrive) ToDirectory() (string, error) {
 			return "", err
 		}
 
-		if err := ioutil.WriteFile(networkDataPath, data, 0644); err != nil {
+		if err := os.WriteFile(networkDataPath, data, 0644); err != nil {
 			return "", err
 		}
 	}

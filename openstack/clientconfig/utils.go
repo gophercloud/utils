@@ -3,7 +3,6 @@ package clientconfig
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -109,7 +108,7 @@ func FindAndReadCloudsYAML() (string, []byte, error) {
 	// OS_CLIENT_CONFIG_FILE
 	if v := env.Getenv("OS_CLIENT_CONFIG_FILE"); v != "" {
 		if ok := fileExists(v); ok {
-			content, err := ioutil.ReadFile(v)
+			content, err := os.ReadFile(v)
 			return v, content, err
 		}
 	}
@@ -146,7 +145,7 @@ func FindAndReadYAML(yamlFile string) (string, []byte, error) {
 
 	filename := filepath.Join(cwd, yamlFile)
 	if ok := fileExists(filename); ok {
-		content, err := ioutil.ReadFile(filename)
+		content, err := os.ReadFile(filename)
 		return filename, content, err
 	}
 
@@ -156,7 +155,7 @@ func FindAndReadYAML(yamlFile string) (string, []byte, error) {
 		if homeDir != "" {
 			filename := filepath.Join(homeDir, ".config/openstack/"+yamlFile)
 			if ok := fileExists(filename); ok {
-				content, err := ioutil.ReadFile(filename)
+				content, err := os.ReadFile(filename)
 				return filename, content, err
 			}
 		}
@@ -165,7 +164,7 @@ func FindAndReadYAML(yamlFile string) (string, []byte, error) {
 	// unix-specific site config directory: /etc/openstack.
 	filename = "/etc/openstack/" + yamlFile
 	if ok := fileExists(filename); ok {
-		content, err := ioutil.ReadFile(filename)
+		content, err := os.ReadFile(filename)
 		return filename, content, err
 	}
 
