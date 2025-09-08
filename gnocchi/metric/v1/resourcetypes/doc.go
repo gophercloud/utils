@@ -32,14 +32,14 @@ Example of Creating a resource type
 	  Attributes: map[string]resourcetypes.AttributeOpts{
 	    "port_name": resourcetypes.AttributeOpts{
 	      Type: "string",
-	      Details: map[string]interface{}{
+	      Details: map[string]any{
 	        "max_length": 128,
 	        "required":   false,
 	      },
 	    },
 	    "port_id": resourcetypes.AttributeOpts{
 	      Type: "uuid",
-	      Details: map[string]interface{}{
+	      Details: map[string]any{
 	        "required": true,
 	      },
 	    },
@@ -53,16 +53,16 @@ Example of Creating a resource type
 Example of Updating a resource type
 
 	enabledAttributeOptions := resourcetypes.AttributeOpts{
-	  Details: map[string]interface{}{
+	  Details: map[string]any{
 	    "required": true,
-	    "options": map[string]interface{}{
+	    "options": map[string]any{
 	      "fill": true,
 	    },
 	  },
 	  Type: "bool",
 	}
 	parendIDAttributeOptions := resourcetypes.AttributeOpts{
-	  Details: map[string]interface{}{
+	  Details: map[string]any{
 	    "required": false,
 	  },
 	  Type: "uuid",

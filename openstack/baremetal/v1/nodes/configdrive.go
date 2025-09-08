@@ -3,18 +3,17 @@ package nodes
 import (
 	"encoding/base64"
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
 
 // A ConfigDrive struct will be used to create a base64-encoded, gzipped ISO9660 image for use with Ironic.
 type ConfigDrive struct {
-	UserData       UserDataBuilder        `json:"user_data"`
-	MetaData       map[string]interface{} `json:"meta_data"`
-	NetworkData    map[string]interface{} `json:"network_data"`
-	Version        string                 `json:"-"`
-	BuildDirectory string                 `json:"-"`
+	UserData       UserDataBuilder `json:"user_data"`
+	MetaData       map[string]any  `json:"meta_data"`
+	NetworkData    map[string]any  `json:"network_data"`
+	Version        string          `json:"-"`
+	BuildDirectory string          `json:"-"`
 }
 
 // Interface to let us specify a raw string, or a map for the user data
@@ -22,7 +21,7 @@ type UserDataBuilder interface {
 	ToUserData() ([]byte, error)
 }
 
-type UserDataMap map[string]interface{}
+type UserDataMap map[string]any
 type UserDataString string
 
 // Converts a UserDataMap to JSON-string
@@ -41,7 +40,7 @@ type ConfigDriveBuilder interface {
 // Writes out a ConfigDrive to a temporary directory, and returns the path
 func (configDrive ConfigDrive) ToDirectory() (string, error) {
 	// Create a temporary directory for our config drive
-	directory, err := ioutil.TempDir(configDrive.BuildDirectory, "gophercloud")
+	directory, err := os.MkdirTemp(configDrive.BuildDirectory, "gophercloud")
 	if err != nil {
 		return "", err
 	}
@@ -67,7 +66,7 @@ func (configDrive ConfigDrive) ToDirectory() (string, error) {
 			return "", err
 		}
 
-		if err := ioutil.WriteFile(userDataPath, data, 0644); err != nil {
+		if err := os.WriteFile(userDataPath, data, 0644); err != nil {
 			return "", err
 		}
 	}
@@ -80,7 +79,7 @@ func (configDrive ConfigDrive) ToDirectory() (string, error) {
 			return "", err
 		}
 
-		if err := ioutil.WriteFile(metaDataPath, data, 0644); err != nil {
+		if err := os.WriteFile(metaDataPath, data, 0644); err != nil {
 			return "", err
 		}
 	}
@@ -93,7 +92,7 @@ func (configDrive ConfigDrive) ToDirectory() (string, error) {
 			return "", err
 		}
 
-		if err := ioutil.WriteFile(networkDataPath, data, 0644); err != nil {
+		if err := os.WriteFile(networkDataPath, data, 0644); err != nil {
 			return "", err
 		}
 	}

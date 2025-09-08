@@ -23,12 +23,12 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, ResourceTypeListResult)
+		fmt.Fprint(w, ResourceTypeListResult)
 	})
 
 	count := 0
 
-	resourcetypes.List(fake.ServiceClient()).EachPage(context.TODO(), func(_ context.Context, page pagination.Page) (bool, error) {
+	err := resourcetypes.List(fake.ServiceClient()).EachPage(context.TODO(), func(_ context.Context, page pagination.Page) (bool, error) {
 		count++
 		actual, err := resourcetypes.ExtractResourceTypes(page)
 		if err != nil {
@@ -46,6 +46,7 @@ func TestList(t *testing.T) {
 
 		return true, nil
 	})
+	th.AssertNoErr(t, err)
 
 	if count != 1 {
 		t.Errorf("Expected 1 page, got %d", count)
@@ -63,7 +64,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, ResourceTypeGetResult)
+		fmt.Fprint(w, ResourceTypeGetResult)
 	})
 
 	s, err := resourcetypes.Get(context.TODO(), fake.ServiceClient(), "compute_instance").Extract()
@@ -74,7 +75,7 @@ func TestGet(t *testing.T) {
 	th.AssertDeepEquals(t, s.Attributes, map[string]resourcetypes.Attribute{
 		"host": {
 			Type: "string",
-			Details: map[string]interface{}{
+			Details: map[string]any{
 				"max_length": float64(255),
 				"min_length": float64(0),
 				"required":   true,
@@ -82,7 +83,7 @@ func TestGet(t *testing.T) {
 		},
 		"image_ref": {
 			Type: "uuid",
-			Details: map[string]interface{}{
+			Details: map[string]any{
 				"required": false,
 			},
 		},
@@ -103,7 +104,7 @@ func TestCreateWithoutAttributes(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, ResourceTypeCreateWithoutAttributesResult)
+		fmt.Fprint(w, ResourceTypeCreateWithoutAttributesResult)
 	})
 
 	opts := resourcetypes.CreateOpts{
@@ -131,7 +132,7 @@ func TestCreateWithAttributes(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, ResourceTypeCreateWithAttributesResult)
+		fmt.Fprint(w, ResourceTypeCreateWithAttributesResult)
 	})
 
 	opts := resourcetypes.CreateOpts{
@@ -139,14 +140,14 @@ func TestCreateWithAttributes(t *testing.T) {
 		Attributes: map[string]resourcetypes.AttributeOpts{
 			"port_name": {
 				Type: "string",
-				Details: map[string]interface{}{
+				Details: map[string]any{
 					"max_length": 128,
 					"required":   false,
 				},
 			},
 			"port_id": {
 				Type: "uuid",
-				Details: map[string]interface{}{
+				Details: map[string]any{
 					"required": true,
 				},
 			},
@@ -160,7 +161,7 @@ func TestCreateWithAttributes(t *testing.T) {
 	th.AssertDeepEquals(t, s.Attributes, map[string]resourcetypes.Attribute{
 		"port_name": {
 			Type: "string",
-			Details: map[string]interface{}{
+			Details: map[string]any{
 				"max_length": float64(128),
 				"min_length": float64(0),
 				"required":   false,
@@ -168,7 +169,7 @@ func TestCreateWithAttributes(t *testing.T) {
 		},
 		"port_id": {
 			Type: "uuid",
-			Details: map[string]interface{}{
+			Details: map[string]any{
 				"required": true,
 			},
 		},
@@ -189,20 +190,20 @@ func TestUpdate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json-patch+json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, ResourceTypeUpdateResult)
+		fmt.Fprint(w, ResourceTypeUpdateResult)
 	})
 
 	enabledAttributeOptions := resourcetypes.AttributeOpts{
-		Details: map[string]interface{}{
+		Details: map[string]any{
 			"required": true,
-			"options": map[string]interface{}{
+			"options": map[string]any{
 				"fill": true,
 			},
 		},
 		Type: "bool",
 	}
 	parendIDAttributeOptions := resourcetypes.AttributeOpts{
-		Details: map[string]interface{}{
+		Details: map[string]any{
 			"required": false,
 		},
 		Type: "uuid",
@@ -234,19 +235,19 @@ func TestUpdate(t *testing.T) {
 	th.AssertDeepEquals(t, s.Attributes, map[string]resourcetypes.Attribute{
 		"enabled": {
 			Type: "bool",
-			Details: map[string]interface{}{
+			Details: map[string]any{
 				"required": true,
 			},
 		},
 		"parent_id": {
 			Type: "uuid",
-			Details: map[string]interface{}{
+			Details: map[string]any{
 				"required": false,
 			},
 		},
 		"name": {
 			Type: "string",
-			Details: map[string]interface{}{
+			Details: map[string]any{
 				"required":   true,
 				"min_length": float64(0),
 				"max_length": float64(128),

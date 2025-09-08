@@ -1,7 +1,6 @@
 package testing
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -30,15 +29,15 @@ func TestConfigDriveToDirectory(t *testing.T) {
 
 	basePath := filepath.FromSlash(path + "/openstack/latest")
 
-	userData, err := ioutil.ReadFile(filepath.FromSlash(basePath + "/user_data"))
+	userData, err := os.ReadFile(filepath.FromSlash(basePath + "/user_data"))
 	th.AssertNoErr(t, err)
 	th.CheckJSONEquals(t, string(userData), IgnitionUserData)
 
-	metaData, err := ioutil.ReadFile(filepath.FromSlash(basePath + "/meta_data.json"))
+	metaData, err := os.ReadFile(filepath.FromSlash(basePath + "/meta_data.json"))
 	th.AssertNoErr(t, err)
 	th.CheckJSONEquals(t, string(metaData), OpenStackMetaData)
 
-	networkData, err := ioutil.ReadFile(filepath.FromSlash(basePath + "/network_data.json"))
+	networkData, err := os.ReadFile(filepath.FromSlash(basePath + "/network_data.json"))
 	th.AssertNoErr(t, err)
 	th.CheckJSONEquals(t, string(networkData), NetworkData)
 }
@@ -50,15 +49,15 @@ func TestConfigDriveVersionToDirectory(t *testing.T) {
 
 	basePath := filepath.FromSlash(path + "/openstack/" + ConfigDriveVersioned.Version)
 
-	userData, err := ioutil.ReadFile(filepath.FromSlash(basePath + "/user_data"))
+	userData, err := os.ReadFile(filepath.FromSlash(basePath + "/user_data"))
 	th.AssertNoErr(t, err)
 	th.CheckJSONEquals(t, string(userData), IgnitionUserData)
 
-	metaData, err := ioutil.ReadFile(filepath.FromSlash(basePath + "/meta_data.json"))
+	metaData, err := os.ReadFile(filepath.FromSlash(basePath + "/meta_data.json"))
 	th.AssertNoErr(t, err)
 	th.CheckJSONEquals(t, string(metaData), OpenStackMetaData)
 
-	networkData, err := ioutil.ReadFile(filepath.FromSlash(basePath + "/network_data.json"))
+	networkData, err := os.ReadFile(filepath.FromSlash(basePath + "/network_data.json"))
 	th.AssertNoErr(t, err)
 	th.CheckJSONEquals(t, string(networkData), NetworkData)
 }

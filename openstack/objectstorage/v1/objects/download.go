@@ -273,9 +273,7 @@ func downloadObject(ctx context.Context, client *gophercloud.ServiceClient, cont
 			return nil, fmt.Errorf("error creating directory %s: %s", objectPath, err)
 		}
 	} else {
-		mkdir := !(opts.NoDownload || opts.OutFile == "")
-
-		if mkdir {
+		if !opts.NoDownload && opts.OutFile != "" {
 			dir := filepath.Dir(objectPath)
 			if _, err := os.Stat(dir); err != nil && os.IsNotExist(err) {
 				if err := os.MkdirAll(dir, 0777); err != nil {

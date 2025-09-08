@@ -72,19 +72,19 @@ func ProjectPurgeCompute(ctx context.Context, projectID string, purgeOpts Comput
 
 	allPages, err := servers.List(purgeOpts.Client, listOpts).AllPages(ctx)
 	if err != nil {
-		return fmt.Errorf("Error finding servers for project: " + projectID)
+		return fmt.Errorf("error finding servers for project: %s", projectID)
 	}
 
 	allServers, err := servers.ExtractServers(allPages)
 	if err != nil {
-		return fmt.Errorf("Error extracting servers for project: " + projectID)
+		return fmt.Errorf("error extracting servers for project: %s", projectID)
 	}
 
 	if len(allServers) > 0 {
 		for _, server := range allServers {
 			err = servers.Delete(ctx, purgeOpts.Client, server.ID).ExtractErr()
 			if err != nil {
-				return fmt.Errorf("Error deleting server: " + server.Name + " from project: " + projectID)
+				return fmt.Errorf("error deleting server: %s from project: %s", server.Name, projectID)
 			}
 		}
 	}
@@ -148,11 +148,11 @@ func clearBlockStorageVolumes(ctx context.Context, projectID string, storageClie
 	}
 	allPages, err := volumes.List(storageClient, listOpts).AllPages(ctx)
 	if err != nil {
-		return fmt.Errorf("Error finding volumes for project: " + projectID)
+		return fmt.Errorf("error finding volumes for project: %s", projectID)
 	}
 	allVolumes, err := volumes.ExtractVolumes(allPages)
 	if err != nil {
-		return fmt.Errorf("Error extracting volumes for project: " + projectID)
+		return fmt.Errorf("error extracting volumes for project: %s", projectID)
 	}
 	if len(allVolumes) > 0 {
 		deleteOpts := volumes.DeleteOpts{
@@ -161,7 +161,7 @@ func clearBlockStorageVolumes(ctx context.Context, projectID string, storageClie
 		for _, volume := range allVolumes {
 			err = volumes.Delete(ctx, storageClient, volume.ID, deleteOpts).ExtractErr()
 			if err != nil {
-				return fmt.Errorf("Error deleting volume: " + volume.Name + " from project: " + projectID)
+				return fmt.Errorf("error deleting volume: %s from project: %s", volume.Name, projectID)
 			}
 		}
 	}
@@ -176,17 +176,17 @@ func clearBlockStorageSnaphosts(ctx context.Context, projectID string, storageCl
 	}
 	allPages, err := snapshots.List(storageClient, listOpts).AllPages(ctx)
 	if err != nil {
-		return fmt.Errorf("Error finding snapshots for project: " + projectID)
+		return fmt.Errorf("error finding snapshots for project: %s", projectID)
 	}
 	allSnapshots, err := snapshots.ExtractSnapshots(allPages)
 	if err != nil {
-		return fmt.Errorf("Error extracting snapshots for project: " + projectID)
+		return fmt.Errorf("error extracting snapshots for project: %s", projectID)
 	}
 	if len(allSnapshots) > 0 {
 		for _, snaphost := range allSnapshots {
 			err = snapshots.Delete(ctx, storageClient, snaphost.ID).ExtractErr()
 			if err != nil {
-				return fmt.Errorf("Error deleting snaphost: " + snaphost.Name + " from project: " + projectID)
+				return fmt.Errorf("error deleting snaphost: %s from project: %s", snaphost.Name, projectID)
 			}
 		}
 	}
@@ -207,7 +207,7 @@ func clearPortforwarding(ctx context.Context, networkClient *gophercloud.Service
 	for _, pf := range allPFs {
 		err := portforwarding.Delete(ctx, networkClient, fipID, pf.ID).ExtractErr()
 		if err != nil {
-			return fmt.Errorf("Error deleting floating IP port forwarding: " + pf.ID + " from project: " + projectID)
+			return fmt.Errorf("error deleting floating IP port forwarding: %s from project %s", pf.ID, projectID)
 		}
 	}
 
@@ -220,11 +220,11 @@ func clearNetworkingFloatingIPs(ctx context.Context, projectID string, networkCl
 	}
 	allPages, err := floatingips.List(networkClient, listOpts).AllPages(ctx)
 	if err != nil {
-		return fmt.Errorf("Error finding floating IPs for project: " + projectID)
+		return fmt.Errorf("error finding floating IPs for project: %s", projectID)
 	}
 	allFloatings, err := floatingips.ExtractFloatingIPs(allPages)
 	if err != nil {
-		return fmt.Errorf("Error extracting floating IPs for project: " + projectID)
+		return fmt.Errorf("error extracting floating IPs for project: %s", projectID)
 	}
 	if len(allFloatings) > 0 {
 		for _, floating := range allFloatings {
@@ -236,7 +236,7 @@ func clearNetworkingFloatingIPs(ctx context.Context, projectID string, networkCl
 
 			err = floatingips.Delete(ctx, networkClient, floating.ID).ExtractErr()
 			if err != nil {
-				return fmt.Errorf("Error deleting floating IP: " + floating.ID + " from project: " + projectID)
+				return fmt.Errorf("error deleting floating IP: %s from project: %s", floating.ID, projectID)
 			}
 		}
 	}
@@ -251,11 +251,11 @@ func clearNetworkingPorts(ctx context.Context, projectID string, networkClient *
 
 	allPages, err := ports.List(networkClient, listOpts).AllPages(ctx)
 	if err != nil {
-		return fmt.Errorf("Error finding ports for project: " + projectID)
+		return fmt.Errorf("error finding ports for project: %s", projectID)
 	}
 	allPorts, err := ports.ExtractPorts(allPages)
 	if err != nil {
-		return fmt.Errorf("Error extracting ports for project: " + projectID)
+		return fmt.Errorf("error extracting ports for project: %s", projectID)
 	}
 	if len(allPorts) > 0 {
 		for _, port := range allPorts {
@@ -265,7 +265,7 @@ func clearNetworkingPorts(ctx context.Context, projectID string, networkClient *
 
 			err = ports.Delete(ctx, networkClient, port.ID).ExtractErr()
 			if err != nil {
-				return fmt.Errorf("Error deleting port: " + port.ID + " from project: " + projectID)
+				return fmt.Errorf("error deleting port: %s from project: %s", port.ID, projectID)
 			}
 		}
 	}
@@ -282,11 +282,11 @@ func getAllSubnets(ctx context.Context, projectID string, networkClient *gopherc
 
 	allPages, err := networks.List(networkClient, listOpts).AllPages(ctx)
 	if err != nil {
-		return subnets, fmt.Errorf("Error finding networks for project: " + projectID)
+		return subnets, fmt.Errorf("error finding networks for project: %s", projectID)
 	}
 	allNetworks, err := networks.ExtractNetworks(allPages)
 	if err != nil {
-		return subnets, fmt.Errorf("Error extracting networks for project: " + projectID)
+		return subnets, fmt.Errorf("error extracting networks for project: %s", projectID)
 	}
 	if len(allNetworks) > 0 {
 		for _, network := range allNetworks {
@@ -297,7 +297,7 @@ func getAllSubnets(ctx context.Context, projectID string, networkClient *gopherc
 	return subnets, nil
 }
 
-func clearAllRouterInterfaces(ctx context.Context, projectID string, routerID string, subnets []string, networkClient *gophercloud.ServiceClient) error {
+func clearAllRouterInterfaces(ctx context.Context, routerID string, subnets []string, networkClient *gophercloud.ServiceClient) error {
 	for _, subnet := range subnets {
 		intOpts := routers.RemoveInterfaceOpts{
 			SubnetID: subnet,
@@ -318,21 +318,21 @@ func clearNetworkingRouters(ctx context.Context, projectID string, networkClient
 	}
 	allPages, err := routers.List(networkClient, listOpts).AllPages(ctx)
 	if err != nil {
-		return fmt.Errorf("Error finding routers for project: " + projectID)
+		return fmt.Errorf("error finding routers for project: %s", projectID)
 	}
 	allRouters, err := routers.ExtractRouters(allPages)
 	if err != nil {
-		return fmt.Errorf("Error extracting routers for project: " + projectID)
+		return fmt.Errorf("error extracting routers for project: %s", projectID)
 	}
 
 	subnets, err := getAllSubnets(ctx, projectID, networkClient)
 	if err != nil {
-		return fmt.Errorf("Error fetching subnets project: " + projectID)
+		return fmt.Errorf("error fetching subnets project: %s", projectID)
 	}
 
 	if len(allRouters) > 0 {
 		for _, router := range allRouters {
-			err = clearAllRouterInterfaces(ctx, projectID, router.ID, subnets, networkClient)
+			err = clearAllRouterInterfaces(ctx, router.ID, subnets, networkClient)
 			if err != nil {
 				return err
 			}
@@ -345,12 +345,12 @@ func clearNetworkingRouters(ctx context.Context, projectID string, networkClient
 
 			_, err := routers.Update(ctx, networkClient, router.ID, updateOpts).Extract()
 			if err != nil {
-				return fmt.Errorf("Error deleting router: " + router.Name + " from project: " + projectID)
+				return fmt.Errorf("error deleting router: %s from project: %s", router.Name, projectID)
 			}
 
 			err = routers.Delete(ctx, networkClient, router.ID).ExtractErr()
 			if err != nil {
-				return fmt.Errorf("Error deleting router: " + router.Name + " from project: " + projectID)
+				return fmt.Errorf("error deleting router: %s from project: %s", router.Name, projectID)
 			}
 		}
 	}
@@ -365,17 +365,17 @@ func clearNetworkingNetworks(ctx context.Context, projectID string, networkClien
 
 	allPages, err := networks.List(networkClient, listOpts).AllPages(ctx)
 	if err != nil {
-		return fmt.Errorf("Error finding networks for project: " + projectID)
+		return fmt.Errorf("error finding networks for project: %s", projectID)
 	}
 	allNetworks, err := networks.ExtractNetworks(allPages)
 	if err != nil {
-		return fmt.Errorf("Error extracting networks for project: " + projectID)
+		return fmt.Errorf("error extracting networks for project: %s", projectID)
 	}
 	if len(allNetworks) > 0 {
 		for _, network := range allNetworks {
 			err = networks.Delete(ctx, networkClient, network.ID).ExtractErr()
 			if err != nil {
-				return fmt.Errorf("Error deleting network: " + network.Name + " from project: " + projectID)
+				return fmt.Errorf("error deleting network: %s from project: %s", network.Name, projectID)
 			}
 		}
 	}
@@ -389,17 +389,17 @@ func clearNetworkingSecurityGroups(ctx context.Context, projectID string, networ
 	}
 	allPages, err := groups.List(networkClient, listOpts).AllPages(ctx)
 	if err != nil {
-		return fmt.Errorf("Error finding security groups for project: " + projectID)
+		return fmt.Errorf("error finding security groups for project: %s", projectID)
 	}
 	allSecGroups, err := groups.ExtractGroups(allPages)
 	if err != nil {
-		return fmt.Errorf("Error extracting security groups for project: " + projectID)
+		return fmt.Errorf("error extracting security groups for project: %s", projectID)
 	}
 	if len(allSecGroups) > 0 {
 		for _, group := range allSecGroups {
 			err = groups.Delete(ctx, networkClient, group.ID).ExtractErr()
 			if err != nil {
-				return fmt.Errorf("Error deleting security group: " + group.Name + " from project: " + projectID)
+				return fmt.Errorf("error deleting security group: %s from project: %s", group.Name, projectID)
 			}
 		}
 	}

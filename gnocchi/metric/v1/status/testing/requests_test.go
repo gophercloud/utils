@@ -22,7 +22,7 @@ func TestGetWithDetails(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, StatusGetWithDetailsResult)
+		fmt.Fprint(w, StatusGetWithDetailsResult)
 	})
 
 	details := true
@@ -48,7 +48,7 @@ func TestGetWithoutDetails(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, StatusGetWithoutDetailsResult)
+		fmt.Fprint(w, StatusGetWithoutDetailsResult)
 	})
 
 	details := false

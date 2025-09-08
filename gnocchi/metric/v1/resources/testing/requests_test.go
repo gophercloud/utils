@@ -23,13 +23,14 @@ func TestList(t *testing.T) {
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		r.ParseForm()
+		err := r.ParseForm()
+		th.AssertNoErr(t, err)
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
-			fmt.Fprintf(w, ResourceListResult)
+			fmt.Fprint(w, ResourceListResult)
 		case "789a7f65-977d-40f4-beed-f717100125f5":
-			fmt.Fprintf(w, `[]`)
+			fmt.Fprint(w, `[]`)
 		default:
 			t.Fatalf("/v1/resources invoked with unexpected marker=[%s]", marker)
 		}
@@ -37,7 +38,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	resources.List(fake.ServiceClient(), resources.ListOpts{}, "generic").EachPage(context.TODO(), func(_ context.Context, page pagination.Page) (bool, error) {
+	err := resources.List(fake.ServiceClient(), resources.ListOpts{}, "generic").EachPage(context.TODO(), func(_ context.Context, page pagination.Page) (bool, error) {
 		count++
 		actual, err := resources.ExtractResources(page)
 		if err != nil {
@@ -54,6 +55,7 @@ func TestList(t *testing.T) {
 
 		return true, nil
 	})
+	th.AssertNoErr(t, err)
 
 	if count != 1 {
 		t.Errorf("Expected 1 page, got %d", count)
@@ -71,7 +73,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, ResourceGetResult)
+		fmt.Fprint(w, ResourceGetResult)
 	})
 
 	s, err := resources.Get(context.TODO(), fake.ServiceClient(), "compute_instance_network", "75274f99-faf6-4112-a6d5-2794cb07c789").Extract()
@@ -95,7 +97,7 @@ func TestGet(t *testing.T) {
 	th.AssertEquals(t, s.EndedAt, time.Time{})
 	th.AssertEquals(t, s.Type, "compute_instance_network")
 	th.AssertEquals(t, s.UserID, "bd5874d666624b24a9f01c128871e4ac")
-	th.AssertDeepEquals(t, s.ExtraAttributes, map[string]interface{}{
+	th.AssertDeepEquals(t, s.ExtraAttributes, map[string]any{
 		"iface_name": "eth0",
 	})
 }
@@ -114,7 +116,7 @@ func TestCreateWithoutMetrics(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, ResourceCreateWithoutMetricsResult)
+		fmt.Fprint(w, ResourceCreateWithoutMetricsResult)
 	})
 
 	opts := resources.CreateOpts{
@@ -154,7 +156,7 @@ func TestCreateLinkMetrics(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, ResourceCreateLinkMetricsResult)
+		fmt.Fprint(w, ResourceCreateLinkMetricsResult)
 	})
 
 	startedAt := time.Date(2018, 1, 2, 23, 23, 34, 0, time.UTC)
@@ -165,7 +167,7 @@ func TestCreateLinkMetrics(t *testing.T) {
 		UserID:    "bd5874d6-6662-4b24-a9f01c128871e4ac",
 		StartedAt: &startedAt,
 		EndedAt:   &endedAt,
-		Metrics: map[string]interface{}{
+		Metrics: map[string]any{
 			"network.incoming.bytes.rate": "01b2953e-de74-448a-a305-c84440697933",
 			"network.outgoing.bytes.rate": "dc9f3198-155b-4b88-a92c-58a3853ce2b2",
 		},
@@ -205,7 +207,7 @@ func TestCreateWithMetrics(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, ResourceCreateWithMetricsResult)
+		fmt.Fprint(w, ResourceCreateWithMetricsResult)
 	})
 
 	endedAt := time.Date(2018, 1, 9, 20, 0, 0, 0, time.UTC)
@@ -214,7 +216,7 @@ func TestCreateWithMetrics(t *testing.T) {
 		ProjectID: "4154f088-8333-4e04-94c4-1155c33c0fc9",
 		UserID:    "bd5874d6-6662-4b24-a9f01c128871e4ac",
 		EndedAt:   &endedAt,
-		Metrics: map[string]interface{}{
+		Metrics: map[string]any{
 			"disk.write.bytes.rate": map[string]string{
 				"archive_policy_name": "high",
 			},
@@ -254,11 +256,11 @@ func TestUpdateLinkMetrics(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, ResourceUpdateLinkMetricsResponse)
+		fmt.Fprint(w, ResourceUpdateLinkMetricsResponse)
 	})
 
 	endedAt := time.Date(2018, 1, 14, 13, 0, 0, 0, time.UTC)
-	metrics := map[string]interface{}{
+	metrics := map[string]any{
 		"network.incoming.bytes.rate": "01b2953e-de74-448a-a305-c84440697933",
 	}
 	updateOpts := resources.UpdateOpts{
@@ -299,11 +301,11 @@ func TestUpdateCreateMetrics(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, ResourceUpdateCreateMetricsResponse)
+		fmt.Fprint(w, ResourceUpdateCreateMetricsResponse)
 	})
 
 	startedAt := time.Date(2018, 1, 12, 11, 0, 0, 0, time.UTC)
-	metrics := map[string]interface{}{
+	metrics := map[string]any{
 		"disk.read.bytes.rate": map[string]string{
 			"archive_policy_name": "low",
 		},

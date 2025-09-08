@@ -64,7 +64,7 @@ Gnocchi APIv1 returns measures in a such format:
 Helper unmarshals every nested array into the Measure type.
 */
 func (r *Measure) UnmarshalJSON(b []byte) error {
-	var measuresSlice []interface{}
+	var measuresSlice []any
 	err := json.Unmarshal(b, &measuresSlice)
 	if err != nil {
 		return err
@@ -72,8 +72,7 @@ func (r *Measure) UnmarshalJSON(b []byte) error {
 
 	// We need to check that a measure contains all needed data.
 	if len(measuresSlice) != 3 {
-		errMsg := fmt.Sprintf("got an invalid measure: %v", measuresSlice)
-		return fmt.Errorf(errMsg)
+		return fmt.Errorf("got an invalid measure: %v", measuresSlice)
 	}
 
 	type tmp Measure
@@ -86,8 +85,7 @@ func (r *Measure) UnmarshalJSON(b []byte) error {
 	var timeStamp string
 	var ok bool
 	if timeStamp, ok = measuresSlice[0].(string); !ok {
-		errMsg := fmt.Sprintf("got an invalid timestamp of a measure %v: %v", measuresSlice, measuresSlice[0])
-		return fmt.Errorf(errMsg)
+		return fmt.Errorf("got an invalid timestamp of a measure %v: %v", measuresSlice, measuresSlice[0])
 	}
 	r.Timestamp, err = time.Parse(gnocchi.RFC3339NanoTimezone, timeStamp)
 	if err != nil {
@@ -96,14 +94,12 @@ func (r *Measure) UnmarshalJSON(b []byte) error {
 
 	// Populate a measure's granularity.
 	if r.Granularity, ok = measuresSlice[1].(float64); !ok {
-		errMsg := fmt.Sprintf("got an invalid granularity of a measure %v: %v", measuresSlice, measuresSlice[1])
-		return fmt.Errorf(errMsg)
+		return fmt.Errorf("got an invalid granularity of a measure %v: %v", measuresSlice, measuresSlice[1])
 	}
 
 	// Populate a measure's value.
 	if r.Value = measuresSlice[2].(float64); !ok {
-		errMsg := fmt.Sprintf("got an invalid value of a measure %v: %v", measuresSlice, measuresSlice[2])
-		return fmt.Errorf(errMsg)
+		return fmt.Errorf("got an invalid value of a measure %v: %v", measuresSlice, measuresSlice[2])
 	}
 
 	return nil

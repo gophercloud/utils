@@ -25,13 +25,14 @@ func TestList(t *testing.T) {
 
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		r.ParseForm()
+		err := r.ParseForm()
+		th.AssertNoErr(t, err)
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
-			fmt.Fprintf(w, MetricsListResult)
+			fmt.Fprint(w, MetricsListResult)
 		case "6dbc97c5-bfdf-47a2-b184-02e7fa348d21":
-			fmt.Fprintf(w, `[]`)
+			fmt.Fprint(w, `[]`)
 		default:
 			t.Fatalf("/v1/metric invoked with unexpected marker=[%s]", marker)
 		}
@@ -39,7 +40,7 @@ func TestList(t *testing.T) {
 
 	count := 0
 
-	metrics.List(fake.ServiceClient(), metrics.ListOpts{}).EachPage(context.TODO(), func(_ context.Context, page pagination.Page) (bool, error) {
+	err := metrics.List(fake.ServiceClient(), metrics.ListOpts{}).EachPage(context.TODO(), func(_ context.Context, page pagination.Page) (bool, error) {
 		count++
 		actual, err := metrics.ExtractMetrics(page)
 		if err != nil {
@@ -56,6 +57,7 @@ func TestList(t *testing.T) {
 
 		return true, nil
 	})
+	th.AssertNoErr(t, err)
 
 	if count != 1 {
 		t.Errorf("Expected 1 page, got %d", count)
@@ -73,7 +75,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, MetricGetResult)
+		fmt.Fprint(w, MetricGetResult)
 	})
 
 	s, err := metrics.Get(context.TODO(), fake.ServiceClient(), "0ddf61cf-3747-4f75-bf13-13c28ff03ae3").Extract()
@@ -117,7 +119,7 @@ func TestGet(t *testing.T) {
 		EndedAt:            time.Time{},
 		Type:               "compute_instance_network",
 		UserID:             "bd5874d666624b24a9f01c128871e4ac",
-		ExtraAttributes:    map[string]interface{}{},
+		ExtraAttributes:    map[string]any{},
 	})
 	th.AssertEquals(t, s.Unit, "packet/s")
 }
@@ -136,7 +138,7 @@ func TestCreate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, MetricCreateResponse)
+		fmt.Fprint(w, MetricCreateResponse)
 	})
 
 	opts := metrics.CreateOpts{

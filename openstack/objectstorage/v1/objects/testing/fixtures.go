@@ -71,6 +71,6 @@ func HandleDownloadManifestSuccessfully(t *testing.T) {
 		th.TestHeader(t, r, "Accept", "application/json")
 		w.Header().Set("Date", "Wed, 10 Nov 2009 23:00:00 GMT")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, multipartManifest)
+		fmt.Fprint(w, multipartManifest)
 	})
 }

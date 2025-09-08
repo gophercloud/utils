@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"compress/gzip"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 )
@@ -14,7 +13,7 @@ func GzipFile(path string) ([]byte, error) {
 	var buf bytes.Buffer
 
 	w := gzip.NewWriter(&buf)
-	contents, err := ioutil.ReadFile(path)
+	contents, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +33,7 @@ func GzipFile(path string) ([]byte, error) {
 
 // Packs a directory into a gzipped ISO image
 func PackDirectoryAsISO(path string) ([]byte, error) {
-	iso, err := ioutil.TempFile("", "gophercloud-iso")
+	iso, err := os.CreateTemp("", "gophercloud-iso")
 	if err != nil {
 		return nil, err
 	}

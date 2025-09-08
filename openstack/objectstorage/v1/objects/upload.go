@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -224,14 +223,14 @@ func Upload(ctx context.Context, client *gophercloud.ServiceClient, containerNam
 		if sourceFileInfo.IsDir() {
 			// If the source path is a directory, then create a Directory Marker,
 			// even if DirMarker wasn't specified.
-			return createDirMarker(ctx, client, containerName, objectName, opts, origObject, sourceFileInfo)
+			return createDirMarker(ctx, client, containerName, objectName, opts, origObject)
 		}
 
 		return uploadObject(ctx, client, containerName, objectName, opts, origObject, sourceFileInfo)
 	}
 
 	if opts.DirMarker {
-		return createDirMarker(ctx, client, containerName, objectName, opts, origObject, sourceFileInfo)
+		return createDirMarker(ctx, client, containerName, objectName, opts, origObject)
 	}
 
 	// Finally, create an empty object.
@@ -248,8 +247,7 @@ func createDirMarker(
 	containerName string,
 	objectName string,
 	opts *UploadOpts,
-	origObject *originalObject,
-	sourceFileInfo os.FileInfo) (*UploadResult, error) {
+	origObject *originalObject) (*UploadResult, error) {
 
 	uploadResult := &UploadResult{
 		Action:    "create_dir_marker",
@@ -529,7 +527,7 @@ func uploadObject(
 			}
 
 			if !uploadSegmentResult.Success {
-				return nil, fmt.Errorf("Problem uploading segment %d of %s/%s", segIndex, containerName, objectName)
+				return nil, fmt.Errorf("problem uploading segment %d of %s/%s", segIndex, containerName, objectName)
 			}
 
 			if uploadSegmentResult.Size != 0 {
@@ -603,14 +601,17 @@ func uploadObject(
 			// Wrap it in a NewReader to prevent the Transport
 			// from doing this.
 			if readSeeker, ok := opts.Content.(io.ReadSeeker); ok {
-				data, err := ioutil.ReadAll(readSeeker)
+				data, err := io.ReadAll(readSeeker)
 				if err != nil {
 					return nil, err
 				}
 
 				contentLength = int64(len(data))
 				readSeeker = bytes.NewReader(data)
-				readSeeker.Seek(0, io.SeekStart)
+				_, err = readSeeker.Seek(0, io.SeekStart)
+				if err != nil {
+					return nil, err
+				}
 				reader = readSeeker
 			} else {
 				reader = opts.Content
@@ -623,7 +624,7 @@ func uploadObject(
 			// chance that this can exhaust memory on very large streams.
 			readSeeker, isReadSeeker := reader.(io.ReadSeeker)
 			if !isReadSeeker {
-				data, err := ioutil.ReadAll(reader)
+				data, err := io.ReadAll(reader)
 				if err != nil {
 					return nil, err
 				}
@@ -635,7 +636,10 @@ func uploadObject(
 				return nil, err
 			}
 
-			readSeeker.Seek(0, io.SeekStart)
+			_, err := readSeeker.Seek(0, io.SeekStart)
+			if err != nil {
+				return nil, err
+			}
 			reader = readSeeker
 
 			eTag = fmt.Sprintf("%x", hash.Sum(nil))
@@ -690,9 +694,7 @@ func uploadObject(
 				return nil, err
 			}
 
-			for _, o := range allObjects {
-				oldObjects = append(oldObjects, o)
-			}
+			oldObjects = append(oldObjects, allObjects...)
 
 			delObjectMap[sContainer] = oldObjects
 		}
@@ -819,7 +821,7 @@ func uploadSegment(ctx context.Context, client *gophercloud.ServiceClient, opts 
 
 	if opts.Checksum {
 		if createHeader.ETag != eTag {
-			err := fmt.Errorf("Segment %d: upload verification failed: md5 mismatch, local %s != remote %s", opts.SegmentIndex, eTag, createHeader.ETag)
+			err := fmt.Errorf("segment %d: upload verification failed: md5 mismatch, local %s != remote %s", opts.SegmentIndex, eTag, createHeader.ETag)
 			return nil, err
 		}
 	}

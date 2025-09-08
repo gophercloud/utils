@@ -23,7 +23,7 @@ func TestListArchivePolicies(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, ArchivePoliciesListResult)
+		fmt.Fprint(w, ArchivePoliciesListResult)
 	})
 
 	expected := ListArchivePoliciesExpected
@@ -56,7 +56,7 @@ func TestListArchivePoliciesAllPages(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, ArchivePoliciesListResult)
+		fmt.Fprint(w, ArchivePoliciesListResult)
 	})
 
 	allPages, err := archivepolicies.List(fake.ServiceClient()).AllPages(context.TODO())
@@ -76,7 +76,7 @@ func TestGetArchivePolicy(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, ArchivePolicyGetResult)
+		fmt.Fprint(w, ArchivePolicyGetResult)
 	})
 
 	s, err := archivepolicies.Get(context.TODO(), fake.ServiceClient(), "test_policy").Extract()
@@ -117,7 +117,7 @@ func TestCreate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, ArchivePolicyCreateResponse)
+		fmt.Fprint(w, ArchivePolicyCreateResponse)
 	})
 
 	opts := archivepolicies.CreateOpts{
@@ -177,7 +177,7 @@ func TestUpdateArchivePolicy(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, ArchivePolicyUpdateResponse)
+		fmt.Fprint(w, ArchivePolicyUpdateResponse)
 	})
 
 	updateOpts := archivepolicies.UpdateOpts{
