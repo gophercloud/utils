@@ -181,7 +181,7 @@ func (rt *RoundTripper) RoundTrip(request *http.Request) (*http.Response, error)
 	// this is concurrency safe
 	ort := rt.Rt
 	if ort == nil {
-		return nil, fmt.Errorf("Rt RoundTripper is nil, aborting")
+		return nil, fmt.Errorf("Rt RoundTripper is nil, aborting") //nolint
 	}
 	response, err := ort.RoundTrip(request)
 

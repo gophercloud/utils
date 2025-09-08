@@ -529,7 +529,7 @@ func uploadObject(
 			}
 
 			if !uploadSegmentResult.Success {
-				return nil, fmt.Errorf("Problem uploading segment %d of %s/%s", segIndex, containerName, objectName)
+				return nil, fmt.Errorf("problem uploading segment %d of %s/%s", segIndex, containerName, objectName)
 			}
 
 			if uploadSegmentResult.Size != 0 {
@@ -819,7 +819,7 @@ func uploadSegment(ctx context.Context, client *gophercloud.ServiceClient, opts 
 
 	if opts.Checksum {
 		if createHeader.ETag != eTag {
-			err := fmt.Errorf("Segment %d: upload verification failed: md5 mismatch, local %s != remote %s", opts.SegmentIndex, eTag, createHeader.ETag)
+			err := fmt.Errorf("segment %d: upload verification failed: md5 mismatch, local %s != remote %s", opts.SegmentIndex, eTag, createHeader.ETag)
 			return nil, err
 		}
 	}

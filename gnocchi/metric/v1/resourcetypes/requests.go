@@ -2,7 +2,7 @@ package resourcetypes
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"strings"
 
 	"github.com/gophercloud/gophercloud/v2"
@@ -144,7 +144,7 @@ type AttributeUpdateOpts struct {
 // ToResourceTypeUpdateMap constructs a request body from UpdateOpts.
 func (opts UpdateOpts) ToResourceTypeUpdateMap() ([]map[string]interface{}, error) {
 	if len(opts.Attributes) == 0 {
-		return nil, fmt.Errorf("provided Gnocchi resource type UpdateOpts is empty")
+		return nil, errors.New("provided Gnocchi resource type UpdateOpts is empty")
 	}
 
 	updateOptsMaps := make([]map[string]interface{}, len(opts.Attributes))

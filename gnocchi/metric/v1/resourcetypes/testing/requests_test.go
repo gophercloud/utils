@@ -23,7 +23,7 @@ func TestList(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, ResourceTypeListResult)
+		fmt.Fprint(w, ResourceTypeListResult)
 	})
 
 	count := 0
@@ -63,7 +63,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, ResourceTypeGetResult)
+		fmt.Fprint(w, ResourceTypeGetResult)
 	})
 
 	s, err := resourcetypes.Get(context.TODO(), fake.ServiceClient(), "compute_instance").Extract()
@@ -103,7 +103,7 @@ func TestCreateWithoutAttributes(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, ResourceTypeCreateWithoutAttributesResult)
+		fmt.Fprint(w, ResourceTypeCreateWithoutAttributesResult)
 	})
 
 	opts := resourcetypes.CreateOpts{
@@ -131,7 +131,7 @@ func TestCreateWithAttributes(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, ResourceTypeCreateWithAttributesResult)
+		fmt.Fprint(w, ResourceTypeCreateWithAttributesResult)
 	})
 
 	opts := resourcetypes.CreateOpts{
@@ -189,7 +189,7 @@ func TestUpdate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json-patch+json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, ResourceTypeUpdateResult)
+		fmt.Fprint(w, ResourceTypeUpdateResult)
 	})
 
 	enabledAttributeOptions := resourcetypes.AttributeOpts{

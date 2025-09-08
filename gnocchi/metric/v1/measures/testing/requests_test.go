@@ -24,7 +24,7 @@ func TestListMeasures(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, MeasuresListResult)
+		fmt.Fprint(w, MeasuresListResult)
 	})
 
 	metricID := "9e5a6441-1044-4181-b66e-34e180753040"

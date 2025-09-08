@@ -29,9 +29,9 @@ func TestList(t *testing.T) {
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
-			fmt.Fprintf(w, MetricsListResult)
+			fmt.Fprint(w, MetricsListResult)
 		case "6dbc97c5-bfdf-47a2-b184-02e7fa348d21":
-			fmt.Fprintf(w, `[]`)
+			fmt.Fprint(w, `[]`)
 		default:
 			t.Fatalf("/v1/metric invoked with unexpected marker=[%s]", marker)
 		}
@@ -73,7 +73,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, MetricGetResult)
+		fmt.Fprint(w, MetricGetResult)
 	})
 
 	s, err := metrics.Get(context.TODO(), fake.ServiceClient(), "0ddf61cf-3747-4f75-bf13-13c28ff03ae3").Extract()
@@ -136,7 +136,7 @@ func TestCreate(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, MetricCreateResponse)
+		fmt.Fprint(w, MetricCreateResponse)
 	})
 
 	opts := metrics.CreateOpts{

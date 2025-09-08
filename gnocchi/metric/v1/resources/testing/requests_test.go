@@ -27,9 +27,9 @@ func TestList(t *testing.T) {
 		marker := r.Form.Get("marker")
 		switch marker {
 		case "":
-			fmt.Fprintf(w, ResourceListResult)
+			fmt.Fprint(w, ResourceListResult)
 		case "789a7f65-977d-40f4-beed-f717100125f5":
-			fmt.Fprintf(w, `[]`)
+			fmt.Fprint(w, `[]`)
 		default:
 			t.Fatalf("/v1/resources invoked with unexpected marker=[%s]", marker)
 		}
@@ -71,7 +71,7 @@ func TestGet(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, ResourceGetResult)
+		fmt.Fprint(w, ResourceGetResult)
 	})
 
 	s, err := resources.Get(context.TODO(), fake.ServiceClient(), "compute_instance_network", "75274f99-faf6-4112-a6d5-2794cb07c789").Extract()
@@ -114,7 +114,7 @@ func TestCreateWithoutMetrics(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, ResourceCreateWithoutMetricsResult)
+		fmt.Fprint(w, ResourceCreateWithoutMetricsResult)
 	})
 
 	opts := resources.CreateOpts{
@@ -154,7 +154,7 @@ func TestCreateLinkMetrics(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, ResourceCreateLinkMetricsResult)
+		fmt.Fprint(w, ResourceCreateLinkMetricsResult)
 	})
 
 	startedAt := time.Date(2018, 1, 2, 23, 23, 34, 0, time.UTC)
@@ -205,7 +205,7 @@ func TestCreateWithMetrics(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 
-		fmt.Fprintf(w, ResourceCreateWithMetricsResult)
+		fmt.Fprint(w, ResourceCreateWithMetricsResult)
 	})
 
 	endedAt := time.Date(2018, 1, 9, 20, 0, 0, 0, time.UTC)
@@ -254,7 +254,7 @@ func TestUpdateLinkMetrics(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, ResourceUpdateLinkMetricsResponse)
+		fmt.Fprint(w, ResourceUpdateLinkMetricsResponse)
 	})
 
 	endedAt := time.Date(2018, 1, 14, 13, 0, 0, 0, time.UTC)
@@ -299,7 +299,7 @@ func TestUpdateCreateMetrics(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
-		fmt.Fprintf(w, ResourceUpdateCreateMetricsResponse)
+		fmt.Fprint(w, ResourceUpdateCreateMetricsResponse)
 	})
 
 	startedAt := time.Date(2018, 1, 12, 11, 0, 0, 0, time.UTC)

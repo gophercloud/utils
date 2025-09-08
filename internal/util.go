@@ -46,12 +46,12 @@ func PrepareTLSConfig(caCertFile, clientCertFile, clientKeyFile string, insecure
 	if caCertFile != "" {
 		caCert, _, err := pathOrContents(caCertFile)
 		if err != nil {
-			return nil, fmt.Errorf("Error reading CA Cert: %s", err)
+			return nil, fmt.Errorf("error reading CA Cert: %s", err)
 		}
 
 		caCertPool := x509.NewCertPool()
 		if ok := caCertPool.AppendCertsFromPEM(bytes.TrimSpace(caCert)); !ok {
-			return nil, fmt.Errorf("Error parsing CA Cert from %s", caCertFile)
+			return nil, fmt.Errorf("error parsing CA Cert from %s", caCertFile)
 		}
 		config.RootCAs = caCertPool
 	}
@@ -65,11 +65,11 @@ func PrepareTLSConfig(caCertFile, clientCertFile, clientKeyFile string, insecure
 	if clientCertFile != "" && clientKeyFile != "" {
 		clientCert, _, err := pathOrContents(clientCertFile)
 		if err != nil {
-			return nil, fmt.Errorf("Error reading Client Cert: %s", err)
+			return nil, fmt.Errorf("error reading Client Cert: %s", err)
 		}
 		clientKey, _, err := pathOrContents(clientKeyFile)
 		if err != nil {
-			return nil, fmt.Errorf("Error reading Client Key: %s", err)
+			return nil, fmt.Errorf("error reading Client Key: %s", err)
 		}
 
 		cert, err := tls.X509KeyPair(clientCert, clientKey)
