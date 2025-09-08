@@ -689,9 +689,7 @@ func uploadObject(
 				return nil, err
 			}
 
-			for _, o := range allObjects {
-				oldObjects = append(oldObjects, o)
-			}
+			oldObjects = append(oldObjects, allObjects...)
 
 			delObjectMap[sContainer] = oldObjects
 		}

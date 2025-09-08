@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
+	"maps"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -20,9 +21,7 @@ import (
 // for resources that can contain an arbitrary or dynamic number of fields.
 func RemainingKeys(s interface{}, m map[string]interface{}) (extras map[string]interface{}) {
 	extras = make(map[string]interface{})
-	for k, v := range m {
-		extras[k] = v
-	}
+	maps.Copy(extras, m)
 
 	valueOf := reflect.ValueOf(s)
 	typeOf := reflect.TypeOf(s)

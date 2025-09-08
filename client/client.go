@@ -100,9 +100,7 @@ func (rt *RoundTripper) SetHeaders(headers http.Header) {
 	newHeaders := make(http.Header, len(headers))
 	for k, v := range headers {
 		s := make([]string, len(v))
-		for i, v := range v {
-			s[i] = v
-		}
+		copy(s, v)
 		newHeaders[k] = s
 	}
 
@@ -342,7 +340,7 @@ func FormatJSON(raw []byte) (string, error) {
 		if v, ok := v["headers"].(map[string]interface{}); ok {
 			if _, ok := v["Authorization"]; ok {
 				if s, ok := v["Authorization"].(string); ok {
-					v["Authorization"] = strings.Replace(s, access, "***", -1)
+					v["Authorization"] = strings.ReplaceAll(s, access, "***")
 				}
 			}
 		}
