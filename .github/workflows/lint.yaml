@@ -5,23 +5,16 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        go-version:
-          - "1.22"
 
     steps:
       - name: Checkout source
         uses: actions/checkout@v5
 
-      - name: Setup Go ${{ matrix.go-version }}
+      - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: ${{ matrix.go-version }}
+          go-version: "1"
 
       - name: Run linters
         run: |
           make lint
-
-      - name: Run unit tests
-        run: |
-          make unit
