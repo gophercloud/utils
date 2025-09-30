@@ -64,8 +64,8 @@ var expectedMultipartManifest = []objects.Manifest{
 // HandleDownloadManifestSuccessfully creates an HTTP handler at
 // `/testContainer/testObject` on the test handler mux that responds with a
 // Download response.
-func HandleDownloadManifestSuccessfully(t *testing.T) {
-	th.Mux.HandleFunc("/testContainer/testObject", func(w http.ResponseWriter, r *http.Request) {
+func HandleDownloadManifestSuccessfully(t *testing.T, fakeServer th.FakeServer) {
+	fakeServer.Mux.HandleFunc("/testContainer/testObject", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		th.TestHeader(t, r, "Accept", "application/json")

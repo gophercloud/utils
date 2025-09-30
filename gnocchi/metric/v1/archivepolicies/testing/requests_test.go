@@ -13,10 +13,10 @@ import (
 )
 
 func TestListArchivePolicies(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	fakeServer := th.SetupHTTP()
+	defer fakeServer.Teardown()
 
-	th.Mux.HandleFunc("/v1/archive_policy", func(w http.ResponseWriter, r *http.Request) {
+	fakeServer.Mux.HandleFunc("/v1/archive_policy", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
@@ -28,7 +28,7 @@ func TestListArchivePolicies(t *testing.T) {
 
 	expected := ListArchivePoliciesExpected
 	pages := 0
-	err := archivepolicies.List(fake.ServiceClient()).EachPage(context.TODO(), func(_ context.Context, page pagination.Page) (bool, error) {
+	err := archivepolicies.List(fake.ServiceClient(fakeServer)).EachPage(context.TODO(), func(_ context.Context, page pagination.Page) (bool, error) {
 		pages++
 
 		actual, err := archivepolicies.ExtractArchivePolicies(page)
@@ -46,10 +46,10 @@ func TestListArchivePolicies(t *testing.T) {
 }
 
 func TestListArchivePoliciesAllPages(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	fakeServer := th.SetupHTTP()
+	defer fakeServer.Teardown()
 
-	th.Mux.HandleFunc("/v1/archive_policy", func(w http.ResponseWriter, r *http.Request) {
+	fakeServer.Mux.HandleFunc("/v1/archive_policy", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
@@ -59,17 +59,17 @@ func TestListArchivePoliciesAllPages(t *testing.T) {
 		fmt.Fprint(w, ArchivePoliciesListResult)
 	})
 
-	allPages, err := archivepolicies.List(fake.ServiceClient()).AllPages(context.TODO())
+	allPages, err := archivepolicies.List(fake.ServiceClient(fakeServer)).AllPages(context.TODO())
 	th.AssertNoErr(t, err)
 	_, err = archivepolicies.ExtractArchivePolicies(allPages)
 	th.AssertNoErr(t, err)
 }
 
 func TestGetArchivePolicy(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	fakeServer := th.SetupHTTP()
+	defer fakeServer.Teardown()
 
-	th.Mux.HandleFunc("/v1/archive_policy/test_policy", func(w http.ResponseWriter, r *http.Request) {
+	fakeServer.Mux.HandleFunc("/v1/archive_policy/test_policy", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 
@@ -79,7 +79,7 @@ func TestGetArchivePolicy(t *testing.T) {
 		fmt.Fprint(w, ArchivePolicyGetResult)
 	})
 
-	s, err := archivepolicies.Get(context.TODO(), fake.ServiceClient(), "test_policy").Extract()
+	s, err := archivepolicies.Get(context.TODO(), fake.ServiceClient(fakeServer), "test_policy").Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertDeepEquals(t, s.AggregationMethods, []string{
@@ -104,10 +104,10 @@ func TestGetArchivePolicy(t *testing.T) {
 }
 
 func TestCreate(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	fakeServer := th.SetupHTTP()
+	defer fakeServer.Teardown()
 
-	th.Mux.HandleFunc("/v1/archive_policy", func(w http.ResponseWriter, r *http.Request) {
+	fakeServer.Mux.HandleFunc("/v1/archive_policy", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "POST")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		th.TestHeader(t, r, "Content-Type", "application/json")
@@ -139,7 +139,7 @@ func TestCreate(t *testing.T) {
 		},
 		Name: "test_policy",
 	}
-	s, err := archivepolicies.Create(context.TODO(), fake.ServiceClient(), opts).Extract()
+	s, err := archivepolicies.Create(context.TODO(), fake.ServiceClient(fakeServer), opts).Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertDeepEquals(t, s.AggregationMethods, []string{
@@ -164,10 +164,10 @@ func TestCreate(t *testing.T) {
 }
 
 func TestUpdateArchivePolicy(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	fakeServer := th.SetupHTTP()
+	defer fakeServer.Teardown()
 
-	th.Mux.HandleFunc("/v1/archive_policy/test_policy", func(w http.ResponseWriter, r *http.Request) {
+	fakeServer.Mux.HandleFunc("/v1/archive_policy/test_policy", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "PATCH")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		th.TestHeader(t, r, "Content-Type", "application/json")
@@ -192,7 +192,7 @@ func TestUpdateArchivePolicy(t *testing.T) {
 			},
 		},
 	}
-	s, err := archivepolicies.Update(context.TODO(), fake.ServiceClient(), "test_policy", updateOpts).Extract()
+	s, err := archivepolicies.Update(context.TODO(), fake.ServiceClient(fakeServer), "test_policy", updateOpts).Extract()
 	th.AssertNoErr(t, err)
 
 	th.AssertDeepEquals(t, s.AggregationMethods, []string{
@@ -215,15 +215,15 @@ func TestUpdateArchivePolicy(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	th.SetupHTTP()
-	defer th.TeardownHTTP()
+	fakeServer := th.SetupHTTP()
+	defer fakeServer.Teardown()
 
-	th.Mux.HandleFunc("/v1/archive_policy/test_policy", func(w http.ResponseWriter, r *http.Request) {
+	fakeServer.Mux.HandleFunc("/v1/archive_policy/test_policy", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "DELETE")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		w.WriteHeader(http.StatusNoContent)
 	})
 
-	res := archivepolicies.Delete(context.TODO(), fake.ServiceClient(), "test_policy")
+	res := archivepolicies.Delete(context.TODO(), fake.ServiceClient(fakeServer), "test_policy")
 	th.AssertNoErr(t, res.Err)
 }
