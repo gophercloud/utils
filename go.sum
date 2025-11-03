@@ -1,5 +1,5 @@
-github.com/gofrs/uuid/v5 v5.3.2 h1:2jfO8j3XgSwlz/wHqemAEugfnTlikAYHhnqQ8Xh4fE0=
-github.com/gofrs/uuid/v5 v5.3.2/go.mod h1:CDOjlDMVAtN56jqyRUZh58JT31Tiw7/oQyEXZV+9bD8=
+github.com/gofrs/uuid/v5 v5.4.0 h1:EfbpCTjqMuGyq5ZJwxqzn3Cbr2d0rUZU7v5ycAk/e/0=
+github.com/gofrs/uuid/v5 v5.4.0/go.mod h1:CDOjlDMVAtN56jqyRUZh58JT31Tiw7/oQyEXZV+9bD8=
 github.com/gophercloud/gophercloud/v2 v2.8.0 h1:of2+8tT6+FbEYHfYC8GBu8TXJNsXYSNm9KuvpX7Neqo=
 github.com/gophercloud/gophercloud/v2 v2.8.0/go.mod h1:Ki/ILhYZr/5EPebrPL9Ej+tUg4lqx71/YH2JWVeU+Qk=
 golang.org/x/sys v0.35.0 h1:vz1N37gP5bs89s7He8XuIYXpyY0+QlsKmzipCbUtyxI=
