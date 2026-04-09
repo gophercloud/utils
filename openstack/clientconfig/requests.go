@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"reflect"
+	"strconv"
 	"strings"
 
 	"github.com/gophercloud/gophercloud/v2"
@@ -808,9 +809,17 @@ func NewServiceClient(ctx context.Context, service string, opts *ClientOpts) (*g
 	}
 
 	// Define whether or not SSL API requests should be verified.
+	// First, check if the INSECURE environment variable is set.
 	var insecurePtr *bool
+	if v := env.Getenv(envPrefix + "INSECURE"); v != "" {
+		insecure, err := strconv.ParseBool(v)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse %sINSECURE: %w", envPrefix, err)
+		}
+		insecurePtr = &insecure
+	}
+	// Next, check if the cloud entry sets verify (inverted to insecure).
 	if cloud.Verify != nil {
-		// Here we take the boolean pointer negation.
 		insecure := !*cloud.Verify
 		insecurePtr = &insecure
 	}
