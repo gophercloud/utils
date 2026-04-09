@@ -2,6 +2,7 @@ package clientconfig
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"net/http"
@@ -738,43 +739,10 @@ func AuthenticatedClient(ctx context.Context, opts *ClientOpts) (*gophercloud.Pr
 	return openstack.AuthenticatedClient(ctx, *ao)
 }
 
-// NewServiceClient is a convenience function to get a new service client.
-func NewServiceClient(ctx context.Context, service string, opts *ClientOpts) (*gophercloud.ServiceClient, error) {
-	cloud := new(Cloud)
-
-	// If no opts were passed in, create an empty ClientOpts.
-	if opts == nil {
-		opts = new(ClientOpts)
-	}
-
-	// Determine if a clouds.yaml entry should be retrieved.
-	// Start by figuring out the cloud name.
-	// First check if one was explicitly specified in opts.
-	var cloudName string
-	if opts.Cloud != "" {
-		cloudName = opts.Cloud
-	}
-
-	// Next see if a cloud name was specified as an environment variable.
-	envPrefix := "OS_"
-	if opts.EnvPrefix != "" {
-		envPrefix = opts.EnvPrefix
-	}
-
-	if v := env.Getenv(envPrefix + "CLOUD"); v != "" {
-		cloudName = v
-	}
-
-	// If a cloud name was determined, try to look it up in clouds.yaml.
-	if cloudName != "" {
-		// Get the requested cloud.
-		var err error
-		cloud, err = GetCloudFromYAML(opts)
-		if err != nil {
-			return nil, err
-		}
-	}
-
+// PrepareTLSConfig builds a *tls.Config from environment variables and cloud
+// configuration. Environment variables are checked first; cloud entry values
+// override if set.
+func PrepareTLSConfig(envPrefix string, cloud *Cloud) (*tls.Config, error) {
 	// Check if a custom CA cert was provided.
 	// First, check if the CACERT environment variable is set.
 	var caCertPath string
@@ -824,7 +792,47 @@ func NewServiceClient(ctx context.Context, service string, opts *ClientOpts) (*g
 		insecurePtr = &insecure
 	}
 
-	tlsConfig, err := internal.PrepareTLSConfig(caCertPath, clientCertPath, clientKeyPath, insecurePtr)
+	return internal.PrepareTLSConfig(caCertPath, clientCertPath, clientKeyPath, insecurePtr)
+}
+
+// NewServiceClient is a convenience function to get a new service client.
+func NewServiceClient(ctx context.Context, service string, opts *ClientOpts) (*gophercloud.ServiceClient, error) {
+	cloud := new(Cloud)
+
+	// If no opts were passed in, create an empty ClientOpts.
+	if opts == nil {
+		opts = new(ClientOpts)
+	}
+
+	// Determine if a clouds.yaml entry should be retrieved.
+	// Start by figuring out the cloud name.
+	// First check if one was explicitly specified in opts.
+	var cloudName string
+	if opts.Cloud != "" {
+		cloudName = opts.Cloud
+	}
+
+	// Next see if a cloud name was specified as an environment variable.
+	envPrefix := "OS_"
+	if opts.EnvPrefix != "" {
+		envPrefix = opts.EnvPrefix
+	}
+
+	if v := env.Getenv(envPrefix + "CLOUD"); v != "" {
+		cloudName = v
+	}
+
+	// If a cloud name was determined, try to look it up in clouds.yaml.
+	if cloudName != "" {
+		// Get the requested cloud.
+		var err error
+		cloud, err = GetCloudFromYAML(opts)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	tlsConfig, err := PrepareTLSConfig(envPrefix, cloud)
 	if err != nil {
 		return nil, err
 	}
