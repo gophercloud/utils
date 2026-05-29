@@ -655,6 +655,12 @@ func v3auth(cloud *Cloud, opts *ClientOpts) (*gophercloud.AuthOptions, error) {
 		}
 	}
 
+	if cloud.AuthInfo.TrustID == "" {
+		if v := env.Getenv(envPrefix + "TRUST_ID"); v != "" {
+			cloud.AuthInfo.TrustID = v
+		}
+	}
+
 	// Build a scope and try to do it correctly.
 	// https://github.com/openstack/os-client-config/blob/master/os_client_config/config.py#L595
 	scope := new(gophercloud.AuthScope)
@@ -664,6 +670,8 @@ func v3auth(cloud *Cloud, opts *ClientOpts) (*gophercloud.AuthOptions, error) {
 		// If Domain* is set, but UserDomain* or ProjectDomain* aren't,
 		// then use Domain* as the default setting.
 		cloud = setDomainIfNeeded(cloud)
+	} else if cloud.AuthInfo.TrustID != "" {
+		scope.TrustID = cloud.AuthInfo.TrustID
 	} else {
 		if !isProjectScoped(cloud.AuthInfo) {
 			if cloud.AuthInfo.DomainID != "" {
