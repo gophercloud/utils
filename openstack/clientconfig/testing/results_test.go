@@ -29,6 +29,7 @@ var HawaiiExpected = `clouds:
             project_name: Some Project
             domain_name: default
         region_name: HNL
+        compute_default_microversion: "2.87"
         verify: true
 `
 

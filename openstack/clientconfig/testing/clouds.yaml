@@ -7,6 +7,7 @@ clouds:
       project_name: "Some Project"
       domain_name: "default"
     region_name: "HNL"
+    compute_default_microversion: "2.87"
   florida:
     interface: "admin"
     auth:
@@ -139,11 +140,13 @@ clouds:
       username: "jdoe"
       password: "password"
       project_name: "Some Project"
+    compute_default_microversion: "2.87"
     regions:
       - name: PHL1
         values:
           auth:
             auth_url: "https://phl1.example.com:5000/v3"
+          compute_default_microversion: "2.79"
       - PHL2
   virginia:
     auth_type: "v3applicationcredential"
