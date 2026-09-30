@@ -7,6 +7,7 @@ import (
 	"os/user"
 	"path/filepath"
 	"reflect"
+	"strings"
 
 	"github.com/gophercloud/gophercloud/v2"
 	"github.com/gophercloud/utils/v2/env"
@@ -66,6 +67,10 @@ func mergeInterfaces(overridingInterface, inferiorInterface any) any {
 		}
 		for k, v := range interfaceMap {
 			if overridingValue, ok := overriding[k]; ok {
+				// Explicit empty and null microversion defaults replace inherited values.
+				if strings.HasSuffix(k, defaultMicroversionSuffix) {
+					continue
+				}
 				overriding[k] = mergeInterfaces(overridingValue, v)
 			} else {
 				overriding[k] = v
